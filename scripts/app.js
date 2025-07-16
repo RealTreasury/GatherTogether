@@ -13,6 +13,10 @@ const App = {
         if (inviteBtn) {
             inviteBtn.addEventListener('click', App.inviteFriend);
         }
+        const inviteBtnMobile = document.getElementById('invite-btn-mobile');
+        if (inviteBtnMobile) {
+            inviteBtnMobile.addEventListener('click', App.inviteFriend);
+        }
         App.initModules();
         App.handleResize();
         
