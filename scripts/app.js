@@ -25,6 +25,12 @@ const App = {
                 e.preventDefault();
                 const targetId = link.getAttribute('href').substring(1);
                 App.switchTab(targetId);
+
+                // Hide the navigation menu on mobile after selecting a tab
+                const nav = document.getElementById('nav');
+                if (nav && (window.innerWidth < 768 || nav.classList.contains('md:hidden'))) {
+                    nav.classList.add('hidden');
+                }
             });
         });
 
