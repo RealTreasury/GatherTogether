@@ -23,10 +23,10 @@
     <main class="container mx-auto px-4 flex-1">
         <section id="bingo" class="tab-section">
             <div class="glass p-6 mt-4">
-                <h2 class="text-2xl mb-4">3D Bingo Challenge Tracker</h2>
+                <h2 class="text-2xl mb-4">Bingo Challenge Tracker</h2>
                 <div id="bingo-container" class="h-64 flex items-center justify-center">
                     <div class="loading"></div>
-                    <span class="ml-2">Loading 3D Bingo...</span>
+                    <span class="ml-2">Loading Bingo...</span>
                 </div>
             </div>
         </section>
@@ -48,10 +48,12 @@
         </section>
     </main>
 
-    <!-- Load Three.js library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
-    <!-- Load the app -->
+    <!-- Load scripts -->
+    <script type="module" src="scripts/storage.js"></script>
+    <script type="module" src="scripts/utils.js"></script>
+    <script type="module" src="scripts/bingo.js"></script>
+    <script type="module" src="scripts/verse.js"></script>
+    <script type="module" src="scripts/polls.js"></script>
     <script type="module" src="scripts/app.js"></script>
     
     <!-- Add some error handling -->
@@ -60,7 +62,7 @@
             console.error('Script error:', e.error);
             const bingoContainer = document.getElementById('bingo-container');
             if (bingoContainer && bingoContainer.innerHTML.includes('Loading')) {
-                bingoContainer.innerHTML = '<p class="text-red-600">Error loading 3D bingo. Please refresh the page.</p>';
+                bingoContainer.innerHTML = '<p class="text-red-600">Error loading bingo. Please refresh the page.</p>';
             }
         });
     </script>

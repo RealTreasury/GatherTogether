@@ -35,14 +35,14 @@ function initTabs() {
 }
 
 // Initialize modules
-async function initializeApp() {
+function initializeApp() {
     try {
         console.log('Initializing GatherTogether app...');
 
         initTabs();
 
-        await window.initBingo3D();
-        window.initVerseOfTheHour();
+        window.initBingo();
+        window.initVerse();
         window.initPolls();
 
         console.log('App initialized successfully');
