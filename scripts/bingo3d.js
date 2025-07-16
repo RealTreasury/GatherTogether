@@ -1,3 +1,5 @@
+import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+
 // Bingo challenges for LCMS Youth Gathering
 const CHALLENGES = [
     "Share your faith story", "Pray for a friend", "Read John 3:16", "Help a stranger", "Attend worship",
@@ -14,12 +16,6 @@ let dailyChallenge = 12; // Center tile by default
 let confettiParticles = [];
 
 export function initBingo3D() {
-    // Check if Three.js is loaded
-    if (typeof THREE === 'undefined') {
-        console.error('Three.js not loaded');
-        return;
-    }
-
     const container = document.getElementById('bingo-container');
     if (!container) {
         console.error('Bingo container not found');
