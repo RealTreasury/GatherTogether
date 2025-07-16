@@ -40,6 +40,18 @@ node server.js
 The app will be available at `http://localhost:3000` and the polls API can be
 reached at `http://localhost:3000/api/polls`.
 
+## Running Tests
+
+Install dependencies and run the test suite with npm:
+
+```bash
+npm install
+npm test
+```
+
+Tests are automatically executed for every push and pull request through
+GitHub Actions.
+
 ## Legal
 
 Standalone pages [`terms.html`](terms.html) and [`privacy.html`](privacy.html) outline the demo
