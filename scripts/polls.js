@@ -4,3 +4,6 @@ export function initPolls() {
         container.textContent = 'Polls and Q&A coming soon...';
     }
 }
+
+// Expose initializer globally
+window.initPolls = initPolls;
