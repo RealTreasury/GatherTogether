@@ -241,8 +241,24 @@ const BingoTracker = {
         }
         if (diagonal1) count++;
         if (diagonal2) count++;
-        
+
         return count;
+    },
+
+    // Count total achievements including sub items
+    countAchievements: () => {
+        if (BingoTracker.currentMode === 'regular') {
+            return BingoTracker.completedTiles.regular.size;
+        }
+        let total = 0;
+        COMPLETIONIST_CHALLENGES.forEach((ch, idx) => {
+            const progress = BingoTracker.subItemProgress[idx] || [];
+            total += progress.length;
+            if (BingoTracker.completedTiles.completionist.has(idx)) {
+                total += 1;
+            }
+        });
+        return total;
     },
 
     // Show celebration
@@ -291,18 +307,23 @@ const BingoTracker = {
                 <h3 class="text-xl font-bold mb-4">${challenge.text}</h3>
                 <ul class="sublist-items">
                     ${challenge.sublist.map((item,i)=>`
-                        <li class="flex items-center">
-                            <input id="sub-${i}" type="checkbox" data-sub="${i}" ${progress.has(i)?'checked':''} class="mr-2">
-                            <label for="sub-${i}" class="ml-1">${item}</label>
+                        <li>
+                            <button class="sub-item-btn ${progress.has(i)?'selected':''}" data-sub="${i}">${item}</button>
                         </li>`).join('')}
                 </ul>
             </div>
         `;
 
-        const handleChange = (e) => {
-            if (e.target.matches('input[type="checkbox"]')) {
+        const handleClick = (e) => {
+            if (e.target.matches('.sub-item-btn')) {
                 const sub = parseInt(e.target.dataset.sub,10);
-                if (e.target.checked) progress.add(sub); else progress.delete(sub);
+                if (progress.has(sub)) {
+                    progress.delete(sub);
+                    e.target.classList.remove('selected');
+                } else {
+                    progress.add(sub);
+                    e.target.classList.add('selected');
+                }
                 BingoTracker.subItemProgress[index] = [...progress];
                 if (progress.size === challenge.sublist.length) {
                     BingoTracker.completedTiles.completionist.add(index);
@@ -315,7 +336,7 @@ const BingoTracker = {
             }
         };
 
-        overlay.addEventListener('change', handleChange);
+        overlay.addEventListener('click', handleClick);
         overlay.addEventListener('click', (e) => {
             if (e.target.classList.contains('sublist-close') || e.target === overlay) {
                 BingoTracker.closeSublist();
@@ -347,11 +368,13 @@ const BingoTracker = {
         const totalCount = BingoTracker.getCurrentChallenges().length;
         const progressPercent = Math.round((completedCount / totalCount) * 100);
         const bingoLines = BingoTracker.countBingoLines();
+        const achievements = BingoTracker.countAchievements();
         
         const elements = {
             'completed-count': completedCount,
             'progress-percent': progressPercent + '%',
-            'bingo-count': bingoLines
+            'bingo-count': bingoLines,
+            'achievement-count': achievements
         };
         
         Object.entries(elements).forEach(([id, value]) => {

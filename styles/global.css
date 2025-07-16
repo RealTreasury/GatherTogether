@@ -363,12 +363,32 @@ body {
 }
 
 .sublist-items li {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #e5e7eb;
+    padding: 0.25rem 0;
+    border-bottom: none;
 }
 
-.sublist-items li:last-child {
-    border-bottom: none;
+
+.sub-item-btn {
+    display: block;
+    width: 100%;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sub-item-btn:hover {
+    background: rgba(124,58,237,0.1);
+    border-color: var(--primary-purple);
+}
+
+.sub-item-btn.selected {
+    background: var(--primary-purple);
+    color: white;
+    border-color: var(--primary-purple);
 }
 
 @keyframes confettiFall {
