@@ -30,6 +30,7 @@ const App = {
                 const nav = document.getElementById('nav');
                 if (nav && (window.innerWidth < 768 || nav.classList.contains('md:hidden'))) {
                     nav.classList.add('hidden');
+                    nav.classList.remove('open');
                 }
             });
         });
@@ -44,7 +45,13 @@ const App = {
         const nav = document.getElementById('nav');
         if (toggle && nav) {
             toggle.addEventListener('click', () => {
-                nav.classList.toggle('hidden');
+                if (nav.classList.contains('hidden')) {
+                    nav.classList.remove('hidden');
+                    nav.classList.add('open');
+                } else {
+                    nav.classList.add('hidden');
+                    nav.classList.remove('open');
+                }
             });
         }
     },
