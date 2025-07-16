@@ -62,3 +62,24 @@ test('Bingo progress endpoints record progress and return leaderboard data', asy
     score: progress.completedTiles.length,
   });
 });
+
+test('Leaderboard ranks users and updates existing entries', async () => {
+  // create two users with different scores
+  await request(app)
+    .post('/api/bingo/progress')
+    .send({ userId: 'u1', username: 'User1', completedTiles: [1] });
+  await request(app)
+    .post('/api/bingo/progress')
+    .send({ userId: 'u2', username: 'User2', completedTiles: [1, 2, 3] });
+
+  // update first user with higher score
+  await request(app)
+    .post('/api/bingo/progress')
+    .send({ userId: 'u1', username: 'User1', completedTiles: [1, 2, 3, 4, 5] });
+
+  const res = await request(app).get('/api/bingo/leaderboard');
+  expect(res.status).toBe(200);
+  expect(res.body.length).toBe(2);
+  expect(res.body[0]).toEqual({ username: 'User1', score: 5 });
+  expect(res.body[1]).toEqual({ username: 'User2', score: 3 });
+});
