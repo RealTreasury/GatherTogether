@@ -136,10 +136,11 @@ const PollManager = {
 
         if (shouldSend) {
             try {
+                const userId = Utils.getUserId();
                 await fetch(`/api/polls/${pollId}/vote`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ optionId })
+                    body: JSON.stringify({ optionId, userId })
                 });
                 await PollManager.loadPolls();
             } catch (err) {
