@@ -7,6 +7,8 @@ both a regular card and a more difficult **completionist** card that can be
 toggled in the interface. Completionist challenges with multiple tasks open in a
 sublist view that can be dismissed via the close button, clicking outside the
 list or pressing <kbd>Esc</kbd>.
+An "Invite a Friend" button lets you quickly share the site link using your
+device's native share sheet or by copying the invite text to the clipboard.
 
 ## File Structure
 

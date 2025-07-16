@@ -9,6 +9,10 @@ const App = {
         
         App.initTabs();
         App.initMenu();
+        const inviteBtn = document.getElementById('invite-btn');
+        if (inviteBtn) {
+            inviteBtn.addEventListener('click', App.inviteFriend);
+        }
         App.initModules();
         App.handleResize();
         
@@ -115,6 +119,21 @@ const App = {
         }, 250);
 
         window.addEventListener('resize', debouncedResize);
+    },
+
+    // Share app link via native share or clipboard
+    inviteFriend: () => {
+        const inviteText = `Check out this Faith Challenge app for the LCMS Youth Gathering! ${window.location.href}`;
+        if (navigator.share) {
+            navigator.share({
+                title: 'GatherTogether Invite',
+                text: inviteText,
+                url: window.location.href
+            }).catch(err => console.error('Share failed', err));
+        } else {
+            navigator.clipboard.writeText(inviteText);
+            Utils.showNotification('Invite link copied to clipboard!');
+        }
     },
 
     // Error handling
