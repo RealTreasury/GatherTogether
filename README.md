@@ -1,6 +1,6 @@
 # GatherTogether
 
-Simple web app demo featuring a bingo challenge tracker, verse of the hour and
+Simple web app demo featuring a bingo challenge tracker, hourly verse and
 placeholder live polls. The project is intentionally lightweight and uses
 vanilla JavaScript without external frameworks. The bingo tracker now supports
 both a regular card and a more difficult **completionist** card that can be
