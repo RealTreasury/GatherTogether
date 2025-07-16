@@ -1,5 +1,3 @@
-import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
-
 // Bingo challenges for LCMS Youth Gathering
 const CHALLENGES = [
     "Share your faith story", "Pray for a friend", "Read John 3:16", "Help a stranger", "Attend worship",
@@ -16,24 +14,40 @@ let dailyChallenge = 12; // Center tile by default
 let confettiParticles = [];
 
 export function initBingo3D() {
+    // Check if Three.js is loaded
+    if (typeof THREE === 'undefined') {
+        console.error('Three.js not loaded');
+        return;
+    }
+
     const container = document.getElementById('bingo-container');
-    if (!container) return;
+    if (!container) {
+        console.error('Bingo container not found');
+        return;
+    }
     
     // Clear placeholder text
-    container.textContent = '';
+    container.innerHTML = '';
     
     // Load saved state
     loadGameState();
     
-    // Initialize Three.js
-    setupScene(container);
-    createBingoBoard();
-    setupLighting();
-    setupInteraction();
-    animate();
-    
-    // Set daily challenge
-    setDailyChallenge();
+    try {
+        // Initialize Three.js
+        setupScene(container);
+        createBingoBoard();
+        setupLighting();
+        setupInteraction();
+        animate();
+        
+        // Set daily challenge
+        setDailyChallenge();
+        
+        console.log('Bingo 3D initialized successfully');
+    } catch (error) {
+        console.error('Error initializing Bingo 3D:', error);
+        container.innerHTML = '<p class="text-red-600">Error loading 3D bingo. Please refresh the page.</p>';
+    }
 }
 
 function setupScene(container) {
@@ -461,13 +475,22 @@ function showBingoMessage() {
 }
 
 function saveGameState() {
-    localStorage.setItem('bingoCompleted', JSON.stringify([...completedTiles]));
+    try {
+        localStorage.setItem('bingoCompleted', JSON.stringify([...completedTiles]));
+    } catch (error) {
+        console.warn('Could not save game state:', error);
+    }
 }
 
 function loadGameState() {
-    const saved = localStorage.getItem('bingoCompleted');
-    if (saved) {
-        completedTiles = new Set(JSON.parse(saved));
+    try {
+        const saved = localStorage.getItem('bingoCompleted');
+        if (saved) {
+            completedTiles = new Set(JSON.parse(saved));
+        }
+    } catch (error) {
+        console.warn('Could not load game state:', error);
+        completedTiles = new Set();
     }
 }
 
