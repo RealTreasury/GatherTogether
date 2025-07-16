@@ -22,3 +22,7 @@ GatherTogether/
 │   └── utils.js            # Utility functions
 └── README.md               # Documentation
 ```
+
+## License
+
+Distributed under the [MIT License](LICENSE).
