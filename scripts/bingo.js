@@ -1,31 +1,31 @@
 // Bingo tracker functionality
 
 const BINGO_CHALLENGES = [
-    "Share your faith story",
-    "Pray for a friend",
-    "Read John 3:16",
-    "Help a stranger",
-    "Attend worship",
-    "Join a Bible study",
-    "Thank a volunteer",
-    "Make a new friend",
-    "Sing a hymn",
-    "Share a meal",
-    "Give encouragement",
-    "Practice forgiveness",
-    "Show kindness",
-    "Learn a verse",
-    "Serve others",
-    "Share testimony",
-    "Invite someone",
-    "Practice gratitude",
-    "Listen deeply",
-    "Show compassion",
-    "Spread joy",
-    "Be patient",
-    "Offer help",
-    "Share hope",
-    "Love neighbor"
+    "Take a selfie at the gathering entrance",
+    "Learn someone's name from a different state",
+    "Attend the opening worship service",
+    "Visit 3 different exhibitor booths",
+    "Participate in a service project",
+    "Share your testimony during small group",
+    "Memorize the gathering theme verse",
+    "Take communion at morning worship",
+    "Ask a speaker a question during Q&A",
+    "Exchange contact info with 5 new friends",
+    "Attend a breakout session on missions",
+    "Pray with someone you just met",
+    "Try food from the local food trucks",
+    "Take a group photo with your youth group",
+    "Visit the prayer station",
+    "Share the gospel with someone new",
+    "Attend evening worship under the stars",
+    "Write an encouragement note to mail home",
+    "Learn a new worship song",
+    "Visit the LCMS booth",
+    "Participate in the large group games",
+    "Share a meal with another youth group",
+    "Take notes during a main session",
+    "Post about the gathering on social media",
+    "Give a high-five to 10 different people"
 ];
 
 const US_STATES = [
@@ -49,7 +49,10 @@ const COMPLETIONIST_CHALLENGES = [
     { text: 'Learn 5 new hymns/songs by heart', sublist: Array.from({length:5},(_,i)=>`Song ${i+1}`) },
     { text: 'Share testimony in 3 different venues', sublist: Array.from({length:3},(_,i)=>`Venue ${i+1}`) },
     { text: 'Complete daily random acts of kindness', sublist: Array.from({length:7},(_,i)=>`Day ${i+1}`) },
-    { text: 'Fast for a meal and donate savings' }
+    { text: 'Fast for a meal and donate savings' },
+    { text: 'Get photos with all main speakers', sublist: ['Speaker 1', 'Speaker 2', 'etc.'] },
+    { text: 'Visit every exhibitor booth', sublist: Array.from({length:50},(_,i)=>`Booth ${i+1}`) },
+    { text: 'Attend all main sessions', sublist: ['Opening', 'Session 1', 'Session 2', 'etc.'] }
 ];
 
 const BingoTracker = {
