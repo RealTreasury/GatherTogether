@@ -3,7 +3,8 @@
 const Storage = {
     // Keys for different data types
     KEYS: {
-        BINGO_PROGRESS: 'bingoProgress',
+        BINGO_PROGRESS_REGULAR: 'bingoProgressRegular',
+        BINGO_PROGRESS_COMPLETIONIST: 'bingoProgressCompletionist',
         FAVORITE_VERSES: 'favoriteVerses',
         POLL_RESPONSES: 'pollResponses',
         USER_PREFERENCES: 'userPreferences',
