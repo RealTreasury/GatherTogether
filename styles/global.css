@@ -1,9 +1,277 @@
+/* LCMS Youth Gathering 2025 Theme */
+:root {
+    --primary-purple: #7c3aed;
+    --secondary-purple: #8b5cf6;
+    --light-purple: #a78bfa;
+    --gold: #fbbf24;
+    --light-gold: #fcd34d;
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+}
+
+body {
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    min-height: 100vh;
+}
+
+/* Enhanced glassmorphism */
 .glass {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 1rem;
+    box-shadow: 
+        0 8px 32px 0 rgba(124, 58, 237, 0.1),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.glass::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    pointer-events: none;
+}
+
+/* Navigation styling */
+nav {
+    background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.tab-link {
+    position: relative;
+    transition: all 0.3s ease;
+    padding: 0.5rem 1rem;
     border-radius: 0.5rem;
 }
+
+.tab-link:hover {
+    background: var(--glass-bg);
+    color: var(--primary-purple);
+}
+
+.tab-link.active {
+    color: var(--primary-purple);
+    background: var(--glass-bg);
+}
+
+.tab-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 10%;
+    right: 10%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold) 0%, var(--primary-purple) 100%);
+    border-radius: 3px;
+}
+
+/* Section transitions */
+.tab-section {
+    animation: fadeIn 0.5s ease;
+}
+
 .tab-section.hidden {
     display: none;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Bingo container specific styling */
+#bingo-container {
+    background: radial-gradient(ellipse at center, rgba(124, 58, 237, 0.05) 0%, transparent 70%);
+    border-radius: 1rem;
+    position: relative;
+}
+
+#bingo-container canvas {
+    border-radius: 1rem;
+}
+
+/* Spiritual glow effects */
+.spiritual-glow {
+    box-shadow: 
+        0 0 20px rgba(124, 58, 237, 0.3),
+        0 0 40px rgba(124, 58, 237, 0.1);
+}
+
+/* Button styling */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+}
+
+.btn-secondary {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    color: var(--primary-purple);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.btn-secondary:hover {
+    background: rgba(124, 58, 237, 0.1);
+    border-color: var(--primary-purple);
+}
+
+/* Icon buttons */
+.icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+}
+
+.icon-btn:hover {
+    background: rgba(124, 58, 237, 0.1);
+    transform: scale(1.1);
+}
+
+/* Verse styling */
+.verse-text {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    color: #1f2937;
+    font-style: italic;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+}
+
+.verse-text::before,
+.verse-text::after {
+    content: '"';
+    font-size: 3rem;
+    color: var(--primary-purple);
+    opacity: 0.3;
+    position: absolute;
+}
+
+.verse-text::before {
+    top: 0;
+    left: 1rem;
+}
+
+.verse-text::after {
+    bottom: 0;
+    right: 1rem;
+}
+
+/* Poll styling */
+.poll-option {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin: 0.5rem 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.poll-option:hover {
+    background: rgba(124, 58, 237, 0.1);
+    border-color: var(--primary-purple);
+    transform: translateX(5px);
+}
+
+.poll-option.selected {
+    background: rgba(124, 58, 237, 0.2);
+    border-color: var(--primary-purple);
+}
+
+.poll-bar {
+    height: 8px;
+    background: linear-gradient(90deg, var(--gold) 0%, var(--primary-purple) 100%);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+    margin-top: 0.5rem;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    #bingo-container {
+        height: 50vh;
+        min-height: 300px;
+    }
+    
+    .tab-link {
+        font-size: 0.875rem;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .verse-text {
+        font-size: 1.25rem;
+        padding: 1.5rem;
+    }
+}
+
+/* Loading animation */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--glass-border);
+    border-radius: 50%;
+    border-top-color: var(--primary-purple);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Celebration animation */
+.celebrate {
+    animation: celebrate 0.5s ease;
+}
+
+@keyframes celebrate {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
 }
