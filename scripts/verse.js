@@ -5,7 +5,7 @@ const verses = [
     'Be strong and courageous... - Joshua 1:9'
 ];
 
-export function initVerseOfTheHour() {
+export function initVerse() {
     const verseText = document.getElementById('verse-text');
     if (!verseText) return;
 
@@ -14,5 +14,4 @@ export function initVerseOfTheHour() {
     verseText.textContent = verses[index];
 }
 
-// Expose initializer globally
-window.initVerseOfTheHour = initVerseOfTheHour;
+window.initVerse = initVerse;
