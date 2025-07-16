@@ -538,7 +538,7 @@ body {
         align-items: center;
         gap: 2rem;
         padding: 3rem 1.5rem;
-        background: var(--glass-bg);
+        background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         z-index: 100;
@@ -555,5 +555,10 @@ body {
         padding: 1rem;
         width: 100%;
         text-align: center;
+    }
+
+    #menu-toggle {
+        position: relative;
+        z-index: 150;
     }
 }
