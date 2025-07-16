@@ -48,10 +48,7 @@
         </section>
     </main>
 
-    <!-- Load Three.js first -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    
-    <!-- Then load the app -->
+    <!-- Load the app -->
     <script type="module" src="scripts/app.js"></script>
     
     <!-- Add some error handling -->
@@ -62,19 +59,6 @@
             if (bingoContainer && bingoContainer.innerHTML.includes('Loading')) {
                 bingoContainer.innerHTML = '<p class="text-red-600">Error loading 3D bingo. Please refresh the page.</p>';
             }
-        });
-        
-        // Check if Three.js loaded
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                if (typeof THREE === 'undefined') {
-                    console.error('Three.js failed to load');
-                    const bingoContainer = document.getElementById('bingo-container');
-                    if (bingoContainer) {
-                        bingoContainer.innerHTML = '<p class="text-red-600">Failed to load 3D library. Please refresh the page.</p>';
-                    }
-                }
-            }, 1000);
         });
     </script>
 </body>
