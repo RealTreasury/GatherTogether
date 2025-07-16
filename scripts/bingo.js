@@ -60,6 +60,7 @@ const BingoTracker = {
     },
     subItemProgress: {},
     dailyChallenge: 0,
+    sublistKeyHandler: null,
 
     // Initialize bingo tracker
     init: () => {
@@ -285,17 +286,20 @@ const BingoTracker = {
         const overlay = document.createElement('div');
         overlay.className = 'sublist-overlay';
         overlay.innerHTML = `
-            <div class="sublist-content">
+            <div class="sublist-content relative">
+                <button class="sublist-close" aria-label="Close">&times;</button>
                 <h3 class="text-xl font-bold mb-4">${challenge.text}</h3>
-                <div class="sublist-items">
-                    ${challenge.sublist.map((item,i)=>`<label class="flex items-center mb-2"><input type="checkbox" data-sub="${i}" ${progress.has(i)?'checked':''}> <span class="ml-2">${item}</span></label>`).join('')}
-                </div>
-                <div class="text-center mt-4">
-                    <button class="btn-primary" onclick="BingoTracker.closeSublist()">Done</button>
-                </div>
+                <ul class="sublist-items">
+                    ${challenge.sublist.map((item,i)=>`
+                        <li class="flex items-center">
+                            <input id="sub-${i}" type="checkbox" data-sub="${i}" ${progress.has(i)?'checked':''} class="mr-2">
+                            <label for="sub-${i}" class="ml-1">${item}</label>
+                        </li>`).join('')}
+                </ul>
             </div>
         `;
-        overlay.addEventListener('change', (e) => {
+
+        const handleChange = (e) => {
             if (e.target.matches('input[type="checkbox"]')) {
                 const sub = parseInt(e.target.dataset.sub,10);
                 if (e.target.checked) progress.add(sub); else progress.delete(sub);
@@ -309,13 +313,32 @@ const BingoTracker = {
                 BingoTracker.renderGrid();
                 BingoTracker.updateStats();
             }
+        };
+
+        overlay.addEventListener('change', handleChange);
+        overlay.addEventListener('click', (e) => {
+            if (e.target.classList.contains('sublist-close') || e.target === overlay) {
+                BingoTracker.closeSublist();
+            }
         });
+
+        BingoTracker.sublistKeyHandler = (e) => {
+            if (e.key === 'Escape') {
+                BingoTracker.closeSublist();
+            }
+        };
+        document.addEventListener('keydown', BingoTracker.sublistKeyHandler);
+
         document.body.appendChild(overlay);
     },
 
     closeSublist: () => {
         const overlay = document.querySelector('.sublist-overlay');
         if (overlay) overlay.remove();
+        if (BingoTracker.sublistKeyHandler) {
+            document.removeEventListener('keydown', BingoTracker.sublistKeyHandler);
+            BingoTracker.sublistKeyHandler = null;
+        }
     },
 
     // Update statistics
