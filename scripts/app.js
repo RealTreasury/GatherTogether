@@ -93,6 +93,9 @@ const App = {
             case 'polls':
                 // Polls are initialized on app load
                 break;
+            case 'leaderboard':
+                Leaderboard.init();
+                break;
         }
     },
 

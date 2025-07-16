@@ -68,5 +68,15 @@ const Utils = {
         setTimeout(() => {
             notification.remove();
         }, 3000);
+    },
+
+    // Generate or retrieve unique user ID
+    getUserId: () => {
+        let userId = localStorage.getItem('userId');
+        if (!userId) {
+            userId = Utils.generateId();
+            localStorage.setItem('userId', userId);
+        }
+        return userId;
     }
 };
