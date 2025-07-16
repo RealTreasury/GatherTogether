@@ -38,7 +38,7 @@ const Utils = {
 
     // Create confetti animation
     createConfetti: (count = 50) => {
-        const colors = ['#7c3aed', '#8b5cf6', '#fbbf24', '#f59e0b', '#a78bfa'];
+        const colors = ['#302984', '#a23bb0', '#f5de39', '#27a2c2', '#7ab492'];
         
         for (let i = 0; i < count; i++) {
             const confetti = document.createElement('div');
