@@ -28,23 +28,28 @@ const BINGO_CHALLENGES = [
     "Love neighbor"
 ];
 
+const US_STATES = [
+    'Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia',
+    'Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'
+];
+
 const COMPLETIONIST_CHALLENGES = [
-    "Meet someone from all 50 states",
-    "Meet people from 5 different countries",
-    "Collect all district booth prizes",
-    "Compete in every convention center game",
-    "Attend 15+ sessions/workshops",
-    "Take photos at all major landmarks",
-    "Volunteer for 3+ service opportunities",
-    "Get autographs from all guest speakers",
-    "Participate in every worship service",
-    "Lead a prayer circle with strangers",
-    "Exchange contacts with 25+ new friends",
-    "Document journey with 100+ photos",
-    "Learn 5 new hymns/songs by heart",
-    "Share testimony in 3 different venues",
-    "Complete daily random acts of kindness",
-    "Fast for a meal and donate savings"
+    { text: 'Meet someone from all 50 states', sublist: US_STATES },
+    { text: 'Meet people from 5 different countries', sublist: Array.from({length:5},(_,i)=>`Country ${i+1}`) },
+    { text: 'Collect all district booth prizes', sublist: Array.from({length:10},(_,i)=>`Prize ${i+1}`) },
+    { text: 'Compete in every convention center game', sublist: Array.from({length:8},(_,i)=>`Game ${i+1}`) },
+    { text: 'Attend 15+ sessions/workshops', sublist: Array.from({length:15},(_,i)=>`Session ${i+1}`) },
+    { text: 'Take photos at all major landmarks', sublist: Array.from({length:10},(_,i)=>`Landmark ${i+1}`) },
+    { text: 'Volunteer for 3+ service opportunities', sublist: Array.from({length:3},(_,i)=>`Service ${i+1}`) },
+    { text: 'Get autographs from all guest speakers', sublist: Array.from({length:5},(_,i)=>`Speaker ${i+1}`) },
+    { text: 'Participate in every worship service', sublist: Array.from({length:5},(_,i)=>`Service ${i+1}`) },
+    { text: 'Lead a prayer circle with strangers' },
+    { text: 'Exchange contacts with 25+ new friends', sublist: Array.from({length:25},(_,i)=>`Friend ${i+1}`) },
+    { text: 'Document journey with 100+ photos', sublist: Array.from({length:100},(_,i)=>`Photo ${i+1}`) },
+    { text: 'Learn 5 new hymns/songs by heart', sublist: Array.from({length:5},(_,i)=>`Song ${i+1}`) },
+    { text: 'Share testimony in 3 different venues', sublist: Array.from({length:3},(_,i)=>`Venue ${i+1}`) },
+    { text: 'Complete daily random acts of kindness', sublist: Array.from({length:7},(_,i)=>`Day ${i+1}`) },
+    { text: 'Fast for a meal and donate savings' }
 ];
 
 const BingoTracker = {
@@ -53,6 +58,7 @@ const BingoTracker = {
         regular: new Set(),
         completionist: new Set()
     },
+    subItemProgress: {},
     dailyChallenge: 0,
 
     // Initialize bingo tracker
@@ -109,7 +115,12 @@ const BingoTracker = {
                 tile.classList.add('daily-challenge');
             }
 
-            tile.innerHTML = `<div class="bingo-tile-text">${challenge}</div>`;
+            const label = typeof challenge === 'string' ? challenge : challenge.text;
+            tile.innerHTML = `<div class="bingo-tile-text">${label}</div>`;
+            if (typeof challenge !== 'string' && challenge.sublist) {
+                const progress = BingoTracker.subItemProgress[index] ? BingoTracker.subItemProgress[index].length : 0;
+                tile.innerHTML += `<div class="bingo-sub-progress">${progress}/${challenge.sublist.length}</div>`;
+            }
             tile.addEventListener('click', () => BingoTracker.toggleTile(index));
 
             grid.appendChild(tile);
@@ -120,6 +131,14 @@ const BingoTracker = {
     toggleTile: (index) => {
         const tile = document.querySelector(`[data-index="${index}"]`);
         if (!tile) return;
+
+        const challenges = BingoTracker.getCurrentChallenges();
+        const challenge = challenges[index];
+
+        if (BingoTracker.currentMode === 'completionist' && typeof challenge !== 'string' && challenge.sublist) {
+            BingoTracker.openSublist(index);
+            return;
+        }
 
         const completedSet = BingoTracker.completedTiles[BingoTracker.currentMode];
 
@@ -133,13 +152,13 @@ const BingoTracker = {
             completedSet.add(index);
             tile.classList.add('completed');
             tile.style.animation = 'bounceIn 0.6s ease';
-            
+
             // Check for bingo
             if (BingoTracker.checkForBingo()) {
                 setTimeout(() => BingoTracker.showCelebration(), 300);
             }
         }
-        
+
         BingoTracker.saveProgress();
         BingoTracker.updateStats();
     },
@@ -259,6 +278,46 @@ const BingoTracker = {
         Utils.removeConfetti();
     },
 
+    openSublist: (index) => {
+        const challenge = COMPLETIONIST_CHALLENGES[index];
+        const progress = new Set(BingoTracker.subItemProgress[index] || []);
+
+        const overlay = document.createElement('div');
+        overlay.className = 'sublist-overlay';
+        overlay.innerHTML = `
+            <div class="sublist-content">
+                <h3 class="text-xl font-bold mb-4">${challenge.text}</h3>
+                <div class="sublist-items">
+                    ${challenge.sublist.map((item,i)=>`<label class="flex items-center mb-2"><input type="checkbox" data-sub="${i}" ${progress.has(i)?'checked':''}> <span class="ml-2">${item}</span></label>`).join('')}
+                </div>
+                <div class="text-center mt-4">
+                    <button class="btn-primary" onclick="BingoTracker.closeSublist()">Done</button>
+                </div>
+            </div>
+        `;
+        overlay.addEventListener('change', (e) => {
+            if (e.target.matches('input[type="checkbox"]')) {
+                const sub = parseInt(e.target.dataset.sub,10);
+                if (e.target.checked) progress.add(sub); else progress.delete(sub);
+                BingoTracker.subItemProgress[index] = [...progress];
+                if (progress.size === challenge.sublist.length) {
+                    BingoTracker.completedTiles.completionist.add(index);
+                } else {
+                    BingoTracker.completedTiles.completionist.delete(index);
+                }
+                BingoTracker.saveProgress();
+                BingoTracker.renderGrid();
+                BingoTracker.updateStats();
+            }
+        });
+        document.body.appendChild(overlay);
+    },
+
+    closeSublist: () => {
+        const overlay = document.querySelector('.sublist-overlay');
+        if (overlay) overlay.remove();
+    },
+
     // Update statistics
     updateStats: () => {
         const completedCount = BingoTracker.completedTiles[BingoTracker.currentMode].size;
@@ -290,6 +349,9 @@ const BingoTracker = {
             ? Storage.KEYS.BINGO_PROGRESS_REGULAR
             : Storage.KEYS.BINGO_PROGRESS_COMPLETIONIST;
         Storage.save(key, [...BingoTracker.completedTiles[BingoTracker.currentMode]]);
+        if (BingoTracker.currentMode === 'completionist') {
+            Storage.save(Storage.KEYS.BINGO_SUBITEMS_COMPLETIONIST, BingoTracker.subItemProgress);
+        }
     },
 
     // Load progress
@@ -298,12 +360,16 @@ const BingoTracker = {
         const completionist = Storage.load(Storage.KEYS.BINGO_PROGRESS_COMPLETIONIST, []);
         BingoTracker.completedTiles.regular = new Set(regular);
         BingoTracker.completedTiles.completionist = new Set(completionist);
+        BingoTracker.subItemProgress = Storage.load(Storage.KEYS.BINGO_SUBITEMS_COMPLETIONIST, {});
     },
 
     // Reset progress
     reset: () => {
         if (confirm(`Are you sure you want to reset all ${BingoTracker.currentMode} progress?`)) {
             BingoTracker.completedTiles[BingoTracker.currentMode].clear();
+            if (BingoTracker.currentMode === 'completionist') {
+                BingoTracker.subItemProgress = {};
+            }
             BingoTracker.saveProgress();
             BingoTracker.renderGrid();
             BingoTracker.updateStats();
