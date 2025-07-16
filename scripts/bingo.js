@@ -405,7 +405,7 @@ const BingoTracker = {
         const userId = Utils.getUserId();
         const username = document.getElementById('username') ? document.getElementById('username').value || 'Anonymous' : 'Anonymous';
         const completedTiles = [...BingoTracker.completedTiles[BingoTracker.currentMode]];
-        fetch('/api/bingo/progress', {
+        return fetch('/api/bingo/progress', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId, username, completedTiles })

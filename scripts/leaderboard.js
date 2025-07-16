@@ -5,6 +5,11 @@ const Leaderboard = {
             usernameInput.value = localStorage.getItem('username') || '';
             usernameInput.addEventListener('change', () => {
                 localStorage.setItem('username', usernameInput.value);
+                if (window.BingoTracker && BingoTracker.saveProgress) {
+                    BingoTracker.saveProgress().then(() => {
+                        Leaderboard.loadLeaderboard();
+                    });
+                }
             });
         }
         Leaderboard.loadLeaderboard();
