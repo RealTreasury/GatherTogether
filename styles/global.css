@@ -524,16 +524,16 @@ body {
         grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     }
 
-    /* Centered mobile navigation */
+    /* Mobile dropdown navigation */
     #nav {
         position: fixed;
-        top: 50%;
+        top: 4.5rem;
         left: 50%;
         width: 90%;
         max-width: 320px;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
         gap: 2rem;
         padding: 3rem 1.5rem;
@@ -541,12 +541,14 @@ body {
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         z-index: 100;
-        transform: translate(-50%, -50%) scale(0);
+        transform: translate(-50%, 0) scale(0);
         transition: transform 0.3s ease;
+        max-height: calc(100vh - 4.5rem);
+        overflow-y: auto;
     }
 
     #nav.open {
-        transform: translate(-50%, -50%) scale(1);
+        transform: translate(-50%, 0) scale(1);
     }
 
     #nav li a {

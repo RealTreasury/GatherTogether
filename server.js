@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const http = require('http');
+const { Server } = require('socket.io');
 
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
 const DATA_PATH = path.join(DATA_DIR, 'polls.json');
@@ -92,20 +94,30 @@ let polls = loadPolls();
 let pollResponses = loadPollResponses();
 let bingoProgress = loadBingoProgress();
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-app.use(express.static(__dirname));
-
-app.get('/api/polls', (req, res) => {
-  const pollsWithVotes = polls.map(poll => {
+function getPollsWithVotes() {
+  return polls.map(poll => {
     const updatedOptions = poll.options.map(option => {
       const votes = pollResponses.filter(r => r.pollId === poll.id && r.optionId === option.id).length;
       return { ...option, votes };
     });
     return { ...poll, options: updatedOptions };
   });
-  res.json(pollsWithVotes);
+}
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: '*' } });
+app.use(cors());
+app.use(express.json());
+app.use(express.static(__dirname));
+
+io.on('connection', socket => {
+  console.log('Socket connected');
+  socket.emit('pollsUpdate', getPollsWithVotes());
+});
+
+app.get('/api/polls', (req, res) => {
+  res.json(getPollsWithVotes());
 });
 
 app.post('/api/polls/:pollId/vote', (req, res) => {
@@ -129,6 +141,8 @@ app.post('/api/polls/:pollId/vote', (req, res) => {
   };
   pollResponses.push(newResponse);
   savePollResponses(pollResponses);
+
+  io.emit('pollsUpdate', getPollsWithVotes());
 
   res.status(201).json({ message: 'Vote recorded' });
 });
@@ -167,3 +181,4 @@ if (require.main === module && module.parent === null) {
 }
 
 module.exports = app;
+
