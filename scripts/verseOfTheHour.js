@@ -13,3 +13,6 @@ export function initVerseOfTheHour() {
     const index = hour % verses.length;
     verseText.textContent = verses[index];
 }
+
+// Expose initializer globally
+window.initVerseOfTheHour = initVerseOfTheHour;

@@ -1,6 +1,3 @@
-import { initBingo3D } from './bingo3d.js';
-import { initVerseOfTheHour } from './verseOfTheHour.js';
-import { initPolls } from './polls.js';
 
 // Tab switching functionality
 function initTabs() {
@@ -41,15 +38,13 @@ function initTabs() {
 async function initializeApp() {
     try {
         console.log('Initializing GatherTogether app...');
-        
-        // Initialize tabs first
+
         initTabs();
-        
-        // Initialize modules
-        await initBingo3D();
-        initVerseOfTheHour();
-        initPolls();
-        
+
+        await window.initBingo3D();
+        window.initVerseOfTheHour();
+        window.initPolls();
+
         console.log('App initialized successfully');
     } catch (error) {
         console.error('Error initializing app:', error);

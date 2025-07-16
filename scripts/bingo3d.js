@@ -1,4 +1,3 @@
-import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
 
 // Bingo challenges for LCMS Youth Gathering
 const CHALLENGES = [
@@ -45,6 +44,9 @@ export function initBingo3D() {
         container.innerHTML = '<p class="text-red-600">Error loading 3D bingo. Please refresh the page.</p>';
     }
 }
+
+// Expose initializer globally
+window.initBingo3D = initBingo3D;
 
 function setupScene(container) {
     // Scene setup
@@ -511,3 +513,6 @@ function animate() {
     
     renderer.render(scene, camera);
 }
+
+// Expose initializer globally
+window.initBingo3D = initBingo3D;
