@@ -3,68 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GatherTogether</title>
-    <!-- Tailwind CSS via CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <title>GatherTogether - LCMS Youth Gathering 2025</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="styles/global.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
-    <header class="bg-white shadow mb-4">
-        <nav class="container mx-auto px-4 py-4 flex justify-between">
-            <h1 class="text-xl font-bold">GatherTogether</h1>
-            <ul class="flex space-x-4" id="nav">
-                <li><a href="#bingo" class="tab-link text-blue-600">Bingo Tracker</a></li>
-                <li><a href="#verse" class="tab-link">Verse of the Hour</a></li>
-                <li><a href="#polls" class="tab-link">Live Polls & Q&A</a></li>
-            </ul>
+<body class="min-h-screen">
+    <header class="mb-4">
+        <nav class="nav-glass shadow-lg">
+            <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">GatherTogether</h1>
+                    <p class="text-sm text-gray-600">LCMS Youth Gathering 2025</p>
+                </div>
+                <ul class="flex space-x-2" id="nav">
+                    <li><a href="#bingo" class="tab-link active">Bingo Tracker</a></li>
+                    <li><a href="#verse" class="tab-link">Verse of the Hour</a></li>
+                    <li><a href="#polls" class="tab-link">Polls & Q&A</a></li>
+                </ul>
+            </div>
         </nav>
     </header>
 
-    <main class="container mx-auto px-4 flex-1">
+    <main class="container mx-auto px-4 pb-8">
+        <!-- Bingo Section -->
         <section id="bingo" class="tab-section">
-            <div class="glass p-6 mt-4">
-                <h2 class="text-2xl mb-4">Bingo Challenge Tracker</h2>
-                <div id="bingo-container" class="h-64 flex items-center justify-center">
-                    <div class="loading"></div>
-                    <span class="ml-2">Loading Bingo...</span>
+            <div class="glass p-6">
+                <div class="text-center mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Faith Challenge Bingo</h2>
+                    <p class="text-gray-600">Complete challenges to grow in faith during the gathering!</p>
+                </div>
+                
+                <div class="bingo-grid mb-6" id="bingo-grid">
+                    <!-- Bingo tiles will be generated here -->
+                </div>
+
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-number" id="completed-count">0</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="progress-percent">0%</div>
+                        <div class="stat-label">Progress</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="bingo-count">0</div>
+                        <div class="stat-label">Bingo Lines</div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-6">
+                    <button class="btn-primary" onclick="BingoTracker.reset()">Reset Progress</button>
                 </div>
             </div>
         </section>
 
+        <!-- Verse Section -->
         <section id="verse" class="tab-section hidden">
-            <div class="glass p-6 mt-4">
-                <h2 class="text-2xl mb-4">Verse of the Hour</h2>
-                <p id="verse-text" class="text-lg">Loading...</p>
+            <div class="glass p-6">
+                <div class="text-center mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Verse of the Hour</h2>
+                    <p class="text-gray-600">A new verse every hour to inspire your faith journey</p>
+                </div>
+                
+                <div class="verse-container" id="verse-container">
+                    <div class="verse-text" id="verse-text">Loading...</div>
+                    <div class="verse-reference" id="verse-reference"></div>
+                </div>
+                
+                <div class="text-center mt-6">
+                    <button class="btn-primary" onclick="VerseManager.refresh()">New Verse</button>
+                    <button class="btn-primary ml-2" onclick="VerseManager.favorite()">❤️ Favorite</button>
+                </div>
             </div>
         </section>
 
+        <!-- Polls Section -->
         <section id="polls" class="tab-section hidden">
-            <div class="glass p-6 mt-4">
-                <h2 class="text-2xl mb-4">Live Polls & Q&A</h2>
+            <div class="glass p-6">
+                <div class="text-center mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Live Polls & Q&A</h2>
+                    <p class="text-gray-600">Connect with other youth and share your thoughts</p>
+                </div>
+                
                 <div id="polls-container">
-                    <!-- Polls UI placeholder -->
+                    <!-- Polls will be loaded here -->
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- Load scripts -->
-    <script type="module" src="scripts/storage.js"></script>
-    <script type="module" src="scripts/utils.js"></script>
-    <script type="module" src="scripts/bingo.js"></script>
-    <script type="module" src="scripts/verse.js"></script>
-    <script type="module" src="scripts/polls.js"></script>
-    <script type="module" src="scripts/app.js"></script>
-    
-    <!-- Add some error handling -->
-    <script>
-        window.addEventListener('error', function(e) {
-            console.error('Script error:', e.error);
-            const bingoContainer = document.getElementById('bingo-container');
-            if (bingoContainer && bingoContainer.innerHTML.includes('Loading')) {
-                bingoContainer.innerHTML = '<p class="text-red-600">Error loading bingo. Please refresh the page.</p>';
-            }
-        });
-    </script>
+    <!-- Load scripts in order -->
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/storage.js"></script>
+    <script src="scripts/bingo.js"></script>
+    <script src="scripts/verse.js"></script>
+    <script src="scripts/polls.js"></script>
+    <script src="scripts/app.js"></script>
 </body>
 </html>
