@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GatherTogether</title>
+    <!-- Tailwind CSS via CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <link href="styles/global.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <header class="bg-white shadow mb-4">
+        <nav class="container mx-auto px-4 py-4 flex justify-between">
+            <h1 class="text-xl font-bold">GatherTogether</h1>
+            <ul class="flex space-x-4" id="nav">
+                <li><a href="#bingo" class="tab-link text-blue-600">Bingo Tracker</a></li>
+                <li><a href="#verse" class="tab-link">Verse of the Hour</a></li>
+                <li><a href="#polls" class="tab-link">Live Polls & Q&A</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 flex-1">
+        <section id="bingo" class="tab-section">
+            <div class="glass p-6 mt-4">
+                <h2 class="text-2xl mb-4">3D Bingo Challenge Tracker</h2>
+                <div id="bingo-container" class="h-64 flex items-center justify-center">
+                    <!-- Three.js canvas goes here -->
+                </div>
+            </div>
+        </section>
+
+        <section id="verse" class="tab-section hidden">
+            <div class="glass p-6 mt-4">
+                <h2 class="text-2xl mb-4">Verse of the Hour</h2>
+                <p id="verse-text" class="text-lg">Loading...</p>
+            </div>
+        </section>
+
+        <section id="polls" class="tab-section hidden">
+            <div class="glass p-6 mt-4">
+                <h2 class="text-2xl mb-4">Live Polls & Q&A</h2>
+                <div id="polls-container">
+                    <!-- Polls UI placeholder -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="scripts/app.js"></script>
+</body>
+</html>
