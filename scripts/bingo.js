@@ -16,7 +16,7 @@ const BINGO_CHALLENGES = [
     "Try food from the local food trucks",
     "Take a group photo with your youth group",
     "Visit the prayer station and set a reminder to pray daily at home",
-    "Share the gospel with someone new and with a friend back home",
+    "Share your experience with someone from your church and someone not from your church at home",
     "Attend evening worship under the stars",
     "Write an encouragement note to mail home",
     "Learn a new worship song to teach your family back home",
