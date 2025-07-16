@@ -332,25 +332,39 @@ body {
 
 @media (max-width: 768px) {
     .bingo-grid {
+        grid-template-columns: 1fr;
         gap: 0.25rem;
     }
-    
+
     .bingo-tile {
-        min-height: 80px;
+        aspect-ratio: auto;
+        flex-direction: row;
+        justify-content: flex-start;
+        padding-left: 2rem;
+        min-height: 60px;
     }
-    
+
     .bingo-tile-text {
-        font-size: 0.65rem;
+        font-size: 0.9rem;
+        text-align: left;
     }
-    
+
+    .bingo-tile.completed::after {
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 1;
+        font-size: 1.25rem;
+    }
+
     .verse-text {
         font-size: 1.1rem;
     }
-    
+
     .verse-container {
         padding: 1rem;
     }
-    
+
     .stats-container {
         grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     }
