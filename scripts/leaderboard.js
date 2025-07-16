@@ -22,6 +22,9 @@ const Leaderboard = {
             Leaderboard.renderLeaderboard(leaderboard);
         } catch (err) {
             console.error('Failed to load leaderboard:', err);
+            if (window.Utils && Utils.showNotification) {
+                Utils.showNotification('Unable to load leaderboard. Is the backend running?', 'error');
+            }
         }
     },
 
