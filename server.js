@@ -3,6 +3,7 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
+const https = require('https');
 const { Server } = require('socket.io');
 
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
@@ -175,9 +176,27 @@ app.get('/api/bingo/leaderboard', (req, res) => {
 
 if (require.main === module && module.parent === null) {
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
+  const keyPath = process.env.SSL_KEY_PATH;
+  const certPath = process.env.SSL_CERT_PATH;
+
+  if (
+    keyPath &&
+    certPath &&
+    fs.existsSync(keyPath) &&
+    fs.existsSync(certPath)
+  ) {
+    const key = fs.readFileSync(keyPath);
+    const cert = fs.readFileSync(certPath);
+    const httpsServer = https.createServer({ key, cert }, app);
+    io.attach(httpsServer);
+    httpsServer.listen(PORT, () => {
+      console.log(`Server running on https://localhost:${PORT}`);
+    });
+  } else {
+    server.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  }
 }
 
 module.exports = app;

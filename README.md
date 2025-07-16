@@ -30,15 +30,21 @@ GatherTogether/
 ## Running the server
 
 The polls feature relies on a small Node.js API. Install dependencies and start
-the server:
+the server. You can optionally provide `SSL_KEY_PATH` and `SSL_CERT_PATH`
+environment variables to enable HTTPS:
 
 ```bash
 npm install
-node server.js
+npm start
+
+# example using HTTPS
+SSL_KEY_PATH=/path/server.key \
+SSL_CERT_PATH=/path/server.crt npm start
 ```
 
-The app will be available at `http://localhost:3000` and the polls API can be
-reached at `http://localhost:3000/api/polls`.
+The app will be available at `http://localhost:3000` (or
+`https://localhost:3000` when using HTTPS) and the polls API can be
+reached at `/api/polls`.
 
 ## Running Tests
 
