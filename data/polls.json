@@ -1,0 +1,27 @@
+[
+  {
+    "id": "youth-gathering-excitement",
+    "question": "How excited are you for the Youth Gathering?",
+    "options": [
+      { "id": "very-excited", "text": "Very excited! 🎉", "votes": 0 },
+      { "id": "excited", "text": "Excited 😊", "votes": 0 },
+      { "id": "somewhat", "text": "Somewhat excited 😐", "votes": 0 },
+      { "id": "not-sure", "text": "Not sure yet 🤔", "votes": 0 }
+    ],
+    "allowMultiple": false,
+    "active": true
+  },
+  {
+    "id": "favorite-activity",
+    "question": "What are you most looking forward to?",
+    "options": [
+      { "id": "worship", "text": "Worship services 🙏", "votes": 0 },
+      { "id": "sessions", "text": "Learning sessions 📚", "votes": 0 },
+      { "id": "friends", "text": "Meeting new friends 👥", "votes": 0 },
+      { "id": "service", "text": "Service opportunities 🤝", "votes": 0 },
+      { "id": "activities", "text": "Fun activities 🎮", "votes": 0 }
+    ],
+    "allowMultiple": true,
+    "active": true
+  }
+]

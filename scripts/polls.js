@@ -33,16 +33,22 @@ const PollManager = {
     userResponses: new Map(),
 
     // Initialize polls
-    init: () => {
-        PollManager.loadPolls();
+    init: async () => {
+        await PollManager.loadPolls();
         PollManager.loadResponses();
         PollManager.renderPolls();
     },
 
-    // Load polls (from local data for now, could be from API)
-    loadPolls: () => {
-        // In future, this could fetch from an API
-        PollManager.polls = [...SAMPLE_POLLS];
+    // Load polls from the API (fallback to sample data on failure)
+    loadPolls: async () => {
+        try {
+            const res = await fetch('/api/polls');
+            if (!res.ok) throw new Error('Failed to fetch polls');
+            PollManager.polls = await res.json();
+        } catch (err) {
+            console.warn('Using sample polls due to error:', err);
+            PollManager.polls = [...SAMPLE_POLLS];
+        }
     },
 
     // Render all polls
@@ -100,38 +106,26 @@ const PollManager = {
         `;
     },
 
-    // Handle voting
-    vote: (pollId, optionId, allowMultiple) => {
+    // Handle voting by sending the selection to the API
+    vote: async (pollId, optionId, allowMultiple) => {
         const poll = PollManager.polls.find(p => p.id === pollId);
         if (!poll) return;
 
-        const option = poll.options.find(o => o.id === optionId);
-        if (!option) return;
-
         let userResponse = PollManager.userResponses.get(pollId) || [];
+        let shouldSend = false;
 
         if (allowMultiple) {
-            // Toggle selection for multiple choice
             if (userResponse.includes(optionId)) {
+                // Toggle off locally (cannot remove vote server-side)
                 userResponse = userResponse.filter(id => id !== optionId);
-                option.votes = Math.max(0, option.votes - 1);
             } else {
                 userResponse.push(optionId);
-                option.votes++;
+                shouldSend = true;
             }
         } else {
-            // Single choice - remove previous vote and add new one
-            const previousChoice = userResponse[0];
-            if (previousChoice) {
-                const prevOption = poll.options.find(o => o.id === previousChoice);
-                if (prevOption) {
-                    prevOption.votes = Math.max(0, prevOption.votes - 1);
-                }
-            }
-            
-            if (previousChoice !== optionId) {
+            if (!userResponse.includes(optionId)) {
                 userResponse = [optionId];
-                option.votes++;
+                shouldSend = true;
             } else {
                 userResponse = [];
             }
@@ -139,6 +133,20 @@ const PollManager = {
 
         PollManager.userResponses.set(pollId, userResponse);
         PollManager.saveResponses();
+
+        if (shouldSend) {
+            try {
+                await fetch(`/api/polls/${pollId}/vote`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ optionId })
+                });
+                await PollManager.loadPolls();
+            } catch (err) {
+                console.error('Failed to submit vote:', err);
+            }
+        }
+
         PollManager.renderPolls();
     },
 

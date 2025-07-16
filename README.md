@@ -22,3 +22,16 @@ GatherTogether/
 │   └── utils.js            # Utility functions
 └── README.md               # Documentation
 ```
+
+## Running the server
+
+The polls feature relies on a small Node.js API. Install dependencies and start
+the server:
+
+```bash
+npm install
+node server.js
+```
+
+The app will be available at `http://localhost:3000` and the polls API can be
+reached at `http://localhost:3000/api/polls`.
