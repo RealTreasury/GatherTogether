@@ -5,6 +5,7 @@ const Storage = {
     KEYS: {
         BINGO_PROGRESS_REGULAR: 'bingoProgressRegular',
         BINGO_PROGRESS_COMPLETIONIST: 'bingoProgressCompletionist',
+        BINGO_SUBITEMS_COMPLETIONIST: 'bingoSubItemsCompletionist',
         FAVORITE_VERSES: 'favoriteVerses',
         POLL_RESPONSES: 'pollResponses',
         USER_PREFERENCES: 'userPreferences',
