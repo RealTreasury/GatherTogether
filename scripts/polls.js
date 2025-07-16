@@ -31,12 +31,14 @@ const SAMPLE_POLLS = [
 const PollManager = {
     polls: [],
     userResponses: new Map(),
+    socket: null,
 
     // Initialize polls
     init: async () => {
         await PollManager.loadPolls();
         PollManager.loadResponses();
         PollManager.renderPolls();
+        PollManager.setupSocket();
     },
 
     // Load polls from the API (fallback to sample data on failure)
@@ -168,6 +170,16 @@ const PollManager = {
     loadResponses: () => {
         const saved = Storage.load(Storage.KEYS.POLL_RESPONSES, {});
         PollManager.userResponses = new Map(Object.entries(saved));
+    },
+
+    // Setup realtime updates via Socket.IO
+    setupSocket: () => {
+        if (typeof io !== 'function') return;
+        PollManager.socket = io();
+        PollManager.socket.on('pollsUpdate', polls => {
+            PollManager.polls = polls;
+            PollManager.renderPolls();
+        });
     },
 
     // Get poll results
