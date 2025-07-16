@@ -6,7 +6,7 @@ const BINGO_CHALLENGES = [
     "Attend the opening worship service",
     "Visit 3 different exhibitor booths",
     "Participate in a service project",
-    "Give Rev. Doug Bender a high five",
+    "Do the chicken dance with someone from another group",
     "Memorize the gathering theme verse",
     "Take communion at morning worship",
     "Ask a speaker a question during Q&A",
