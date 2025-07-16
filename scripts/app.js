@@ -8,6 +8,7 @@ const App = {
         console.log('Initializing GatherTogether app...');
         
         App.initTabs();
+        App.initMenu();
         App.initModules();
         App.handleResize();
         
@@ -29,6 +30,17 @@ const App = {
 
         // Set initial active tab
         App.switchTab(App.currentTab);
+    },
+
+    // Initialize mobile menu toggle
+    initMenu: () => {
+        const toggle = document.getElementById('menu-toggle');
+        const nav = document.getElementById('nav');
+        if (toggle && nav) {
+            toggle.addEventListener('click', () => {
+                nav.classList.toggle('hidden');
+            });
+        }
     },
 
     // Switch between tabs
