@@ -340,6 +340,37 @@ body {
     overflow-y: auto;
 }
 
+.sublist-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: transparent;
+    border: none;
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+    color: #6b7280;
+}
+
+.sublist-close:hover {
+    color: #111827;
+}
+
+.sublist-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sublist-items li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.sublist-items li:last-child {
+    border-bottom: none;
+}
+
 @keyframes confettiFall {
     to {
         transform: translateY(100vh) rotate(360deg);
