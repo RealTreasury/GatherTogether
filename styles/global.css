@@ -1,20 +1,25 @@
 :root {
-    --primary-purple: #302984;
-    --secondary-purple: #a23bb0;
-    --light-purple: #a23bb0;
-    --gold: #f5de39;
-    --light-gold: #f5de39;
-    --glass-bg: rgba(255, 255, 255, 0.1);
-    --glass-border: rgba(255, 255, 255, 0.2);
-    --completionist-color: #302984;
-    --completionist-light: #a23bb0;
-    --turquoise: #27a2c2;
-    --green: #7ab492;
+    /* LCMS ENDURE brand palette */
+    --primary-purple: #302984;        /* ENDURE Purple - RGB 48, 41, 132 */
+    --secondary-purple: #a23bb0;      /* ENDURE Light Purple - RGB 162, 59, 176 */
+    --light-purple: #a23bb0;          /* ENDURE Light Purple - RGB 162, 59, 176 */
+    --gold: #f5de39;                  /* ENDURE Yellow - RGB 245, 222, 57 */
+    --light-gold: #f5de39;            /* ENDURE Yellow - RGB 245, 222, 57 */
+    --turquoise: #27a2c2;             /* ENDURE Turquoise - RGB 39, 162, 194 */
+    --green: #7ab492;                 /* ENDURE Green - RGB 122, 180, 146 */
+    --completionist-color: #302984;   /* Use primary purple for completionist */
+    --completionist-light: #a23bb0;   /* Use light purple for completionist */
+
+    /* Additional brand color variables */
     --endure-purple: #302984;
     --endure-light-purple: #a23bb0;
     --endure-yellow: #f5de39;
     --endure-turquoise: #27a2c2;
     --endure-green: #7ab492;
+
+    /* UI glass effect colors */
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
 }
 
 body {
