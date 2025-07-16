@@ -25,7 +25,8 @@
             <div class="glass p-6 mt-4">
                 <h2 class="text-2xl mb-4">3D Bingo Challenge Tracker</h2>
                 <div id="bingo-container" class="h-64 flex items-center justify-center">
-                    <!-- Three.js canvas goes here -->
+                    <div class="loading"></div>
+                    <span class="ml-2">Loading 3D Bingo...</span>
                 </div>
             </div>
         </section>
@@ -47,7 +48,34 @@
         </section>
     </main>
 
+    <!-- Load Three.js first -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- Then load the app -->
     <script type="module" src="scripts/app.js"></script>
+    
+    <!-- Add some error handling -->
+    <script>
+        window.addEventListener('error', function(e) {
+            console.error('Script error:', e.error);
+            const bingoContainer = document.getElementById('bingo-container');
+            if (bingoContainer && bingoContainer.innerHTML.includes('Loading')) {
+                bingoContainer.innerHTML = '<p class="text-red-600">Error loading 3D bingo. Please refresh the page.</p>';
+            }
+        });
+        
+        // Check if Three.js loaded
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                if (typeof THREE === 'undefined') {
+                    console.error('Three.js failed to load');
+                    const bingoContainer = document.getElementById('bingo-container');
+                    if (bingoContainer) {
+                        bingoContainer.innerHTML = '<p class="text-red-600">Failed to load 3D library. Please refresh the page.</p>';
+                    }
+                }
+            }, 1000);
+        });
+    </script>
 </body>
 </html>
