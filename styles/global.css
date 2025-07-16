@@ -524,14 +524,13 @@ body {
         grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     }
 
-    /* Slide-in mobile navigation */
+    /* Centered mobile navigation */
     #nav {
         position: fixed;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        max-width: none;
+        top: 50%;
+        left: 50%;
+        width: 90%;
+        max-width: 320px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -542,12 +541,12 @@ body {
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         z-index: 100;
-        transform: translateX(-100%);
+        transform: translate(-50%, -50%) scale(0);
         transition: transform 0.3s ease;
     }
 
     #nav.open {
-        transform: translateX(0);
+        transform: translate(-50%, -50%) scale(1);
     }
 
     #nav li a {
