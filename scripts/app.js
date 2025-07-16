@@ -1,59 +1,119 @@
+// Main application initialization and tab management
 
-// Tab switching functionality
-function initTabs() {
-    const links = document.querySelectorAll('.tab-link');
-    const sections = document.querySelectorAll('.tab-section');
+const App = {
+    currentTab: 'bingo',
 
-    links.forEach(link => {
-        link.addEventListener('click', e => {
-            e.preventDefault();
-            const targetId = link.getAttribute('href').substring(1);
-            
-            // Remove active class from all links
-            links.forEach(l => l.classList.remove('active'));
-            // Add active class to clicked link
-            link.classList.add('active');
-            
-            // Hide all sections
-            sections.forEach(sec => {
-                sec.classList.add('hidden');
-            });
-            
-            // Show target section
-            const targetSection = document.getElementById(targetId);
-            if (targetSection) {
-                targetSection.classList.remove('hidden');
-            }
-        });
-    });
-    
-    // Set initial active tab
-    const firstLink = links[0];
-    if (firstLink) {
-        firstLink.classList.add('active');
-    }
-}
-
-// Initialize modules
-function initializeApp() {
-    try {
+    // Initialize the application
+    init: () => {
         console.log('Initializing GatherTogether app...');
-
-        initTabs();
-
-        window.initBingo();
-        window.initVerse();
-        window.initPolls();
-
+        
+        App.initTabs();
+        App.initModules();
+        App.handleResize();
+        
         console.log('App initialized successfully');
-    } catch (error) {
-        console.error('Error initializing app:', error);
-    }
-}
+    },
 
-// Wait for DOM to be ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeApp);
-} else {
-    initializeApp();
-}
+    // Initialize tab functionality
+    initTabs: () => {
+        const links = document.querySelectorAll('.tab-link');
+        const sections = document.querySelectorAll('.tab-section');
+
+        links.forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                App.switchTab(targetId);
+            });
+        });
+
+        // Set initial active tab
+        App.switchTab(App.currentTab);
+    },
+
+    // Switch between tabs
+    switchTab: (tabId) => {
+        const links = document.querySelectorAll('.tab-link');
+        const sections = document.querySelectorAll('.tab-section');
+
+        // Update active states
+        links.forEach(link => {
+            link.classList.toggle('active', link.getAttribute('href') === `#${tabId}`);
+        });
+
+        // Show/hide sections
+        sections.forEach(section => {
+            section.classList.toggle('hidden', section.id !== tabId);
+        });
+
+        App.currentTab = tabId;
+
+        // Load tab-specific content if needed
+        App.onTabChange(tabId);
+    },
+
+    // Handle tab change events
+    onTabChange: (tabId) => {
+        switch (tabId) {
+            case 'bingo':
+                // Bingo is initialized on app load
+                break;
+            case 'verse':
+                // Verse is initialized on app load
+                break;
+            case 'polls':
+                // Polls are initialized on app load
+                break;
+        }
+    },
+
+    // Initialize all modules
+    initModules: async () => {
+        try {
+            // Initialize modules in parallel
+            await Promise.all([
+                BingoTracker.init(),
+                VerseManager.init(),
+                PollManager.init()
+            ]);
+        } catch (error) {
+            console.error('Error initializing modules:', error);
+            Utils.showNotification('Some features may not work properly', 'error');
+        }
+    },
+
+    // Handle window resize
+    handleResize: () => {
+        const debouncedResize = Utils.debounce(() => {
+            // Handle any resize-specific logic here
+            console.log('Window resized');
+        }, 250);
+
+        window.addEventListener('resize', debouncedResize);
+    },
+
+    // Error handling
+    handleError: (error) => {
+        console.error('App error:', error);
+        Utils.showNotification('An error occurred. Please refresh the page.', 'error');
+    }
+};
+
+// Initialize app when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        App.init();
+    } catch (error) {
+        App.handleError(error);
+    }
+});
+
+// Global error handler
+window.addEventListener('error', (event) => {
+    App.handleError(event.error);
+});
+
+// Handle unhandled promise rejections
+window.addEventListener('unhandledrejection', (event) => {
+    App.handleError(event.reason);
+});
