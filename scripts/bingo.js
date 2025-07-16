@@ -409,9 +409,15 @@ const BingoTracker = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId, username, completedTiles })
-        }).catch(err => {
-            console.error('Failed to save progress to server:', err);
-        });
+        })
+            .then(() => {
+                if (typeof Leaderboard !== 'undefined' && App.currentTab === 'leaderboard') {
+                    Leaderboard.loadLeaderboard();
+                }
+            })
+            .catch(err => {
+                console.error('Failed to save progress to server:', err);
+            });
     },
 
     // Load progress
