@@ -38,3 +38,8 @@ node server.js
 The app will be available at `http://localhost:3000` and the polls API can be
 reached at `http://localhost:3000/api/polls`.
 
+## Legal
+
+Standalone pages [`terms.html`](terms.html) and [`privacy.html`](privacy.html) outline the demo
+Terms of Service and Privacy Policy.
+
