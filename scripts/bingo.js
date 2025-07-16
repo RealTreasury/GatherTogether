@@ -417,6 +417,9 @@ const BingoTracker = {
             })
             .catch(err => {
                 console.error('Failed to save progress to server:', err);
+                if (window.Utils && Utils.showNotification) {
+                    Utils.showNotification('Unable to save progress. Is the backend running?', 'error');
+                }
             });
     },
 
