@@ -5,9 +5,10 @@ const path = require('path');
 const http = require('http');
 const { Server } = require('socket.io');
 
-const DATA_PATH = path.join(__dirname, 'data', 'polls.json');
-const RESPONSES_DATA_PATH = path.join(__dirname, 'data', 'poll_responses.json');
-const BINGO_PROGRESS_PATH = path.join(__dirname, 'data', 'bingo_progress.json');
+const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
+const DATA_PATH = path.join(DATA_DIR, 'polls.json');
+const RESPONSES_DATA_PATH = path.join(DATA_DIR, 'poll_responses.json');
+const BINGO_PROGRESS_PATH = path.join(DATA_DIR, 'bingo_progress.json');
 
 const SAMPLE_POLLS = [
   {
@@ -172,7 +173,12 @@ app.get('/api/bingo/leaderboard', (req, res) => {
   res.json(leaderboard);
 });
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+if (require.main === module && module.parent === null) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
+

@@ -11,10 +11,13 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test": "jest --passWithNoTests"
-  },
-  "devDependencies": {
-    "jest": "^30.0.4",
-    "supertest": "^7.1.3"
+"test": "jest --passWithNoTests"
+},
+"devDependencies": {
+  "jest": "^30.0.4",
+  "supertest": "^7.1.3"
+},
+"jest": {
+  "testEnvironment": "node"
   }
 }
