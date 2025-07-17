@@ -1,2 +1,6 @@
 node_modules/
 package-lock.json
+
+# Firebase service account keys
+**/serviceAccountKey.json
+gathertogether-backend/config/serviceAccountKey.json
