@@ -12,6 +12,44 @@ const RESPONSES_DATA_PATH = path.join(DATA_DIR, 'poll_responses.json');
 const BINGO_PROGRESS_PATH = path.join(DATA_DIR, 'bingo_progress.json');
 const USERS_DATA_PATH = path.join(DATA_DIR, 'users.json');
 
+function countBingoLines(completedTiles, size = 5) {
+  const completedSet = new Set(completedTiles || []);
+  let count = 0;
+
+  for (let row = 0; row < size; row++) {
+    let complete = true;
+    for (let col = 0; col < size; col++) {
+      if (!completedSet.has(row * size + col)) {
+        complete = false;
+        break;
+      }
+    }
+    if (complete) count++;
+  }
+
+  for (let col = 0; col < size; col++) {
+    let complete = true;
+    for (let row = 0; row < size; row++) {
+      if (!completedSet.has(row * size + col)) {
+        complete = false;
+        break;
+      }
+    }
+    if (complete) count++;
+  }
+
+  let diagonal1 = true,
+    diagonal2 = true;
+  for (let i = 0; i < size; i++) {
+    if (!completedSet.has(i * size + i)) diagonal1 = false;
+    if (!completedSet.has(i * size + (size - 1 - i))) diagonal2 = false;
+  }
+  if (diagonal1) count++;
+  if (diagonal2) count++;
+
+  return count;
+}
+
 const SAMPLE_POLLS = [
   {
     id: 'youth-gathering-excitement',
@@ -295,6 +333,17 @@ app.post('/api/bingo/leaderboard', (req, res) => {
   io.emit('leaderboardUpdate', leaderboard);
   
   res.json({ message: 'Score updated successfully' });
+});
+
+app.get('/api/bingo/lines/:userId', (req, res) => {
+  const { userId } = req.params;
+  const userProgress = bingoProgress.find(p => p.userId === userId);
+  if (!userProgress) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
+  const lines = countBingoLines(userProgress.completedTiles);
+  res.json({ userId, lines });
 });
 
 // User info endpoints

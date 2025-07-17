@@ -98,3 +98,14 @@ test('POST /api/users stores user info and can be retrieved', async () => {
   expect(getRes.body.username).toBe('Tester');
   expect(getRes.body.email).toBe('t@example.com');
 });
+
+test('GET /api/bingo/lines/:userId returns line count', async () => {
+  const tiles = [0, 1, 2, 3, 4, 6, 11, 16, 21, 12, 18, 24];
+  await request(app)
+    .post('/api/bingo/progress')
+    .send({ userId: 'lineUser', username: 'Lines', completedTiles: tiles });
+
+  const res = await request(app).get('/api/bingo/lines/lineUser');
+  expect(res.status).toBe(200);
+  expect(res.body.lines).toBe(3);
+});
