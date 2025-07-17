@@ -66,36 +66,9 @@ const Leaderboard = {
     },
 
     loadLeaderboard: async () => {
-        try {
-            console.log('📊 Loading leaderboard from Node.js backend...');
-            const response = await fetch('/api/bingo/leaderboard');
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            
-            const leaderboard = await response.json();
-            console.log('✅ Leaderboard loaded successfully:', leaderboard);
-            Leaderboard.renderLeaderboard(leaderboard);
-            Leaderboard.retryCount = 0;
-            
-            // Update status indicator
-            const nodeStatus = document.getElementById('nodejs-status');
-            if (nodeStatus && !Leaderboard.socket) {
-                nodeStatus.innerHTML = '📡 Node.js: <span class="text-green-600">Connected</span>';
-            }
-            
-        } catch (error) {
-            console.error('❌ Failed to load leaderboard:', error);
-            Leaderboard.retryCount++;
-            
-            if (Leaderboard.retryCount < Leaderboard.maxRetries) {
-                console.log(`🔄 Retrying in 2 seconds... (${Leaderboard.retryCount}/${Leaderboard.maxRetries})`);
-                setTimeout(() => Leaderboard.loadLeaderboard(), 2000);
-            } else {
-                Leaderboard.showError('Unable to load leaderboard. Check if the server is running.');
-            }
-        }
+        // Use Firebase only - the Firebase leaderboard will handle this
+        console.log('📊 Using Firebase-only leaderboard');
+        return true;
     },
 
     saveScore: async (userId, username, score) => {
