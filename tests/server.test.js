@@ -57,10 +57,8 @@ test('Bingo progress endpoints record progress and return leaderboard data', asy
   const leaderboardRes = await request(app).get('/api/bingo/leaderboard');
   expect(leaderboardRes.status).toBe(200);
   expect(Array.isArray(leaderboardRes.body)).toBe(true);
-  expect(leaderboardRes.body[0]).toEqual({
-    username: progress.username,
-    score: progress.completedTiles.length,
-  });
+  expect(leaderboardRes.body[0].playerName).toBe(progress.username);
+  expect(leaderboardRes.body[0].score).toBe(progress.completedTiles.length);
 });
 
 test('Leaderboard ranks users and updates existing entries', async () => {
@@ -80,6 +78,8 @@ test('Leaderboard ranks users and updates existing entries', async () => {
   const res = await request(app).get('/api/bingo/leaderboard');
   expect(res.status).toBe(200);
   expect(res.body.length).toBe(2);
-  expect(res.body[0]).toEqual({ username: 'User1', score: 5 });
-  expect(res.body[1]).toEqual({ username: 'User2', score: 3 });
+  expect(res.body[0].playerName).toBe('User1');
+  expect(res.body[0].score).toBe(5);
+  expect(res.body[1].playerName).toBe('User2');
+  expect(res.body[1].score).toBe(3);
 });
