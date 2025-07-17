@@ -611,3 +611,313 @@ body {
 
     /* Mobile dropdown navigation removed */
 }
+/* Enhanced CSS for username validation feedback */
+
+/* Username input container enhancements */
+#username-container {
+    position: relative;
+}
+
+/* Username input styling based on validation state */
+#username {
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#username:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+#username.valid {
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+#username.invalid {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+/* Validation feedback styling */
+#username-feedback {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-top: 0.25rem;
+    min-height: 1.25rem;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#username-feedback.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#username-feedback.hide {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+/* Success feedback */
+#username-feedback.success {
+    color: #10b981;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#username-feedback.success::before {
+    content: "✓";
+    color: #10b981;
+    font-weight: bold;
+}
+
+/* Error feedback */
+#username-feedback.error {
+    color: #ef4444;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#username-feedback.error::before {
+    content: "⚠";
+    color: #ef4444;
+    font-weight: bold;
+}
+
+/* Warning feedback */
+#username-feedback.warning {
+    color: #f59e0b;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#username-feedback.warning::before {
+    content: "⚡";
+    color: #f59e0b;
+    font-weight: bold;
+}
+
+/* Character counter */
+.username-counter {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.75rem;
+    color: #6b7280;
+    transition: color 0.2s ease;
+}
+
+.username-counter.warning {
+    color: #f59e0b;
+}
+
+.username-counter.error {
+    color: #ef4444;
+}
+
+/* Validation suggestions */
+.validation-suggestions {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #4b5563;
+    display: none;
+}
+
+.validation-suggestions.show {
+    display: block;
+    animation: slideDown 0.3s ease;
+}
+
+.validation-suggestions h4 {
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+}
+
+.validation-suggestions ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.validation-suggestions li {
+    padding: 0.25rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.validation-suggestions li::before {
+    content: "•";
+    color: var(--primary-purple);
+    font-weight: bold;
+}
+
+/* Suggested username buttons */
+.suggested-username {
+    display: inline-block;
+    background: var(--glass-bg);
+    border: 1px solid var(--primary-purple);
+    border-radius: 0.375rem;
+    padding: 0.25rem 0.5rem;
+    margin: 0.125rem;
+    font-size: 0.75rem;
+    color: var(--primary-purple);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.suggested-username:hover {
+    background: var(--primary-purple);
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* Leaderboard username validation indicators */
+.leaderboard-username {
+    position: relative;
+}
+
+.leaderboard-username.validated::after {
+    content: "✓";
+    color: #10b981;
+    font-size: 0.75rem;
+    margin-left: 0.25rem;
+    opacity: 0.7;
+}
+
+.leaderboard-username.cleaned::after {
+    content: "🔧";
+    color: #f59e0b;
+    font-size: 0.75rem;
+    margin-left: 0.25rem;
+    opacity: 0.7;
+    cursor: help;
+    title: "Username was automatically cleaned";
+}
+
+/* Loading state for username validation */
+.username-validating {
+    position: relative;
+}
+
+.username-validating::after {
+    content: "";
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    border: 2px solid #e5e7eb;
+    border-top-color: var(--primary-purple);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Animations */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    #username-feedback {
+        font-size: 0.8rem;
+    }
+    
+    .validation-suggestions {
+        font-size: 0.8rem;
+    }
+    
+    .suggested-username {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.4rem;
+    }
+}
+
+/* Dark mode support (if needed) */
+@media (prefers-color-scheme: dark) {
+    .validation-suggestions {
+        background: #1f2937;
+        border-color: #374151;
+        color: #d1d5db;
+    }
+    
+    .validation-suggestions h4 {
+        color: #f9fafb;
+    }
+    
+    .suggested-username {
+        background: #374151;
+        border-color: var(--primary-purple);
+        color: var(--primary-purple);
+    }
+    
+    .username-counter {
+        color: #9ca3af;
+    }
+}
+
+/* Accessibility improvements */
+#username:focus + .username-counter {
+    font-weight: 600;
+}
+
+.validation-suggestions:focus-within {
+    outline: 2px solid var(--primary-purple);
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    #username.valid {
+        border-color: #008000;
+        border-width: 2px;
+    }
+    
+    #username.invalid {
+        border-color: #ff0000;
+        border-width: 2px;
+    }
+    
+    #username-feedback.success {
+        color: #008000;
+        font-weight: 700;
+    }
+    
+    #username-feedback.error {
+        color: #ff0000;
+        font-weight: 700;
+    }
+}
+
+/* Print styles */
+@media print {
+    .validation-suggestions,
+    #username-feedback,
+    .username-counter {
+        display: none;
+    }
+}
