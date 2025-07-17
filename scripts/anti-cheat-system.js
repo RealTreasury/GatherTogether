@@ -1,9 +1,14 @@
 /* Anti-Cheat monitoring system */
 
-const AntiCheatSystem = {
-    events: [],
-    flaggedUsers: new Set(),
-    lastActions: {},
+class AntiCheatSystem {
+    constructor() {
+        this.events = [];
+        this.flaggedUsers = new Set();
+        this.lastActions = {};
+        this.maxEvents = 1000;
+        this.timeframe = 30000; // 30 seconds
+        this.maxActionsPerTimeframe = 15;
+    }
 
     recordTileCompletion(userId, tileIndex) {
         const now = Date.now();
@@ -11,53 +16,52 @@ const AntiCheatSystem = {
             this.lastActions[userId] = [];
         }
         this.lastActions[userId].push(now);
-        const timeframe = 30000; // 30 seconds window
-        this.lastActions[userId] = this.lastActions[userId].filter(t => now - t < timeframe);
-        if (this.lastActions[userId].length > 15) {
+        this.lastActions[userId] = this.lastActions[userId].filter(t => now - t < this.timeframe);
+        if (this.lastActions[userId].length > this.maxActionsPerTimeframe) {
             this.flagUser(userId, 'Excessive rapid completions');
         }
-
-        this.logEvent({
-            type: 'tile_complete',
-            userId,
-            tileIndex,
-            timestamp: now
-        });
-    },
+        this.logEvent({ type: 'tile_complete', userId, tileIndex, timestamp: now });
+    }
 
     logEvent(event) {
         this.events.push(event);
-        if (this.events.length > 1000) {
+        if (this.events.length > this.maxEvents) {
             this.events.shift();
         }
 
-        if (typeof window !== 'undefined' && window.ValidationAnalytics &&
+        if (typeof window !== 'undefined' &&
+            window.ValidationAnalytics &&
             typeof window.ValidationAnalytics.trackAntiCheat === 'function') {
             window.ValidationAnalytics.trackAntiCheat(event);
         }
-    },
+    }
 
     flagUser(userId, reason) {
         if (!this.flaggedUsers.has(userId)) {
             this.flaggedUsers.add(userId);
-            this.logEvent({
-                type: 'flag',
-                userId,
-                reason,
-                timestamp: Date.now()
-            });
+            this.logEvent({ type: 'flag', userId, reason, timestamp: Date.now() });
         }
-    },
+    }
 
     isFlagged(userId) {
         return this.flaggedUsers.has(userId);
     }
-};
 
-if (typeof window !== 'undefined') {
-    window.AntiCheatSystem = AntiCheatSystem;
+    getEventLog() {
+        return this.events.slice();
+    }
+
+    reset() {
+        this.events = [];
+        this.flaggedUsers.clear();
+        this.lastActions = {};
+    }
 }
 
-if (typeof module !== 'undefined') {
+if (typeof window !== 'undefined') {
+    window.AntiCheatSystem = new AntiCheatSystem();
+}
+
+if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
     module.exports = AntiCheatSystem;
 }
