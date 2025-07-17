@@ -1,5 +1,3 @@
-// Username Validation Analytics System
-// This module tracks and analyzes username validation patterns
 
 class ValidationAnalytics {
     constructor() {
@@ -56,6 +54,19 @@ class ValidationAnalytics {
         if (this.events.length > 10000) {
             this.events = this.events.slice(-5000);
         }
+    trackAntiCheat(event) {
+        const acEvent = {
+            timestamp: new Date().toISOString(),
+            ...event
+        };
+        this.antiCheatEvents.push(acEvent);
+        if (this.antiCheatEvents.length > 1000) {
+            this.antiCheatEvents = this.antiCheatEvents.slice(-500);
+        }
+    }
+
+
+
     }
 
     // Update statistics based on validation event
@@ -135,6 +146,7 @@ class ValidationAnalytics {
             violations: this.getViolationAnalysis(),
             patterns: this.getPatternAnalysis(),
             performance: this.getPerformanceAnalysis(),
+            antiCheat: this.antiCheatEvents.slice(-100),
             recommendations: this.getRecommendations()
         };
 
@@ -507,8 +519,11 @@ class ValidationAnalytics {
                 
                 this.events = data.events || [];
                 this.patterns = new Map(data.patterns || []);
+                this.antiCheatEvents = data.antiCheatEvents || [];
+
                 
                 if (data.cleaningStats) {
+
                     this.cleaningStats = {
                         ...data.cleaningStats,
                         commonViolations: new Map(data.cleaningStats.commonViolations || [])
@@ -534,6 +549,7 @@ class ValidationAnalytics {
             timestamp: new Date().toISOString(),
             report: report,
             rawEvents: this.events,
+            antiCheatEvents: this.antiCheatEvents,
             version: '1.0.0'
         };
 

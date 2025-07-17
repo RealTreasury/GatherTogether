@@ -1,0 +1,32 @@
+.locked-challenge {
+    position: relative;
+    pointer-events: none;
+    filter: grayscale(0.8);
+}
+
+.locked-challenge::after {
+    content: 'Locked';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+
+.timed-challenge.pending {
+    opacity: 0.6;
+}
+
+.timed-challenge.unlocked {
+    animation: anticheat-pulse 1s ease-in-out infinite;
+}
+
+@keyframes anticheat-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
