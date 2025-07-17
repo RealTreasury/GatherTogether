@@ -448,6 +448,8 @@ const BingoTracker = {
 
         if (score > 0 && window.Leaderboard && typeof Leaderboard.saveScore === 'function') {
             try {
+                // Ensure Firebase is ready before attempting to save
+                await Leaderboard.initializationPromise;
                 await Leaderboard.saveScore(userId, username, score);
                 console.log('✅ Progress saved to leaderboard');
             } catch (error) {
