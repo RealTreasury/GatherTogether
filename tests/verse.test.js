@@ -25,7 +25,7 @@ describe('VerseManager API refresh', () => {
   });
 
   test('refresh displays verse from API', async () => {
-    require('../scripts/verse.js');
+    require('../public/scripts/verse.js');
     VerseManager = window.VerseManager;
     await VerseManager.refresh();
     expect(VerseManager.currentVerse.text).toBe('Test verse');

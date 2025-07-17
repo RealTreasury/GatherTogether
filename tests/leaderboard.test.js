@@ -29,7 +29,7 @@ describe('Leaderboard pending score handling', () => {
     window.FirebaseLeaderboard = FailFirebaseLeaderboard;
     window.firebaseApp = {};
 
-    require('../scripts/leaderboard.js');
+    require('../public/scripts/leaderboard.js');
     Leaderboard = window.Leaderboard;
     Leaderboard.init();
     await Leaderboard.initializationPromise;

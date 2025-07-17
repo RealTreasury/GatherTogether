@@ -3,7 +3,7 @@ const path = require('path');
 const vm = require('vm');
 
 test('getTotalPoints sums points from both modes', () => {
-  const code = fs.readFileSync(path.join(__dirname, '../scripts/bingo.js'), 'utf8');
+  const code = fs.readFileSync(path.join(__dirname, '../public/scripts/bingo.js'), 'utf8');
   const context = { console };
   vm.createContext(context);
   vm.runInContext(code, context);

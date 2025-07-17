@@ -5,7 +5,7 @@ const path = require('path');
 const http = require('http');
 const https = require('https');
 const { Server } = require('socket.io');
-const UsernameValidator = require('./scripts/username-validator');
+const UsernameValidator = require('./public/scripts/username-validator');
 
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
 const DATA_PATH = path.join(DATA_DIR, 'polls.json');
@@ -222,7 +222,7 @@ const io = new Server(server, {
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, "public")));
 
 // Socket.IO connection handling
 io.on('connection', socket => {

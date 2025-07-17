@@ -22,7 +22,7 @@ test('displays warning when username is blocked', () => {
   context.window.UsernameValidator = context.UsernameValidator;
 
   vm.createContext(context);
-  const code = fs.readFileSync(path.join(__dirname, '../scripts/username-feedback.js'), 'utf8');
+  const code = fs.readFileSync(path.join(__dirname, '../public/scripts/username-feedback.js'), 'utf8');
   vm.runInContext(code, context);
 
   dom.window.document.dispatchEvent(new dom.window.Event('DOMContentLoaded'));

@@ -1,4 +1,4 @@
-const Validator = require('../scripts/username-validator');
+const Validator = require('../public/scripts/username-validator');
 
 test('detects inappropriate usernames', () => {
   expect(Validator.isInappropriate('damn')).toBe(true);

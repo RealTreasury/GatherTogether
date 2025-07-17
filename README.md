@@ -19,16 +19,18 @@ device's native share sheet or by copying the invite text to the clipboard.
 
 ```
 GatherTogether/
-├── index.html              # Main HTML structure
-├── styles/
-│   └── global.css          # All styling
-├── scripts/
-│   ├── app.js              # Main app initialization
-│   ├── bingo.js            # Challenge tracker functionality
-│   ├── verse.js            # Bible verse management
-│   ├── polls.js            # Polls and Q&A
-│   ├── storage.js          # Local storage utilities
-│   └── utils.js            # Utility functions
+├── public/
+│   ├── index.html              # Main HTML structure
+│   ├── styles/
+│   │   └── global.css          # All styling
+│   ├── scripts/
+│   │   ├── app.js              # Main app initialization
+│   │   ├── bingo.js            # Challenge tracker functionality
+│   │   ├── verse.js            # Bible verse management
+│   │   ├── polls.js            # Polls and Q&A
+│   │   ├── storage.js          # Local storage utilities
+│   │   └── utils.js            # Utility functions
+│   └── admin/                # Admin pages
 └── README.md               # Documentation
 ```
 
@@ -36,14 +38,14 @@ GatherTogether/
 
 The project is now entirely static. All data for polls and the challenge
 leaderboard is stored directly in Firebase **Firestore** from the browser.
-Simply open `index.html` or visit the live GitHub Pages site and the app
+Simply open `public/index.html` or visit the live GitHub Pages site and the app
 will connect to Firebase without any additional server setup.
 
 Any scores recorded before Firebase initializes are queued locally and will be
 automatically submitted once the connection becomes available.
 
 If you want to use your own Firebase project, edit the `firebaseConfig`
-object at the bottom of `index.html` with your project credentials.
+object at the bottom of `public/index.html` with your project credentials.
 
 ## Legacy Node.js server (optional)
 
@@ -92,7 +94,7 @@ username and email) to `data/users.json`.
 
 The official app runs from GitHub Pages and does **not** require WordPress or any iframe.
 If you wish to integrate it into a WordPress.com site, deploy the frontend
-files (`index.html`, `styles/`, `scripts/`) to your media library or theme and
+files (`public/index.html`, `public/styles/`, `public/scripts/`) to your media library or theme and
 embed the page via `<iframe>`:
 
 ```html
