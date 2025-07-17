@@ -114,13 +114,20 @@
                 <div class="text-center mb-6">
                     <h2 class="text-3xl font-bold text-gray-800 mb-2">Bingo Leaderboard</h2>
                     <p class="text-gray-600">See who's leading the Faith Challenge!</p>
-                    <p class="text-gray-600">Scores are saved via the Node.js backend. Make sure it is running.</p>
+                    <div id="backend-status" class="text-sm text-gray-500 mt-2">
+                        <span id="firebase-status">🔥 Firebase: <span class="loading">Connecting...</span></span>
+                        <span class="mx-2">|</span>
+                        <span id="nodejs-status">📡 Node.js: <span class="loading">Connecting...</span></span>
+                    </div>
                 </div>
                 <div class="mb-4">
                     <label for="username" class="block text-sm font-medium text-gray-700">Username (not your real name):</label>
                     <input type="text" id="username" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                 </div>
                 <ul id="leaderboard-list" class="space-y-2"></ul>
+                <div class="text-center mt-4">
+                    <button onclick="Leaderboard.refresh()" class="btn-secondary">Refresh Leaderboard</button>
+                </div>
             </div>
         </section>
     </main>
@@ -138,16 +145,33 @@
     <script src="scripts/verse.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="scripts/polls.js"></script>
+    
+    <!-- Firebase integration scripts -->
+    <script src="scripts/firebase-leaderboard.js"></script>
     <script src="scripts/leaderboard.js"></script>
     <script src="scripts/app.js"></script>
 
     <!-- Firebase config and initialization -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            updateDoc, 
+            doc, 
+            query, 
+            where, 
+            orderBy, 
+            limit, 
+            getDocs, 
+            onSnapshot,
+            deleteDoc 
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+        // 🔥 REPLACE THIS WITH YOUR ACTUAL FIREBASE CONFIG FROM THE CONSOLE
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
+            apiKey: "YOUR_API_KEY_FROM_FIREBASE_CONSOLE",
             authDomain: "your-project-id.firebaseapp.com",
             projectId: "your-project-id",
             storageBucket: "your-project-id.appspot.com",
@@ -155,20 +179,78 @@
             appId: "YOUR_APP_ID"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        window.firebaseDB = db; // Make it accessible globally
+        try {
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            
+            // Make Firebase available globally
+            window.firebaseApp = app;
+            window.firebaseDB = db;
+            
+            // Make Firestore modules available globally for the leaderboard class
+            window.firestoreModules = {
+                collection,
+                addDoc,
+                updateDoc,
+                doc,
+                query,
+                where,
+                orderBy,
+                limit,
+                getDocs,
+                onSnapshot,
+                deleteDoc
+            };
+
+            console.log('✅ Firebase initialized successfully');
+            
+            // Update status indicator
+            const firebaseStatus = document.getElementById('firebase-status');
+            if (firebaseStatus) {
+                firebaseStatus.innerHTML = '🔥 Firebase: <span class="text-green-600">Connected</span>';
+            }
+
+        } catch (error) {
+            console.error('❌ Firebase initialization failed:', error);
+            
+            // Update status indicator
+            const firebaseStatus = document.getElementById('firebase-status');
+            if (firebaseStatus) {
+                firebaseStatus.innerHTML = '🔥 Firebase: <span class="text-red-600">Failed</span>';
+            }
+            
+            // Show user-friendly error
+            if (window.Utils && Utils.showNotification) {
+                Utils.showNotification('Firebase connection failed - using local backend only', 'error');
+            }
+        }
     </script>
 
-    <script type="module">
-        import { submitScore, getTopScores } from './leaderboard.js';
-
-        const db = window.firebaseDB;
-
-        await submitScore(db, 'tim123', 'Tim', 150);
-
-        const topPlayers = await getTopScores(db);
-        console.log(topPlayers);
+    <!-- Status update script -->
+    <script>
+        // Update Node.js backend status
+        document.addEventListener('DOMContentLoaded', () => {
+            const nodeStatus = document.getElementById('nodejs-status');
+            
+            // Check Node.js backend connectivity
+            fetch('/api/polls')
+                .then(res => {
+                    if (res.ok) {
+                        if (nodeStatus) {
+                            nodeStatus.innerHTML = '📡 Node.js: <span class="text-green-600">Connected</span>';
+                        }
+                    } else {
+                        throw new Error('Server responded with error');
+                    }
+                })
+                .catch(err => {
+                    console.warn('Node.js backend not available:', err);
+                    if (nodeStatus) {
+                        nodeStatus.innerHTML = '📡 Node.js: <span class="text-yellow-600">Offline</span>';
+                    }
+                });
+        });
     </script>
 </body>
 </html>
