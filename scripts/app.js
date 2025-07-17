@@ -1,6 +1,23 @@
 // Main application logic
 
 const App = {
+    currentTab: 'bingo',
+    
+    switchTab: (targetId) => {
+        const tabLinks = document.querySelectorAll('.tab-link');
+        const tabSections = document.querySelectorAll('.tab-section');
+
+        tabSections.forEach(section => {
+            section.classList.toggle('hidden', section.id !== targetId);
+        });
+
+        tabLinks.forEach(l => {
+            const linkTarget = l.getAttribute('href').substring(1);
+            l.classList.toggle('active', linkTarget === targetId);
+        });
+
+        App.currentTab = targetId;
+    },
     // Initialize the application
     init: async () => {
         // Initialize all modules
@@ -48,13 +65,7 @@ const App = {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const targetId = link.getAttribute('href').substring(1);
-                
-                tabSections.forEach(section => {
-                    section.classList.toggle('hidden', section.id !== targetId);
-                });
-
-                tabLinks.forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
+                App.switchTab(targetId);
 
                 // Close mobile menu on navigation
                 if (nav.classList.contains('open')) {
@@ -62,6 +73,14 @@ const App = {
                 }
             });
         });
+
+        // Leaderboard button within bingo section
+        const openLbBtn = document.getElementById('open-leaderboard-btn');
+        if (openLbBtn) {
+            openLbBtn.addEventListener('click', () => {
+                App.switchTab('leaderboard');
+            });
+        }
 
         // Mobile menu toggle
         menuToggle.addEventListener('click', () => {
