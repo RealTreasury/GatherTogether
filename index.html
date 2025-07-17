@@ -8,144 +8,144 @@
     <link href="styles/global.css" rel="stylesheet">
 </head>
 <body class="min-h-screen app-loading">
-    <header class="mb-4 relative z-50">
-        <nav class="nav-glass shadow-lg">
-            <div class="container relative mx-auto px-4 py-4 flex justify-between items-center">
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-800">ENDURE 2025</h1>
-                    <p class="text-sm text-gray-600">LCMS Youth Gathering 2025</p>
-                </div>
-                <button id="menu-toggle" class="md:hidden text-gray-800 focus:outline-none text-2xl">
-                    &#9776;
-                </button>
-                <button id="invite-btn-mobile" class="btn-primary md:hidden ml-2">Invite a Friend</button>
-                <ul id="nav" class="hidden fixed nav-glass p-8 flex flex-col justify-center items-center space-y-6 text-2xl z-50 md:static md:flex md:flex-row md:space-x-2 md:space-y-0 md:p-0 md:relative md:inset-auto md:text-base md:rounded-md">
-                    <li><a href="#bingo" class="tab-link active">Bingo Tracker</a></li>
-                    <li><a href="#verse" class="tab-link">Hourly Verse</a></li>
-                    <li><a href="#polls" class="tab-link">Polls & Q&A</a></li>
-                    <li><a href="#leaderboard" class="tab-link">Leaderboard</a></li>
-                    <li class="hidden md:block"><button id="invite-btn" class="btn-primary">Invite a Friend</button></li>
-                </ul>
-            </div>
-        </nav>
-    </header>
 
-    <main class="container mx-auto px-4 pb-8">
-        <!-- Bingo Section -->
-        <section id="bingo" class="tab-section">
-            <div class="glass p-6">
-                <div class="text-center mb-6">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Faith Challenge Bingo</h2>
-                    <p class="text-gray-600">Complete challenges to grow in faith during the gathering!</p>
-                </div>
+    <div id="loading-indicator">
+        <div class="spinner"></div>
+        <p>Initializing Faith Challenge...</p>
+    </div>
 
-                <div class="total-points">
-                    Total Points: <span id="total-points">0</span>
-                </div>
-
-                <div class="card-selector">
-                    <button class="card-type-btn active" data-type="regular">🎯 Regular</button>
-                    <button class="card-type-btn completionist" data-type="completionist">🏆 Completionist</button>
-                </div>
-                <div class="stats-container">
-                    <div class="stat-card">
-                        <div class="stat-number" id="completed-count">0</div>
-                        <div class="stat-label">Completed</div>
+    <div id="app-container">
+        <header class="mb-4 relative z-50">
+            <nav class="nav-glass shadow-lg">
+                <div class="container relative mx-auto px-4 py-4 flex justify-between items-center">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">ENDURE 2025</h1>
+                        <p class="text-sm text-gray-600">LCMS Youth Gathering 2025</p>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="progress-percent">0%</div>
-                        <div class="stat-label">Progress</div>
+                    <button id="menu-toggle" class="md:hidden text-gray-800 focus:outline-none text-2xl">
+                        &#9776;
+                    </button>
+                    <button id="invite-btn-mobile" class="btn-primary md:hidden ml-2">Invite a Friend</button>
+                    <ul id="nav" class="hidden fixed nav-glass p-8 flex flex-col justify-center items-center space-y-6 text-2xl z-50 md:static md:flex md:flex-row md:space-x-2 md:space-y-0 md:p-0 md:relative md:inset-auto md:text-base md:rounded-md">
+                        <li><a href="#bingo" class="tab-link active">Bingo Tracker</a></li>
+                        <li><a href="#verse" class="tab-link">Hourly Verse</a></li>
+                        <li><a href="#polls" class="tab-link">Polls & Q&A</a></li>
+                        <li><a href="#leaderboard" class="tab-link">Leaderboard</a></li>
+                        <li class="hidden md:block"><button id="invite-btn" class="btn-primary">Invite a Friend</button></li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+
+        <main class="container mx-auto px-4 pb-8">
+            <section id="bingo" class="tab-section">
+                <div class="glass p-6">
+                    <div class="text-center mb-6">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Faith Challenge Bingo</h2>
+                        <p class="text-gray-600">Complete challenges to grow in faith during the gathering!</p>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="bingo-count">0</div>
-                        <div class="stat-label">Bingo Lines</div>
+
+                    <div class="total-points">
+                        Total Points: <span id="total-points">0</span>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="achievement-count">0</div>
-                        <div class="stat-label">Achievements</div>
+
+                    <div class="card-selector">
+                        <button class="card-type-btn active" data-type="regular">🎯 Regular</button>
+                        <button class="card-type-btn completionist" data-type="completionist">🏆 Completionist</button>
                     </div>
-                </div>
-
-                <div class="bingo-grid regular mb-6" id="bingo-grid">
-                    <div class="loading-overlay">
-                        <p>Loading Bingo Board...</p>
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-number" id="completed-count">0</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="progress-percent">0%</div>
+                            <div class="stat-label">Progress</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="bingo-count">0</div>
+                            <div class="stat-label">Bingo Lines</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="achievement-count">0</div>
+                            <div class="stat-label">Achievements</div>
+                        </div>
                     </div>
-                    <!-- Bingo tiles will be generated here -->
-                </div>
+
+                    <div class="bingo-grid regular mb-6" id="bingo-grid">
+                        </div>
 
 
-                <div class="text-center mt-6 flex justify-center space-x-4">
-                    <button class="btn-primary" onclick="BingoTracker.reset()">Reset Progress</button>
-                    <button class="btn-secondary" onclick="BingoTracker.shareProgress()">Share Progress 📤</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Verse Section -->
-        <section id="verse" class="tab-section hidden">
-            <div class="glass p-6">
-                <div class="text-center mb-6">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Hourly Verse</h2>
-                    <p class="text-gray-600">A new verse every hour to inspire your faith journey</p>
-                </div>
-                
-                <div class="verse-container" id="verse-container">
-                    <div class="verse-text" id="verse-text">Loading...</div>
-                    <div class="verse-reference" id="verse-reference"></div>
-                </div>
-                
-                <div class="text-center mt-6">
-                    <button class="btn-primary" onclick="VerseManager.refresh()">New Verse</button>
-                    <button class="btn-primary ml-2" onclick="VerseManager.favorite()">❤️ Favorite</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Polls Section -->
-        <section id="polls" class="tab-section hidden">
-            <div class="glass p-6">
-                <div class="text-center mb-6">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Live Polls & Q&A</h2>
-                    <p class="text-gray-600">Connect with other youth and share your thoughts</p>
-                    <p class="text-gray-600">Polls and leaderboard powered by Firebase!</p>
-                </div>
-                
-                <div id="polls-container">
-                    <!-- Polls will be loaded here -->
-                </div>
-            </div>
-        </section>
-
-        <section id="leaderboard" class="tab-section hidden">
-            <div class="glass p-6">
-                <div class="text-center mb-6">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Bingo Leaderboard</h2>
-                    <p class="text-gray-600">See who's leading the Faith Challenge!</p>
-                    <div id="backend-status" class="text-sm text-gray-500 mt-2">
-                        <span id="firebase-status">🔥 Firebase: <span class="loading">Connecting...</span></span>
-                        <span class="mx-2">|</span>
-                        <span id="nodejs-status">📡 Node.js: <span class="loading">Connecting...</span></span>
+                    <div class="text-center mt-6 flex justify-center space-x-4">
+                        <button class="btn-primary" onclick="BingoTracker.reset()">Reset Progress</button>
+                        <button class="btn-secondary" onclick="BingoTracker.shareProgress()">Share Progress 📤</button>
                     </div>
                 </div>
-                <div class="mb-4">
-                    <label for="username" class="block text-sm font-medium text-gray-700">Username (not your real name):</label>
-                    <input type="text" id="username" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                </div>
-                <ul id="leaderboard-list" class="space-y-2"></ul>
-                <div class="text-center mt-4">
-                    <button id="submit-score-btn" onclick="Leaderboard.saveCurrentProgress()" class="btn-primary">Submit Score</button>
-                    <button onclick="Leaderboard.refresh()" class="btn-secondary">Refresh Leaderboard</button>
-                </div>
-            </div>
-        </section>
-    </main>
+            </section>
 
-    <footer class="text-center text-gray-600 text-sm py-4">
-        <a href="terms.html" class="hover:underline">Terms of Service</a> |
-        <a href="privacy.html" class="hover:underline">Privacy Policy</a>
-    </footer>
+            <section id="verse" class="tab-section hidden">
+                <div class="glass p-6">
+                    <div class="text-center mb-6">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Hourly Verse</h2>
+                        <p class="text-gray-600">A new verse every hour to inspire your faith journey</p>
+                    </div>
+                    
+                    <div class="verse-container" id="verse-container">
+                        <div class="verse-text" id="verse-text">Loading...</div>
+                        <div class="verse-reference" id="verse-reference"></div>
+                    </div>
+                    
+                    <div class="text-center mt-6">
+                        <button class="btn-primary" onclick="VerseManager.refresh()">New Verse</button>
+                        <button class="btn-primary ml-2" onclick="VerseManager.favorite()">❤️ Favorite</button>
+                    </div>
+                </div>
+            </section>
 
-    <!-- Load scripts in order -->
+            <section id="polls" class="tab-section hidden">
+                <div class="glass p-6">
+                    <div class="text-center mb-6">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Live Polls & Q&A</h2>
+                        <p class="text-gray-600">Connect with other youth and share your thoughts</p>
+                        <p class="text-gray-600">Polls and leaderboard powered by Firebase!</p>
+                    </div>
+                    
+                    <div id="polls-container">
+                        </div>
+                </div>
+            </section>
+
+            <section id="leaderboard" class="tab-section hidden">
+                <div class="glass p-6">
+                    <div class="text-center mb-6">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Bingo Leaderboard</h2>
+                        <p class="text-gray-600">See who's leading the Faith Challenge!</p>
+                        <div id="backend-status" class="text-sm text-gray-500 mt-2">
+                            <span id="firebase-status">🔥 Firebase: <span class="loading">Connecting...</span></span>
+                            <span class="mx-2">|</span>
+                            <span id="nodejs-status">📡 Node.js: <span class="loading">Connecting...</span></span>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="username" class="block text-sm font-medium text-gray-700">Username (not your real name):</label>
+                        <input type="text" id="username" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    </div>
+                    <ul id="leaderboard-list" class="space-y-2"></ul>
+                    <div class="text-center mt-4">
+                        <button id="submit-score-btn" onclick="Leaderboard.saveCurrentProgress()" class="btn-primary">Submit Score</button>
+                        <button onclick="Leaderboard.refresh()" class="btn-secondary">Refresh Leaderboard</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="text-center text-gray-600 text-sm py-4">
+            <a href="terms.html" class="hover:underline">Terms of Service</a> |
+            <a href="privacy.html" class="hover:underline">Privacy Policy</a>
+        </footer>
+    </div>
+
+
     <script src="scripts/utils.js"></script>
     <script src="scripts/serverStatus.js"></script>
     <script src="scripts/storage.js"></script>
@@ -153,12 +153,10 @@
     <script src="scripts/verse.js"></script>
     <script src="scripts/polls.js"></script>
     
-    <!-- Firebase integration scripts -->
     <script src="scripts/firebase-leaderboard.js"></script>
     <script src="scripts/leaderboard.js"></script>
     <script src="scripts/app.js"></script>
 
-    <!-- Firebase config and initialization -->
     <script type="module">
         // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
@@ -238,7 +236,6 @@
         }
     </script>
 
-    <!-- Status update script -->
     <script>
         // Firebase-only mode
         const nodeStatus = document.getElementById('nodejs-status');
