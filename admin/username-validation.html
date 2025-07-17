@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Username Validation Admin - LCMS Youth Gathering</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="../styles/global.css" rel="stylesheet">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .admin-card {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+        
+        .violation-item {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .violation-item.resolved {
+            background: #f0fdf4;
+            border-color: #bbf7d0;
+        }
+        
+        .btn-admin {
+            background: var(--primary-purple);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-admin:hover {
+            background: var(--secondary-purple);
+            transform: translateY(-1px);
+        }
+        
+        .btn-admin.danger {
+            background: #ef4444;
+        }
+        
+        .btn-admin.danger:hover {
+            background: #dc2626;
+        }
+        
+        .btn-admin.success {
+            background: #10b981;
+        }
+        
+        .btn-admin.success:hover {
+            background: #059669;
+        }
+        
+        .log-item {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+        
+        .log-item.warning {
+            background: #fffbeb;
+            border-color: #fde68a;
+        }
+        
+        .log-item.error {
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+        
+        .blocked-word {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            margin: 0.125rem;
+            display: inline-block;
+        }
+        
+        .positive-alt {
+            background: #f0fdf4;
+            color: #059669;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            margin: 0.125rem;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="admin-container">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Username Validation Admin</h1>
+            <p class="text-gray-600">Monitor and manage username validation for the LCMS Youth Gathering</p>
+        </header>
+
+        <!-- Statistics Dashboard -->
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="total-users">0</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="cleaned-usernames">0</div>
+                <div class="stat-label">Cleaned Usernames</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="blocked-attempts">0</div>
+                <div class="stat-label">Blocked Attempts</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="validation-rate">0%</div>
+                <div class="stat-label">Success Rate</div>
+            </div>
+        </div>
+
+        <!-- Username Testing Tool -->
+        <div class="admin-card">
+            <h2 class="text-xl font-semibold mb-4">Test Username Validation</h2>
+            <div class="flex gap-4 mb-4">
+                <input 
+                    type="text" 
+                    id="test-username" 
+                    placeholder="Enter username to test"
+                    class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                >
+                <button onclick="testUsername()" class="btn-admin">Test</button>
+            </div>
+            <div id="test-result" class="hidden">
+                <div class="bg-gray-100 rounded-md p-4">
+                    <h3 class="font-semibold mb-2">Validation Result:</h3>
+                    <div id="test-output"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Leaderboard Review -->
+        <div class="admin-card">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold">Current Leaderboard Review</h2>
+                <div class="flex gap-2">
+                    <button onclick="refreshLeaderboard()" class="btn-admin">Refresh</button>
+                    <button onclick="cleanAllUsernames()" class="btn-admin danger">Clean All</button>
+                </div>
+            </div>
+            <div id="leaderboard-review" class="max-h-96 overflow-y-auto">
+                <div class="text-center text-gray-500 py-8">
+                    <div class="text-4xl mb-2">📊</div>
+                    <div>Loading leaderboard...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Violations -->
+        <div class="admin-card">
+            <h2 class="text-xl font-semibold mb-4">Recent Validation Issues</h2>
+            <div id="recent-violations" class="max-h-64 overflow-y-auto">
+                <div class="text-center text-gray-500 py-8">
+                    <div class="text-4xl mb-2">🔍</div>
+                    <div>No recent violations found</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Blocked Words Management -->
+        <div class="admin-card">
+            <h2 class="text-xl font-semibold mb-4">Blocked Words Management</h2>
+            <div class="mb-4">
+                <div class="flex gap-4 mb-2">
+                    <input 
+                        type="text" 
+                        id="new-blocked-word" 
+                        placeholder="Add new blocked word"
+                        class="flex-1 px-3 py-2 border border-gray-300 rounded-md"
+                    >
+                    <button onclick="addBlockedWord()" class="btn-admin">Add</button>
+                </div>
+                <div class="text-sm text-gray-500">
+                    Current blocked words will be normalized (lowercased, l33t speak converted)
+                </div>
+            </div>
+            <div id="blocked-words-list" class="max-h-48 overflow-y-auto">
+                <!-- Blocked words will be populated here -->
+            </div>
+        </div>
+
+        <!-- Positive Alternatives Management -->
+        <div class="admin-card">
+            <h2 class="text-xl font-semibold mb-4">Positive Alternatives</h2>
+            <div class="mb-4">
+                <div class="flex gap-4 mb-2">
+                    <input 
+                        type="text" 
+                        id="new-positive-alt" 
+                        placeholder="Add new positive alternative"
+                        class="flex-1 px-3 py-2 border border-gray-300 rounded-md"
+                    >
+                    <button onclick="addPositiveAlternative()" class="btn-admin success">Add</button>
+                </div>
+                <div class="text-sm text-gray-500">
+                    These will be used as alternatives when usernames are rejected
+                </div>
+            </div>
+            <div id="positive-alternatives-list" class="max-h-48 overflow-y-auto">
+                <!-- Positive alternatives will be populated here -->
+            </div>
+        </div>
+
+        <!-- System Logs -->
+        <div class="admin-card">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold">System Logs</h2>
+                <button onclick="clearLogs()" class="btn-admin danger">Clear Logs</button>
+            </div>
+            <div id="system-logs" class="max-h-64 overflow-y-auto">
+                <div class="text-center text-gray-500 py-8">
+                    <div class="text-4xl mb-2">📋</div>
+                    <div>No logs available</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock data and functions for demonstration
+        // In real implementation, these would connect to your backend API
+        
+        let validationStats = {
+            totalUsers: 0,
+            cleanedUsernames: 0,
+            blockedAttempts: 0,
+            validationRate: 0
+        };
+
+        let mockLeaderboard = [
+            { username: 'FaithWalker123', score: 15, status: 'clean' },
+            { username: 'GatheringFriend456', score: 12, status: 'cleaned', original: 'damn123' },
+            { username: 'EndureWarrior789', score: 10, status: 'clean' },
+            { username: 'BlessedTeen321', score: 8, status: 'cleaned', original: 'stupiduser' }
+        ];
+
+        let mockViolations = [
+            { 
+                timestamp: new Date().toISOString(),
+                username: 'damn123',
+                cleanedTo: 'GatheringFriend456',
+                reason: 'Contains profanity',
+                resolved: true
+            },
+            {
+                timestamp: new Date(Date.now() - 3600000).toISOString(),
+                username: 'hategroup',
+                cleanedTo: 'FaithfulYouth789',
+                reason: 'Hate speech indicator',
+                resolved: true
+            }
+        ];
+
+        let systemLogs = [
+            { 
+                timestamp: new Date().toISOString(),
+                level: 'info',
+                message: 'Username validation system initialized'
+            },
+            {
+                timestamp: new Date(Date.now() - 1800000).toISOString(),
+                level: 'warning',
+                message: 'High volume of blocked attempts detected'
+            }
+        ];
+
+        // Initialize admin interface
+        function initAdminInterface() {
+            updateStats();
+            loadLeaderboard();
+            loadViolations();
+            loadBlockedWords();
+            loadPositiveAlternatives();
+            loadSystemLogs();
+        }
+
+        function updateStats() {
+            validationStats.totalUsers = mockLeaderboard.length;
+            validationStats.cleanedUsernames = mockLeaderboard.filter(u => u.status === 'cleaned').length;
+            validationStats.blockedAttempts = mockViolations.length;
+            validationStats.validationRate = Math.round((validationStats.totalUsers / (validationStats.totalUsers + validationStats.blockedAttempts)) * 100);
+
+            document.getElementById('total-users').textContent = validationStats.totalUsers;
+            document.getElementById('cleaned-usernames').textContent = validationStats.cleanedUsernames;
+            document.getElementById('blocked-attempts').textContent = validationStats.blockedAttempts;
+            document.getElementById('validation-rate').textContent = validationStats.validationRate + '%';
+        }
+
+        function testUsername() {
+            const testInput = document.getElementById('test-username');
+            const username = testInput.value.trim();
+            
+            if (!username) {
+                alert('Please enter a username to test');
+                return;
+            }
+
+            // Simulate validation (in real implementation, use actual validator)
+            const validation = {
+                isValid: !['damn', 'hell', 'hate', 'kill', 'test', 'admin'].some(word => 
+                    username.toLowerCase().includes(word)
+                ),
+                cleanUsername: username.toLowerCase().includes('damn') ? 'GatheringFriend123' : username,
+                message: username.toLowerCase().includes('damn') ? 'Contains profanity' : 'Username is valid'
+            };
+
+            const resultDiv = document.getElementById('test-result');
+            const outputDiv = document.getElementById('test-output');
+            
+            outputDiv.innerHTML = `
+                <div class="space-y-2">
+                    <div><strong>Original:</strong> ${username}</div>
+                    <div><strong>Valid:</strong> ${validation.isValid ? '✅ Yes' : '❌ No'}</div>
+                    <div><strong>Clean Version:</strong> ${validation.cleanUsername}</div>
+                    <div><strong>Message:</strong> ${validation.message}</div>
+                </div>
+            `;
+            
+            resultDiv.classList.remove('hidden');
+        }
+
+        function loadLeaderboard() {
+            const container = document.getElementById('leaderboard-review');
+            
+            container.innerHTML = mockLeaderboard.map(user => `
+                <div class="violation-item ${user.status === 'clean' ? 'resolved' : ''}">
+                    <div>
+                        <div class="font-semibold">${user.username}</div>
+                        <div class="text-sm text-gray-500">
+                            Score: ${user.score} | Status: ${user.status}
+                            ${user.original ? `| Original: ${user.original}` : ''}
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        ${user.status === 'cleaned' ? 
+                            '<button class="btn-admin success">✓ Cleaned</button>' : 
+                            '<button class="btn-admin">✓ Valid</button>'
+                        }
+                        <button onclick="removeUser(\'${user.username}\')" class="btn-admin danger">Remove</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadViolations() {
+            const container = document.getElementById('recent-violations');
+            
+            if (mockViolations.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-500 py-8">
+                        <div class="text-4xl mb-2">✅</div>
+                        <div>No recent violations found</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = mockViolations.map(violation => `
+                <div class="violation-item ${violation.resolved ? 'resolved' : ''}">
+                    <div>
+                        <div class="font-semibold">${violation.username} → ${violation.cleanedTo}</div>
+                        <div class="text-sm text-gray-500">
+                            ${violation.reason} | ${new Date(violation.timestamp).toLocaleString()}
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        ${violation.resolved ? 
+                            '<button class="btn-admin success">✓ Resolved</button>' : 
+                            '<button onclick="resolveViolation()" class="btn-admin">Resolve</button>'
+                        }
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadBlockedWords() {
+            const container = document.getElementById('blocked-words-list');
+            const blockedWords = [
+                'damn', 'hell', 'crap', 'stupid', 'idiot', 'hate', 'kill', 'sex', 'porn', 'drug'
+            ];
+
+            container.innerHTML = blockedWords.map(word => `
+                <span class="blocked-word">
+                    ${word}
+                    <button onclick="removeBlockedWord(\'${word}\')" class="ml-2 text-red-800">×</button>
+                </span>
+            `).join('');
+        }
+
+        function loadPositiveAlternatives() {
+            const container = document.getElementById('positive-alternatives-list');
+            const alternatives = [
+                'GatheringFriend', 'FaithfulYouth', 'EndureWarrior', 'LCMSYouth', 
+                'BlessedTeen', 'ChristFollower', 'PrayerWarrior', 'GodsChild'
+            ];
+
+            container.innerHTML = alternatives.map(alt => `
+                <span class="positive-alt">
+                    ${alt}
+                    <button onclick="removePositiveAlternative(\'${alt}\')" class="ml-2 text-green-800">×</button>
+                </span>
+            `).join('');
+        }
+
+        function loadSystemLogs() {
+            const container = document.getElementById('system-logs');
+            
+            container.innerHTML = systemLogs.map(log => `
+                <div class="log-item ${log.level}">
+                    [${new Date(log.timestamp).toLocaleString()}] ${log.level.toUpperCase()}: ${log.message}
+                </div>
+            `).join('');
+        }
+
+        function refreshLeaderboard() {
+            loadLeaderboard();
+            updateStats();
+        }
+
+        function cleanAllUsernames() {
+            if (confirm('Are you sure you want to clean all usernames? This will affect all users.')) {
+                alert('All usernames have been cleaned (simulated)');
+                loadLeaderboard();
+                updateStats();
+            }
+        }
+
+        function addBlockedWord() {
+            const input = document.getElementById('new-blocked-word');
+            const word = input.value.trim();
+            
+            if (word) {
+                alert(`Added "${word}" to blocked words list`);
+                input.value = '';
+                loadBlockedWords();
+            }
+        }
+
+        function addPositiveAlternative() {
+            const input = document.getElementById('new-positive-alt');
+            const alt = input.value.trim();
+            
+            if (alt) {
+                alert(`Added "${alt}" to positive alternatives list`);
+                input.value = '';
+                loadPositiveAlternatives();
+            }
+        }
+
+        function removeUser(username) {
+            if (confirm(`Remove user "${username}" from leaderboard?`)) {
+                alert(`User "${username}" removed (simulated)`);
+                loadLeaderboard();
+                updateStats();
+            }
+        }
+
+        function removeBlockedWord(word) {
+            if (confirm(`Remove "${word}" from blocked words?`)) {
+                alert(`Removed "${word}" from blocked words (simulated)`);
+                loadBlockedWords();
+            }
+        }
+
+        function removePositiveAlternative(alt) {
+            if (confirm(`Remove "${alt}" from positive alternatives?`)) {
+                alert(`Removed "${alt}" from positive alternatives (simulated)`);
+                loadPositiveAlternatives();
+            }
+        }
+
+        function resolveViolation() {
+            alert('Violation marked as resolved (simulated)');
+            loadViolations();
+        }
+
+        function clearLogs() {
+            if (confirm('Clear all system logs?')) {
+                systemLogs.length = 0;
+                loadSystemLogs();
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initAdminInterface);
+    </script>
+</body>
+</html>
