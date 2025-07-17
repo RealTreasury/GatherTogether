@@ -238,6 +238,34 @@ const AntiCheatSystem = {
                 reason,
                 timestamp: Date.now()
             });
+
+            // Notify and reset progress when a user is flagged
+            this.handleCheater(userId);
+        }
+    },
+
+    // Display warning and clear user progress when cheating is detected
+    handleCheater(userId) {
+        if (typeof window === 'undefined') return;
+
+        const message = 'Nice Try Silly Goose';
+        if (window.Utils && typeof window.Utils.showNotification === 'function') {
+            window.Utils.showNotification(message, 'error');
+        } else {
+            alert(message);
+        }
+
+        if (window.BingoTracker) {
+            const tracker = window.BingoTracker;
+            tracker.completedTiles.regular.clear();
+            tracker.completedTiles.completionist.clear();
+            tracker.subItemProgress = {};
+            if (window.Storage) {
+                window.Storage.clearAll();
+            }
+            tracker.saveProgress();
+            tracker.renderGrid();
+            tracker.updateStats();
         }
     },
 
