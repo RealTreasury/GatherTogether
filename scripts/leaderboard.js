@@ -65,6 +65,8 @@ const Leaderboard = {
 
                 // Resolve the initialization promise
                 Leaderboard._resolveInitialization();
+                // Flush any scores that were queued before Firebase was ready
+                Leaderboard.flushPendingScores();
                 console.log('✅ Leaderboard is ready for use.');
 
             } else {
@@ -79,6 +81,8 @@ const Leaderboard = {
             if (App.currentTab === 'leaderboard') {
                 Leaderboard.showError('Failed to connect to Firebase. Check console for details.');
             }
+            // Resolve the initialization promise even on failure
+            Leaderboard._resolveInitialization();
         }
     },
 

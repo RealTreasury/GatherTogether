@@ -39,6 +39,9 @@ leaderboard is stored directly in Firebase **Firestore** from the browser.
 Simply open `index.html` or visit the live GitHub Pages site and the app
 will connect to Firebase without any additional server setup.
 
+Any scores recorded before Firebase initializes are queued locally and will be
+automatically submitted once the connection becomes available.
+
 If you want to use your own Firebase project, edit the `firebaseConfig`
 object at the bottom of `index.html` with your project credentials.
 
