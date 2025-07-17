@@ -170,7 +170,7 @@ const PollManager = {
         if (!poll) return null;
 
         const totalVotes = poll.options.reduce((sum, option) => sum + option.votes, 0);
-        
+
         return {
             ...poll,
             totalVotes,
@@ -179,6 +179,11 @@ const PollManager = {
                 percentage: totalVotes > 0 ? Math.round((option.votes / totalVotes) * 100) : 0
             }))
         };
+    },
+
+    setupSocket: () => {
+        // Socket.IO disabled for static hosting
+        console.log('Real-time updates via Socket.IO disabled (static hosting)');
     },
 
     // Future: Submit Q&A question

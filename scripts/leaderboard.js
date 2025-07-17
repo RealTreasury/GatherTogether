@@ -66,6 +66,11 @@ const Leaderboard = {
         }
     },
 
+    setupSocket: () => {
+        // Socket.IO disabled for static hosting
+        console.log('Using Firebase real-time updates instead of Socket.IO');
+    },
+
     loadLeaderboard: async () => {
         if (Leaderboard.firebaseLeaderboard && Leaderboard.firebaseLeaderboard.isAvailable()) {
             try {
