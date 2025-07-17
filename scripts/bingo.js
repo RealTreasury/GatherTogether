@@ -69,22 +69,63 @@ const BingoTracker = {
         BingoTracker.loadProgress();
         BingoTracker.setDailyChallenge();
         BingoTracker.initCardSelector();
+        const startBtn = document.getElementById('start-challenges-btn');
+        if (startBtn) {
+            startBtn.addEventListener('click', () => {
+                const active = document.querySelector('.card-type-btn[data-type="' + BingoTracker.currentMode + '"]');
+                document.querySelectorAll('.card-type-btn').forEach(b => b.classList.remove('active'));
+                if (active) active.classList.add('active');
+                BingoTracker.hideLeaderboard();
+            });
+        }
         BingoTracker.renderGrid();
         BingoTracker.updateStats();
     },
 
     initCardSelector: () => {
-        const buttons = document.querySelectorAll('.card-type-btn[data-type]');
+        const buttons = document.querySelectorAll('.card-type-btn');
         buttons.forEach(btn => {
             btn.addEventListener('click', () => {
                 buttons.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                BingoTracker.currentMode = btn.dataset.type;
-                App.openTab('bingo');
-                BingoTracker.renderGrid();
-                BingoTracker.updateStats();
+
+                const type = btn.dataset.type;
+                if (type === 'leaderboard') {
+                    BingoTracker.showLeaderboard();
+                } else {
+                    BingoTracker.currentMode = type;
+                    BingoTracker.hideLeaderboard();
+                    App.openTab('bingo');
+                    BingoTracker.renderGrid();
+                    BingoTracker.updateStats();
+                }
             });
         });
+
+        // Ensure leaderboard hidden on init
+        BingoTracker.hideLeaderboard();
+    },
+
+    showLeaderboard: () => {
+        const section = document.getElementById('leaderboard');
+        const grid = document.getElementById('bingo-grid');
+        const stats = document.querySelector('.stats-container');
+        if (section) section.classList.remove('hidden');
+        if (grid) grid.classList.add('hidden');
+        if (stats) stats.classList.add('hidden');
+        App.openTab('bingo');
+        if (window.Leaderboard && typeof Leaderboard.loadLeaderboard === 'function') {
+            Leaderboard.loadLeaderboard();
+        }
+    },
+
+    hideLeaderboard: () => {
+        const section = document.getElementById('leaderboard');
+        const grid = document.getElementById('bingo-grid');
+        const stats = document.querySelector('.stats-container');
+        if (section) section.classList.add('hidden');
+        if (grid) grid.classList.remove('hidden');
+        if (stats) stats.classList.remove('hidden');
     },
 
     getCurrentChallenges: () => {

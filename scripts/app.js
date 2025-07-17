@@ -18,13 +18,11 @@ const App = {
             targetLink.classList.add('active');
         }
 
-        const leaderboardBtn = document.getElementById('leaderboard-btn');
-        if (leaderboardBtn) {
-            if (targetId === 'leaderboard') {
-                leaderboardBtn.classList.add('active');
-            } else {
-                leaderboardBtn.classList.remove('active');
-            }
+        const leaderboardBtn = document.querySelector('.card-type-btn[data-type="leaderboard"]');
+        const leaderboardSection = document.getElementById('leaderboard');
+        if (leaderboardSection && targetId !== 'bingo') {
+            leaderboardSection.classList.add('hidden');
+            if (leaderboardBtn) leaderboardBtn.classList.remove('active');
         }
 
         const nav = document.getElementById('nav');
@@ -87,15 +85,7 @@ const App = {
             });
         });
 
-        const leaderboardBtn = document.getElementById('leaderboard-btn');
-        if (leaderboardBtn) {
-            leaderboardBtn.addEventListener('click', () => App.openTab('leaderboard'));
-        }
 
-        const startChallengesBtn = document.getElementById('start-challenges-btn');
-        if (startChallengesBtn) {
-            startChallengesBtn.addEventListener('click', () => App.openTab('bingo'));
-        }
 
         // Mobile menu toggle
         menuToggle.addEventListener('click', () => {
