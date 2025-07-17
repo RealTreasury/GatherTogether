@@ -78,10 +78,14 @@ test('Leaderboard ranks users and updates existing entries', async () => {
   const res = await request(app).get('/api/bingo/leaderboard');
   expect(res.status).toBe(200);
   expect(res.body.length).toBe(2);
-  expect(res.body[0].playerName).toBe('User1');
-  expect(res.body[0].score).toBe(5);
-  expect(res.body[1].playerName).toBe('User2');
-  expect(res.body[1].score).toBe(3);
+  const user1 = res.body.find(e => e.id === 'u1');
+  const user2 = res.body.find(e => e.id === 'u2');
+  expect(user1).toBeTruthy();
+  expect(user2).toBeTruthy();
+  expect(user1.score).toBe(5);
+  expect(user2.score).toBe(3);
+  expect(user1.playerName.toLowerCase()).not.toContain('user');
+  expect(user2.playerName.toLowerCase()).not.toContain('user');
 });
 
 test('POST /api/users stores user info and can be retrieved', async () => {
@@ -92,10 +96,12 @@ test('POST /api/users stores user info and can be retrieved', async () => {
 
   expect(res.status).toBe(200);
   expect(res.body.message).toBe('User info saved');
+  expect(res.body.cleaned).toBe(true);
 
   const getRes = await request(app).get('/api/users/user42');
   expect(getRes.status).toBe(200);
-  expect(getRes.body.username).toBe('Tester');
+  expect(getRes.body.username).not.toBe('Tester');
+  expect(getRes.body.username.toLowerCase()).not.toContain('test');
   expect(getRes.body.email).toBe('t@example.com');
 });
 
@@ -147,7 +153,38 @@ test('Leaderboard POST sanitizes username and returns flag', async () => {
   expect(res.body.cleaned).toBe(true);
 
   const lbRes = await request(app).get('/api/bingo/leaderboard');
-  const entry = lbRes.body.find(e => e.playerName === 'MessyUser');
+  const entry = lbRes.body.find(e => e.id === 'p1');
   expect(entry).toBeTruthy();
+  expect(entry.playerName).not.toBe('Messy#User');
+  expect(entry.playerName.toLowerCase()).not.toContain('user');
   expect(entry.score).toBe(3);
+});
+
+test('Blocked word is cleaned in bingo progress', async () => {
+  const progressRes = await request(app)
+    .post('/api/bingo/progress')
+    .send({ userId: 'blocked1', username: 'damnUser', completedTiles: [] });
+
+  expect(progressRes.status).toBe(200);
+  expect(progressRes.body.cleaned).toBe(true);
+
+  const lbRes = await request(app).get('/api/bingo/leaderboard');
+  const entry = lbRes.body.find(e => e.id === 'blocked1');
+  expect(entry).toBeTruthy();
+  expect(entry.playerName).not.toBe('damnUser');
+  expect(entry.playerName.toLowerCase()).not.toContain('damn');
+});
+
+test('Blocked username cleaned when storing user info', async () => {
+  const res = await request(app)
+    .post('/api/users')
+    .send({ userId: 'userbad', username: 'poop', email: 'b@example.com' });
+
+  expect(res.status).toBe(200);
+  expect(res.body.cleaned).toBe(true);
+
+  const getRes = await request(app).get('/api/users/userbad');
+  expect(getRes.status).toBe(200);
+  expect(getRes.body.username).not.toBe('poop');
+  expect(getRes.body.username.toLowerCase()).not.toContain('poop');
 });
