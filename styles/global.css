@@ -334,25 +334,7 @@ body {
     font-size: 0.875rem;
 }
 
-.verse-container::before,
-.verse-container::after {
-    content: '"';
-    font-size: 4rem;
-    color: var(--primary-purple);
-    opacity: 0.2;
-    position: absolute;
-    font-family: Georgia, serif;
-}
 
-.verse-container::before {
-    top: 0;
-    left: 1rem;
-}
-
-.verse-container::after {
-    bottom: 0;
-    right: 1rem;
-}
 
 .stats-container {
     display: grid;
