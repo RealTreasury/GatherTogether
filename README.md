@@ -29,24 +29,36 @@ GatherTogether/
 
 ## Running the server
 
-The polls feature relies on a small Node.js API. The same backend also stores
-progress for the Bingo tracker and serves the leaderboard. Install
-dependencies and start the server. You can optionally provide
-`SSL_KEY_PATH` and `SSL_CERT_PATH` environment variables to enable HTTPS:
+### Firebase backend
+
+Polls and leaderboard data are now stored in Firebase. Run the Node service
+inside `gathertogether-backend/` to expose the required API:
+
+```bash
+cd gathertogether-backend
+npm install
+npm start
+```
+
+The backend listens on `http://localhost:3001` by default. For local
+development provide a Firebase service account file at
+`gathertogether-backend/config/serviceAccountKey.json`. In production you can
+set environment variables such as `FIREBASE_PROJECT_ID`, `FIREBASE_PRIVATE_KEY`
+and `FIREBASE_CLIENT_EMAIL` instead.
+
+### Local server.js (optional)
+
+The original `server.js` at the repository root stores data in JSON files and
+mirrors the same API routes. It can still be run for offline testing but is not
+required when using the Firebase backend. To start it:
 
 ```bash
 npm install
 npm start
-
-# example using HTTPS
-SSL_KEY_PATH=/path/server.key \
-SSL_CERT_PATH=/path/server.crt npm start
 ```
 
-The app will be available at `http://localhost:3000` (or
-`https://localhost:3000` when using HTTPS). The polls API is
-accessible at `/api/polls` and the Bingo leaderboard at
-`/api/bingo/leaderboard`.
+The local server will serve the app at `http://localhost:3000` and expose the
+`/api/polls` and `/api/bingo/leaderboard` endpoints.
 
 ## Running Tests
 
