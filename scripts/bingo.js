@@ -38,7 +38,7 @@ const COMPLETIONIST_CHALLENGES = [
     { text: 'Meet people from 5 different countries', sublist: Array.from({length:5},(_,i)=>`Country ${i+1}`), freeText: true },
     { text: 'Collect all district booth prizes', sublist: Array.from({length:10},(_,i)=>`Prize ${i+1}`), freeText: true },
     { text: 'Compete in every convention center game', sublist: Array.from({length:8},(_,i)=>`Game ${i+1}`), freeText: true },
-    { text: 'Attend 15+ sessions/workshops', sublist: Array.from({length:15},(_,i)=>`Session ${i+1}`), freeText: true },
+    { text: 'Attend 15+ sessions/workshops', sublist: [], requiredCount: 15, enableSearch: true },
     { text: 'Write thank-you notes to 10 event volunteers', sublist: Array.from({length:10},(_,i)=>`Volunteer ${i+1}`) },
     { text: 'Volunteer for 3+ service opportunities', sublist: Array.from({length:3},(_,i)=>`Service ${i+1}`) },
     { text: 'Get autographs from all guest speakers', sublist: Array.from({length:5},(_,i)=>`Speaker ${i+1}`), freeText: true },
@@ -64,9 +64,11 @@ const BingoTracker = {
     subItemProgress: {},
     dailyChallenge: 0,
     sublistKeyHandler: null,
+    sessionsLoaded: false,
 
     // Initialize bingo tracker
-    init: () => {
+    init: async () => {
+        await BingoTracker.loadSessions();
         BingoTracker.loadProgress();
         BingoTracker.setDailyChallenge();
         BingoTracker.initCardSelector();
@@ -131,7 +133,8 @@ const BingoTracker = {
             if (typeof challenge !== 'string' && challenge.sublist) {
                 const stored = BingoTracker.subItemProgress[index];
                 const progress = BingoTracker.getProgressCount(stored);
-                tile.innerHTML += `<div class="bingo-sub-progress">${progress}/${challenge.sublist.length}</div>`;
+                const req = challenge.requiredCount || challenge.sublist.length;
+                tile.innerHTML += `<div class="bingo-sub-progress">${progress}/${req}</div>`;
             }
             tile.addEventListener('click', () => BingoTracker.toggleTile(index));
 
@@ -189,9 +192,10 @@ const BingoTracker = {
 
     openSublist: (index) => {
         const challenge = COMPLETIONIST_CHALLENGES[index];
+        const stored = BingoTracker.subItemProgress[index];
         const progress = challenge.freeText
-            ? (BingoTracker.subItemProgress[index] || {})
-            : new Set(BingoTracker.subItemProgress[index] || []);
+            ? (stored || {})
+            : new Set(Array.isArray(stored) ? stored : Object.keys(stored || {}));
 
         const overlay = document.createElement('div');
         overlay.className = 'sublist-overlay';
@@ -208,6 +212,7 @@ const BingoTracker = {
             <div class="sublist-content relative">
                 <button class="sublist-close" aria-label="Close">&times;</button>
                 <h3 class="text-xl font-bold mb-4">${challenge.text}</h3>
+                ${challenge.enableSearch ? '<input type="text" class="sublist-search" placeholder="Search..." />' : ''}
                 <ul class="sublist-items">${listItems}</ul>
             </div>
         `;
@@ -223,7 +228,8 @@ const BingoTracker = {
                     e.target.classList.add('selected');
                 }
                 BingoTracker.subItemProgress[index] = [...progress];
-                if (progress.size === challenge.sublist.length) {
+                const req = challenge.requiredCount || challenge.sublist.length;
+                if (progress.size >= req) {
                     BingoTracker.completedTiles.completionist.add(index);
                 } else {
                     BingoTracker.completedTiles.completionist.delete(index);
@@ -246,7 +252,8 @@ const BingoTracker = {
                     e.target.classList.add('selected');
                 }
                 BingoTracker.subItemProgress[index] = progress;
-                if (Object.keys(progress).length === challenge.sublist.length) {
+                const req = challenge.requiredCount || challenge.sublist.length;
+                if (Object.keys(progress).length >= req) {
                     BingoTracker.completedTiles.completionist.add(index);
                 } else {
                     BingoTracker.completedTiles.completionist.delete(index);
@@ -257,8 +264,19 @@ const BingoTracker = {
             }
         };
 
+        const handleSearch = (e) => {
+            if (e.target.matches('.sublist-search')) {
+                const term = e.target.value.toLowerCase();
+                overlay.querySelectorAll('.sublist-items li').forEach(li => {
+                    const text = (li.textContent || li.querySelector('input')?.placeholder || '').toLowerCase();
+                    li.style.display = text.includes(term) ? '' : 'none';
+                });
+            }
+        };
+
         overlay.addEventListener('click', handleClick);
         overlay.addEventListener('input', handleInput);
+        overlay.addEventListener('input', handleSearch);
         overlay.addEventListener('click', (e) => {
             if (e.target.classList.contains('sublist-close') || e.target === overlay) {
                 BingoTracker.closeSublist();
@@ -308,6 +326,22 @@ const BingoTracker = {
     setDailyChallenge: () => {
         const dayOfYear = Utils.getDayOfYear();
         BingoTracker.dailyChallenge = dayOfYear % BINGO_CHALLENGES.length;
+    },
+
+    loadSessions: async () => {
+        if (BingoTracker.sessionsLoaded) return;
+        try {
+            const res = await fetch('data/sessions.json');
+            const sessions = await res.json();
+            const unique = Array.from(new Set(sessions));
+            const challenge = COMPLETIONIST_CHALLENGES.find(c => c.text.startsWith('Attend 15+ sessions'));
+            if (challenge) {
+                challenge.sublist = unique;
+            }
+            BingoTracker.sessionsLoaded = true;
+        } catch (err) {
+            console.error('Failed to load sessions list', err);
+        }
     },
 
     // Save progress
