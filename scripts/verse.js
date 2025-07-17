@@ -84,11 +84,11 @@ const VerseManager = {
     displayVerse: (verse) => {
         VerseManager.currentVerse = verse;
         
-        const verseText = document.getElementById('verse-text');
-        const verseReference = document.getElementById('verse-reference');
-        
-        if (verseText) verseText.textContent = verse.text;
-        if (verseReference) verseReference.textContent = verse.reference;
+        const verseTexts = document.querySelectorAll('.verse-text');
+        const verseReferences = document.querySelectorAll('.verse-reference');
+
+        verseTexts.forEach(el => { el.textContent = verse.text; });
+        verseReferences.forEach(el => { el.textContent = verse.reference; });
     },
 
     // Get random verse
