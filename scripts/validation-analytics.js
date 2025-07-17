@@ -580,13 +580,13 @@ if (typeof module !== 'undefined' && module.exports) {
 }
 
 // Track validation events
-ValidationAnalytics.trackValidation({
-    type: 'cleaned',
-    originalUsername: 'inappropriate123',
-    cleanedUsername: 'GatheringFriend456',
-    reason: 'Contains inappropriate content',
-    userId: 'user123'
-});
+// ValidationAnalytics.trackValidation({
+//     type: 'cleaned',
+//     originalUsername: 'inappropriate123',
+//     cleanedUsername: 'GatheringFriend456',
+//     reason: 'Contains inappropriate content',
+//     userId: 'user123'
+// });
 
 // Generate reports
-const report = ValidationAnalytics.generateReport();
+// const report = ValidationAnalytics.generateReport();
