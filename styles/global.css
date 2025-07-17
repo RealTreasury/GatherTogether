@@ -22,6 +22,59 @@
     --glass-border: rgba(255, 255, 255, 0.2);
 }
 
+/* --- Global Loading Indicator --- */
+#loading-indicator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 9999;
+}
+
+#loading-indicator p {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-purple);
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 8px solid #f3f4f6; /* gray-100 */
+    border-top-color: var(--primary-purple);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1.5rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* --- App Loading State Control --- */
+body.app-loading #app-container {
+    visibility: hidden;
+    opacity: 0;
+}
+
+body:not(.app-loading) #loading-indicator {
+    display: none;
+}
+
+#app-container {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+}
+
 body {
     background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
     min-height: 100vh;
@@ -95,33 +148,6 @@ body {
     position: relative;
     min-height: 400px; /* Ensure grid has height during load */
 }
-
-/* Hide loading overlay by default */
-.bingo-grid .loading-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.8);
-    display: none; /* Hidden by default */
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    color: #333;
-    z-index: 10;
-}
-
-/* --- NEW RULES FOR LOADING STATE --- */
-.app-loading #bingo-grid {
-    pointer-events: none; /* Disable all clicks on the board */
-    opacity: 0.6;
-}
-
-.app-loading #bingo-grid .loading-overlay {
-    display: flex; /* Show the overlay when the app is loading */
-}
-/* --- END OF NEW RULES --- */
 
 .bingo-grid.regular {
     grid-template-columns: repeat(5, 1fr);
