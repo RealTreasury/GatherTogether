@@ -303,7 +303,7 @@ body {
 
 .verse-container {
     text-align: center;
-    padding: 2rem;
+    padding: 1rem;
     position: relative;
 }
 
@@ -312,18 +312,18 @@ body {
     line-height: 1.8;
     color: #1f2937;
     font-style: italic;
-    margin: 1rem 0;
+    margin: 0.5rem 0;
 }
 
 .verse-reference {
     font-size: 1rem;
     color: var(--primary-purple);
     font-weight: 600;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
 }
 
 .verse-compact {
-    padding: 1rem;
+    padding: 0.5rem;
 }
 
 .verse-compact .verse-text {
@@ -612,7 +612,7 @@ body {
     }
 
     .verse-container {
-        padding: 1rem;
+        padding: 0.5rem;
     }
 
 .stats-container {
