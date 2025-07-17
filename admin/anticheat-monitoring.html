@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anti-Cheat Monitoring</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="../styles/global.css" rel="stylesheet">
+    <link href="../styles/anticheat-styles.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <div class="admin-container max-w-4xl mx-auto p-6">
+        <h1 class="text-3xl font-bold mb-4">Anti-Cheat Monitoring</h1>
+        <div class="bg-white shadow rounded-lg p-4">
+            <h2 class="text-xl font-semibold mb-2">Flagged Users</h2>
+            <div id="flagged-users">Loading...</div>
+        </div>
+    </div>
+    <script src="../scripts/anti-cheat-system.js"></script>
+    <script>
+        function renderFlagged() {
+            const container = document.getElementById('flagged-users');
+            const list = Array.from(AntiCheatSystem.flaggedUsers);
+            if (list.length === 0) {
+                container.innerHTML = '<p class="text-green-700">No flagged users.</p>';
+                return;
+            }
+            container.innerHTML = '<ul class="list-disc pl-5">' +
+                list.map(u => '<li>' + u + '</li>').join('') +
+                '</ul>';
+        }
+        document.addEventListener('DOMContentLoaded', renderFlagged);
+    </script>
+</body>
+</html>
