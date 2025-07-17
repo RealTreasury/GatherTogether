@@ -5,6 +5,7 @@ const path = require('path');
 const http = require('http');
 const https = require('https');
 const { Server } = require('socket.io');
+const UsernameValidator = require('./scripts/username-validator');
 
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
 const DATA_PATH = path.join(DATA_DIR, 'polls.json');
@@ -166,16 +167,22 @@ let users = loadUsers();
 // Validate username to match client-side rules
 function validateUsername(username) {
   const DEFAULT_NAME = 'Anonymous';
+
   if (typeof username !== 'string') {
     return { cleanUsername: DEFAULT_NAME, isClean: false };
   }
-  let clean = username.trim();
-  // Allow only letters, numbers, spaces, underscores and hyphens
-  clean = clean.replace(/[^a-zA-Z0-9 _-]/g, '');
+
+  let cleaned = username.trim();
+  cleaned = cleaned.replace(/[^a-zA-Z0-9 _-]/g, '');
   const MAX_LENGTH = 20;
-  if (clean.length > MAX_LENGTH) clean = clean.substring(0, MAX_LENGTH);
-  if (!clean) clean = DEFAULT_NAME;
-  return { cleanUsername: clean, isClean: clean === username };
+  if (cleaned.length > MAX_LENGTH) cleaned = cleaned.substring(0, MAX_LENGTH);
+  if (!cleaned) cleaned = DEFAULT_NAME;
+
+  const flagged = UsernameValidator.isInappropriate(cleaned);
+  const finalClean = UsernameValidator.getCleanUsername(cleaned);
+
+  const isClean = !flagged && finalClean === username;
+  return { cleanUsername: finalClean, isClean };
 }
 
 function getPollsWithVotes() {
