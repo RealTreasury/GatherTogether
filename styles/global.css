@@ -419,6 +419,15 @@ body {
     border-bottom: none;
 }
 
+.sublist-search {
+    display: block;
+    width: 100%;
+    border: 1px solid var(--glass-border);
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+}
+
 
 .sub-item-btn {
     display: block;

@@ -38,7 +38,7 @@ const COMPLETIONIST_CHALLENGES = [
     { text: 'Meet people from 5 different countries', sublist: Array.from({length:5},(_,i)=>`Country ${i+1}`), freeText: true },
     { text: 'Collect all district booth prizes', sublist: Array.from({length:10},(_,i)=>`Prize ${i+1}`), freeText: true },
     { text: 'Compete in every convention center game', sublist: Array.from({length:8},(_,i)=>`Game ${i+1}`), freeText: true },
-    { text: 'Attend 15+ sessions/workshops', sublist: Array.from({length:15},(_,i)=>`Session ${i+1}`), freeText: true },
+    { text: 'Attend 15+ sessions/workshops', sublist: [], freeText: false },
     { text: 'Take photos at all major landmarks', sublist: Array.from({length:10},(_,i)=>`Landmark ${i+1}`) },
     { text: 'Volunteer for 3+ service opportunities', sublist: Array.from({length:3},(_,i)=>`Service ${i+1}`) },
     { text: 'Get autographs from all guest speakers', sublist: Array.from({length:5},(_,i)=>`Speaker ${i+1}`), freeText: true },
@@ -63,6 +63,7 @@ const BingoTracker = {
     },
     subItemProgress: {},
     dailyChallenge: 0,
+    sessions: [],
     sublistKeyHandler: null,
 
     // Initialize bingo tracker
@@ -72,6 +73,7 @@ const BingoTracker = {
         BingoTracker.initCardSelector();
         BingoTracker.renderGrid();
         BingoTracker.updateStats();
+        BingoTracker.loadSessions();
     },
 
     initCardSelector: () => {
@@ -93,6 +95,32 @@ const BingoTracker = {
 
     getGridSize: () => {
         return BingoTracker.currentMode === 'regular' ? 5 : 4;
+    },
+
+    getSessionChallengeIndex: () => {
+        return COMPLETIONIST_CHALLENGES.findIndex(c => c.text.startsWith('Attend 15+ sessions'));
+    },
+
+    loadSessions: async () => {
+        try {
+            const resp = await fetch('data/sessions.json');
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            let data = await resp.json();
+            if (!Array.isArray(data)) data = [];
+            const unique = [...new Set(data.map(n => n.trim()).filter(Boolean))];
+            BingoTracker.sessions = unique;
+            const idx = BingoTracker.getSessionChallengeIndex();
+            if (idx !== -1) {
+                COMPLETIONIST_CHALLENGES[idx].sublist = unique;
+            }
+        } catch (err) {
+            console.warn('Failed to load sessions.json', err);
+        } finally {
+            if (BingoTracker.currentMode === 'completionist') {
+                BingoTracker.renderGrid();
+                BingoTracker.updateStats();
+            }
+        }
     },
 
     getProgressCount: (progress) => {
@@ -208,9 +236,21 @@ const BingoTracker = {
             <div class="sublist-content relative">
                 <button class="sublist-close" aria-label="Close">&times;</button>
                 <h3 class="text-xl font-bold mb-4">${challenge.text}</h3>
+                ${index === BingoTracker.getSessionChallengeIndex() ? '<input type="text" class="sublist-search mb-2" placeholder="Search sessions...">' : ''}
                 <ul class="sublist-items">${listItems}</ul>
             </div>
         `;
+
+        const searchField = overlay.querySelector('.sublist-search');
+        if (searchField) {
+            const filterItems = () => {
+                const term = searchField.value.toLowerCase();
+                overlay.querySelectorAll('.sublist-items li').forEach(li => {
+                    li.style.display = li.textContent.toLowerCase().includes(term) ? '' : 'none';
+                });
+            };
+            searchField.addEventListener('input', Utils.debounce(filterItems, 100));
+        }
 
         const handleClick = (e) => {
             if (e.target.matches('.sub-item-btn')) {
