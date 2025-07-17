@@ -125,3 +125,29 @@ test('Submitting zero completed tiles resets leaderboard score', async () => {
   expect(entry).toBeTruthy();
   expect(entry.score).toBe(0);
 });
+
+test('Username is sanitized in bingo progress', async () => {
+  await request(app)
+    .post('/api/bingo/progress')
+    .send({ userId: 'cleanUser', username: 'Bad@Name!!', completedTiles: [1] });
+
+  const res = await request(app).get('/api/bingo/leaderboard');
+  expect(res.status).toBe(200);
+  const entry = res.body.find(e => e.playerName === 'BadName');
+  expect(entry).toBeTruthy();
+  expect(entry.score).toBe(1);
+});
+
+test('Leaderboard POST sanitizes username and returns flag', async () => {
+  const res = await request(app)
+    .post('/api/bingo/leaderboard')
+    .send({ playerId: 'p1', playerName: 'Messy#User', score: 3 });
+
+  expect(res.status).toBe(200);
+  expect(res.body.cleaned).toBe(true);
+
+  const lbRes = await request(app).get('/api/bingo/leaderboard');
+  const entry = lbRes.body.find(e => e.playerName === 'MessyUser');
+  expect(entry).toBeTruthy();
+  expect(entry.score).toBe(3);
+});

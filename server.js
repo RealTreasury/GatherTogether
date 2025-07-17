@@ -163,6 +163,21 @@ let pollResponses = loadPollResponses();
 let bingoProgress = loadBingoProgress();
 let users = loadUsers();
 
+// Validate username to match client-side rules
+function validateUsername(username) {
+  const DEFAULT_NAME = 'Anonymous';
+  if (typeof username !== 'string') {
+    return { cleanUsername: DEFAULT_NAME, isClean: false };
+  }
+  let clean = username.trim();
+  // Allow only letters, numbers, spaces, underscores and hyphens
+  clean = clean.replace(/[^a-zA-Z0-9 _-]/g, '');
+  const MAX_LENGTH = 20;
+  if (clean.length > MAX_LENGTH) clean = clean.substring(0, MAX_LENGTH);
+  if (!clean) clean = DEFAULT_NAME;
+  return { cleanUsername: clean, isClean: clean === username };
+}
+
 function getPollsWithVotes() {
   return polls.map(poll => {
     const updatedOptions = poll.options.map(option => {
@@ -264,20 +279,22 @@ app.post('/api/polls/:pollId/vote', (req, res) => {
 app.post('/api/bingo/progress', (req, res) => {
   const { userId, username, completedTiles } = req.body;
   console.log('Bingo progress update:', { userId, username, completedTiles });
-  
+
   if (!userId || !username) {
     return res.status(400).json({ error: 'User ID and username are required' });
   }
 
+  const { cleanUsername, isClean } = validateUsername(username);
+
   let userProgress = bingoProgress.find(p => p.userId === userId);
   if (userProgress) {
     userProgress.completedTiles = completedTiles || [];
-    userProgress.username = username;
+    userProgress.username = cleanUsername;
     userProgress.updatedAt = new Date().toISOString();
   } else {
-    bingoProgress.push({ 
-      userId, 
-      username, 
+    bingoProgress.push({
+      userId,
+      username: cleanUsername,
       completedTiles: completedTiles || [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -289,7 +306,7 @@ app.post('/api/bingo/progress', (req, res) => {
   const leaderboard = getLeaderboard();
   io.emit('leaderboardUpdate', leaderboard);
   
-  res.status(200).json({ message: 'Progress saved' });
+  res.status(200).json({ message: 'Progress saved', cleaned: !isClean });
 });
 
 app.get('/api/bingo/leaderboard', (req, res) => {
@@ -302,14 +319,16 @@ app.get('/api/bingo/leaderboard', (req, res) => {
 app.post('/api/bingo/leaderboard', (req, res) => {
   const { playerId, playerName, score } = req.body;
   console.log('Leaderboard score update:', { playerId, playerName, score });
-  
+
   if (!playerId || !playerName || score === undefined) {
     return res.status(400).json({ error: 'Player ID, player name, and score are required' });
   }
 
+  const { cleanUsername, isClean } = validateUsername(playerName);
+
   let userProgress = bingoProgress.find(p => p.userId === playerId);
   if (userProgress) {
-    userProgress.username = playerName;
+    userProgress.username = cleanUsername;
     userProgress.score = score;
     userProgress.updatedAt = new Date().toISOString();
     // Update completedTiles to match score if needed
@@ -317,9 +336,9 @@ app.post('/api/bingo/leaderboard', (req, res) => {
       userProgress.completedTiles = Array.from({length: score}, (_, i) => i);
     }
   } else {
-    bingoProgress.push({ 
-      userId: playerId, 
-      username: playerName, 
+    bingoProgress.push({
+      userId: playerId,
+      username: cleanUsername,
       score: score,
       completedTiles: Array.from({length: score}, (_, i) => i),
       createdAt: new Date().toISOString(),
@@ -332,7 +351,7 @@ app.post('/api/bingo/leaderboard', (req, res) => {
   const leaderboard = getLeaderboard();
   io.emit('leaderboardUpdate', leaderboard);
   
-  res.json({ message: 'Score updated successfully' });
+  res.json({ message: 'Score updated successfully', cleaned: !isClean });
 });
 
 app.get('/api/bingo/lines/:userId', (req, res) => {
@@ -354,18 +373,23 @@ app.post('/api/users', (req, res) => {
     return res.status(400).json({ error: 'User ID is required' });
   }
 
+  const usernameProvided = typeof username !== 'undefined';
+  const { cleanUsername, isClean } = validateUsername(usernameProvided ? username : undefined);
+
   let user = users.find(u => u.userId === userId);
   if (user) {
-    user.username = username || user.username;
+    if (usernameProvided) {
+      user.username = cleanUsername;
+    }
     user.email = email || user.email;
     user.updatedAt = new Date().toISOString();
   } else {
-    user = { userId, username: username || '', email: email || '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+    user = { userId, username: cleanUsername || '', email: email || '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
     users.push(user);
   }
 
   saveUsers(users);
-  res.status(200).json({ message: 'User info saved' });
+  res.status(200).json({ message: 'User info saved', cleaned: usernameProvided ? !isClean : false });
 });
 
 app.get('/api/users/:id', (req, res) => {
