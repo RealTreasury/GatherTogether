@@ -111,13 +111,13 @@ const BingoTracker = {
         const stats = document.querySelector('.stats-container');
         const resetButtons = document.querySelector('.text-center.mt-6');
 
-        if (grid) grid.classList.add('hidden');
-        if (stats) stats.classList.add('hidden');
-        if (resetButtons) resetButtons.classList.add('hidden');
+        if (grid) grid.style.display = 'none';
+        if (stats) stats.style.display = 'none';
+        if (resetButtons) resetButtons.style.display = 'none';
 
         // Show leaderboard section
         const section = document.getElementById('leaderboard');
-        if (section) section.classList.remove('hidden');
+        if (section) section.style.display = 'block';
 
         // Load leaderboard data
         if (window.Leaderboard && typeof Leaderboard.loadLeaderboard === 'function') {
@@ -128,16 +128,16 @@ const BingoTracker = {
     hideLeaderboard: () => {
         // Hide leaderboard section
         const section = document.getElementById('leaderboard');
-        if (section) section.classList.add('hidden');
+        if (section) section.style.display = 'none';
 
         // Show challenge content
         const grid = document.getElementById('bingo-grid');
         const stats = document.querySelector('.stats-container');
         const resetButtons = document.querySelector('.text-center.mt-6');
 
-        if (grid) grid.classList.remove('hidden');
-        if (stats) stats.classList.remove('hidden');
-        if (resetButtons) resetButtons.classList.remove('hidden');
+        if (grid) grid.style.display = 'grid';
+        if (stats) stats.style.display = 'grid';
+        if (resetButtons) resetButtons.style.display = 'flex';
     },
 
     getCurrentChallenges: () => {
