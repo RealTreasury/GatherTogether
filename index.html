@@ -153,20 +153,21 @@
 
     <!-- Firebase config and initialization -->
     <script type="module">
+        // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { 
-            getFirestore, 
-            collection, 
-            addDoc, 
-            updateDoc, 
-            doc, 
-            query, 
-            where, 
-            orderBy, 
-            limit, 
-            getDocs, 
+        import {
+            getFirestore,
+            collection,
+            addDoc,
+            updateDoc,
+            doc,
+            query,
+            where,
+            orderBy,
+            limit,
+            getDocs,
             onSnapshot,
-            deleteDoc 
+            deleteDoc
         } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -182,12 +183,12 @@
             // Initialize Firebase
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
-            
+
             // Make Firebase available globally
             window.firebaseApp = app;
             window.firebaseDB = db;
-            
-            // Make Firestore modules available globally for the leaderboard class
+
+            // Make Firestore modules available globally
             window.firestoreModules = {
                 collection,
                 addDoc,
@@ -203,22 +204,25 @@
             };
 
             console.log('✅ Firebase initialized successfully');
-            
+
             // Update status indicator
             const firebaseStatus = document.getElementById('firebase-status');
             if (firebaseStatus) {
                 firebaseStatus.innerHTML = '🔥 Firebase: <span class="text-green-600">Connected</span>';
             }
 
+            // Notify that Firebase is ready
+            window.dispatchEvent(new CustomEvent('firebaseReady'));
+
         } catch (error) {
             console.error('❌ Firebase initialization failed:', error);
-            
+
             // Update status indicator
             const firebaseStatus = document.getElementById('firebase-status');
             if (firebaseStatus) {
                 firebaseStatus.innerHTML = '🔥 Firebase: <span class="text-red-600">Failed</span>';
             }
-            
+
             // Show user-friendly error
             if (window.Utils && Utils.showNotification) {
                 Utils.showNotification('Firebase connection failed - using local backend only', 'error');
