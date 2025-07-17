@@ -35,7 +35,7 @@ const US_STATES = [
 
 const COMPLETIONIST_CHALLENGES = [
     { text: 'Meet someone from all 50 states', sublist: US_STATES },
-    { text: 'Meet people from 5 different countries', sublist: Array.from({length:5},(_,i)=>`Country ${i+1}`) },
+    { text: 'Meet people from 5 different countries', sublist: Array.from({length:5},(_,i)=>`Country ${i+1}`), freeText: true },
     { text: 'Collect all district booth prizes', sublist: Array.from({length:10},(_,i)=>`Prize ${i+1}`) },
     { text: 'Compete in every convention center game', sublist: Array.from({length:8},(_,i)=>`Game ${i+1}`) },
     { text: 'Attend 15+ sessions/workshops', sublist: Array.from({length:15},(_,i)=>`Session ${i+1}`), freeText: true },
