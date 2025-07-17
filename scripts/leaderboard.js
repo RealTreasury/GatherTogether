@@ -7,7 +7,21 @@ const Leaderboard = {
 
     init: async () => {
         console.log('🚀 Initializing Leaderboard...');
-        
+
+        // Make sure Firebase is ready before using it
+        window.addEventListener('firebaseReady', async () => {
+            const firebaseLeaderboard = new window.FirebaseLeaderboard();
+            await firebaseLeaderboard.init(window.firebaseApp);
+            Leaderboard.firebaseLeaderboard = firebaseLeaderboard;
+            await Leaderboard.loadLeaderboard();
+
+            // Subscribe to real-time updates
+            Leaderboard.firebaseLeaderboard.subscribeToLeaderboard((scores) => {
+                console.log('📡 Real-time leaderboard update received:', scores);
+                Leaderboard.renderLeaderboard(scores);
+            });
+        });
+
         const usernameInput = document.getElementById('username');
         if (usernameInput) {
             usernameInput.value = localStorage.getItem('username') || '';
@@ -19,8 +33,6 @@ const Leaderboard = {
 
         Leaderboard.showLoading();
         Leaderboard.setupSocket();
-        Leaderboard.initFirebase();
-        await Leaderboard.loadLeaderboard();
     },
 
     showLoading: () => {
@@ -92,19 +104,17 @@ const Leaderboard = {
     loadLeaderboard: async () => {
         if (Leaderboard.firebaseLeaderboard && Leaderboard.firebaseLeaderboard.isAvailable()) {
             try {
-                const data = await Leaderboard.firebaseLeaderboard.getTopScores(50);
-                Leaderboard.renderLeaderboard(data);
-                return true;
+                const scores = await Leaderboard.firebaseLeaderboard.getTopScores();
+                Leaderboard.renderLeaderboard(scores);
             } catch (error) {
-                console.error('Failed to load leaderboard from Firebase:', error);
-                Leaderboard.showError('Failed to load leaderboard');
-                return false;
+                console.error('❌ Failed to load leaderboard from Firebase:', error);
+                Leaderboard.showError('Could not load leaderboard.');
             }
+        } else {
+            console.log('📊 Using Firebase-only leaderboard, but Firebase is not available.');
+            Leaderboard.showError('Firebase is not connected.');
         }
-
-        console.warn('Firebase leaderboard not initialized');
-        Leaderboard.showError('Leaderboard unavailable');
-        return false;
+        return true;
     },
 
     saveScore: async (userId, username, score) => {
@@ -113,73 +123,22 @@ const Leaderboard = {
             return false;
         }
 
-        try {
-            console.log('💾 Saving score:', { userId, username, score });
-
-            if (Leaderboard.firebaseLeaderboard && Leaderboard.firebaseLeaderboard.isAvailable()) {
-                try {
-                    await Leaderboard.firebaseLeaderboard.submitScore(userId, username, score);
-                    console.log('✅ Score submitted to Firebase');
-                } catch (fbError) {
-                    console.error('Firebase score submit failed:', fbError);
-                }
-            }
-
-            // Try the leaderboard endpoint first (matches server expectations)
-            const response = await fetch('/api/bingo/leaderboard', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    playerId: userId, 
-                    playerName: username, 
-                    score: score
-                })
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            
-            const result = await response.json();
-            console.log('✅ Score saved successfully:', result);
-            
-            // Don't reload immediately if using Socket.IO (it will update automatically)
-            if (!Leaderboard.socket) {
-                setTimeout(() => Leaderboard.loadLeaderboard(), 500);
-            }
-            
-            return true;
-        } catch (error) {
-            console.error('❌ Failed to save score:', error);
-            
-            // Try alternative endpoint as fallback
+        if (Leaderboard.firebaseLeaderboard && Leaderboard.firebaseLeaderboard.isAvailable()) {
             try {
-                console.log('🔄 Trying alternative progress endpoint...');
-                const fallbackResponse = await fetch('/api/bingo/progress', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        userId, 
-                        username, 
-                        completedTiles: Array.from({length: score}, (_, i) => i)
-                    })
-                });
-                
-                if (fallbackResponse.ok) {
-                    console.log('✅ Score saved via fallback endpoint');
-                    if (!Leaderboard.socket) {
-                        setTimeout(() => Leaderboard.loadLeaderboard(), 500);
-                    }
-                    return true;
+                console.log('💾 Saving score to Firebase:', { userId, username, score });
+                await Leaderboard.firebaseLeaderboard.submitScore(userId, username, score);
+                console.log('✅ Score saved successfully to Firebase');
+                return true;
+            } catch (error) {
+                console.error('❌ Failed to save score to Firebase:', error);
+                if (window.Utils && Utils.showNotification) {
+                    Utils.showNotification('Failed to save score.', 'error');
                 }
-            } catch (fallbackError) {
-                console.error('❌ Fallback also failed:', fallbackError);
+                throw error;
             }
-            
-            if (window.Utils && Utils.showNotification) {
-                Utils.showNotification('Failed to save score. Check server connection.', 'error');
-            }
-            throw error;
+        } else {
+            console.warn('Firebase not available, cannot save score.');
+            return false;
         }
     },
 
