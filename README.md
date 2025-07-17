@@ -32,7 +32,19 @@ GatherTogether/
 The polls feature relies on a small Node.js API. The same backend also stores
 progress for the Bingo tracker and serves the leaderboard. Install
 dependencies and start the server. You can optionally provide
-`SSL_KEY_PATH` and `SSL_CERT_PATH` environment variables to enable HTTPS:
+`SSL_KEY_PATH` and `SSL_CERT_PATH` environment variables to enable HTTPS.
+The Firebase admin SDK also expects service account credentials to be supplied
+through environment variables:
+
+* `FIREBASE_PROJECT_ID`
+* `FIREBASE_PRIVATE_KEY_ID`
+* `FIREBASE_PRIVATE_KEY`
+* `FIREBASE_CLIENT_EMAIL`
+* `FIREBASE_CLIENT_ID`
+* `FIREBASE_CLIENT_CERT_URL`
+
+The server will exit with an error if any of these variables are missing.
+Set them in your shell or a `.env` file before running:
 
 ```bash
 npm install
