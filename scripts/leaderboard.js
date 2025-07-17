@@ -2,6 +2,7 @@ const Leaderboard = {
     socket: null,
     retryCount: 0,
     maxRetries: 3,
+    isFirebaseEnabled: false,
 
     init: async () => {
         console.log('🚀 Initializing Leaderboard...');
@@ -36,12 +37,27 @@ const Leaderboard = {
         if (typeof io === 'function') {
             try {
                 Leaderboard.socket = io();
+                
                 Leaderboard.socket.on('leaderboardUpdate', data => {
-                    console.log('📡 Real-time leaderboard update received');
+                    console.log('📡 Real-time leaderboard update received:', data);
                     Leaderboard.renderLeaderboard(data);
                 });
+                
                 Leaderboard.socket.on('connect', () => {
                     console.log('📡 Socket.IO connected');
+                    // Update status indicator
+                    const nodeStatus = document.getElementById('nodejs-status');
+                    if (nodeStatus) {
+                        nodeStatus.innerHTML = '📡 Node.js: <span class="text-green-600">Connected (Real-time)</span>';
+                    }
+                });
+
+                Leaderboard.socket.on('disconnect', () => {
+                    console.log('📡 Socket.IO disconnected');
+                    const nodeStatus = document.getElementById('nodejs-status');
+                    if (nodeStatus) {
+                        nodeStatus.innerHTML = '📡 Node.js: <span class="text-yellow-600">Disconnected</span>';
+                    }
                 });
             } catch (error) {
                 console.warn('Socket.IO setup failed:', error);
@@ -63,6 +79,12 @@ const Leaderboard = {
             Leaderboard.renderLeaderboard(leaderboard);
             Leaderboard.retryCount = 0;
             
+            // Update status indicator
+            const nodeStatus = document.getElementById('nodejs-status');
+            if (nodeStatus && !Leaderboard.socket) {
+                nodeStatus.innerHTML = '📡 Node.js: <span class="text-green-600">Connected</span>';
+            }
+            
         } catch (error) {
             console.error('❌ Failed to load leaderboard:', error);
             Leaderboard.retryCount++;
@@ -71,33 +93,71 @@ const Leaderboard = {
                 console.log(`🔄 Retrying in 2 seconds... (${Leaderboard.retryCount}/${Leaderboard.maxRetries})`);
                 setTimeout(() => Leaderboard.loadLeaderboard(), 2000);
             } else {
-                Leaderboard.showError('Unable to load leaderboard. Server connection failed.');
+                Leaderboard.showError('Unable to load leaderboard. Check if the server is running.');
             }
         }
     },
 
     saveScore: async (userId, username, score) => {
+        if (!userId || !username || score === undefined) {
+            console.error('Invalid parameters for saveScore:', { userId, username, score });
+            return false;
+        }
+
         try {
             console.log('💾 Saving score:', { userId, username, score });
-            const response = await fetch('/api/bingo/progress', {
+            
+            // Try the leaderboard endpoint first (matches server expectations)
+            const response = await fetch('/api/bingo/leaderboard', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
-                    userId, 
-                    username, 
-                    completedTiles: Array(score).fill(0).map((_, i) => i) 
+                    playerId: userId, 
+                    playerName: username, 
+                    score: score
                 })
             });
             
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
             
-            console.log('✅ Score saved successfully');
-            setTimeout(() => Leaderboard.loadLeaderboard(), 500);
+            const result = await response.json();
+            console.log('✅ Score saved successfully:', result);
+            
+            // Don't reload immediately if using Socket.IO (it will update automatically)
+            if (!Leaderboard.socket) {
+                setTimeout(() => Leaderboard.loadLeaderboard(), 500);
+            }
+            
             return true;
         } catch (error) {
             console.error('❌ Failed to save score:', error);
+            
+            // Try alternative endpoint as fallback
+            try {
+                console.log('🔄 Trying alternative progress endpoint...');
+                const fallbackResponse = await fetch('/api/bingo/progress', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        userId, 
+                        username, 
+                        completedTiles: Array.from({length: score}, (_, i) => i)
+                    })
+                });
+                
+                if (fallbackResponse.ok) {
+                    console.log('✅ Score saved via fallback endpoint');
+                    if (!Leaderboard.socket) {
+                        setTimeout(() => Leaderboard.loadLeaderboard(), 500);
+                    }
+                    return true;
+                }
+            } catch (fallbackError) {
+                console.error('❌ Fallback also failed:', fallbackError);
+            }
+            
             if (window.Utils && Utils.showNotification) {
                 Utils.showNotification('Failed to save score. Check server connection.', 'error');
             }
@@ -107,7 +167,7 @@ const Leaderboard = {
 
     saveCurrentProgress: async () => {
         const usernameInput = document.getElementById('username');
-        const username = usernameInput ? usernameInput.value || 'Anonymous' : 'Anonymous';
+        const username = usernameInput ? usernameInput.value.trim() || 'Anonymous' : 'Anonymous';
         const userId = Utils.getUserId();
         
         if (window.BingoTracker && BingoTracker.completedTiles) {
@@ -136,21 +196,28 @@ const Leaderboard = {
             return;
         }
 
-        list.innerHTML = leaderboard.map((entry, index) => {
+        // Sort by score descending (in case server doesn't sort)
+        const sortedLeaderboard = [...leaderboard].sort((a, b) => b.score - a.score);
+
+        list.innerHTML = sortedLeaderboard.map((entry, index) => {
             const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
             const bgClass = index === 0 ? 'bg-yellow-100 border-yellow-300' : 
                            index === 1 ? 'bg-gray-100 border-gray-300' : 
                            index === 2 ? 'bg-orange-100 border-orange-300' : 
                            'bg-white border-gray-200';
             
+            // Handle different property names from server
+            const username = entry.playerName || entry.username || 'Anonymous';
+            const score = entry.score || 0;
+            
             return `
                 <li class="flex justify-between items-center p-3 rounded-lg border ${bgClass} transition-all hover:shadow-md">
                     <div class="flex items-center">
                         <span class="w-8 text-lg">${medal || `${index + 1}.`}</span>
-                        <span class="font-medium">${entry.username}</span>
+                        <span class="font-medium">${username}</span>
                     </div>
                     <div class="flex items-center">
-                        <span class="font-bold text-lg">${entry.score}</span>
+                        <span class="font-bold text-lg">${score}</span>
                         <span class="text-sm text-gray-500 ml-2">pts</span>
                     </div>
                 </li>
@@ -165,6 +232,7 @@ const Leaderboard = {
                 <li class="text-center py-4 text-red-500">
                     <div class="text-4xl mb-2">⚠️</div>
                     <div class="font-bold mb-2">${message}</div>
+                    <div class="text-sm mb-4">Make sure to run: <code class="bg-gray-200 px-2 py-1 rounded">npm start</code></div>
                     <button onclick="Leaderboard.refresh()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                         Try Again
                     </button>
@@ -176,6 +244,7 @@ const Leaderboard = {
     refresh: () => {
         console.log('🔄 Manual leaderboard refresh requested');
         Leaderboard.retryCount = 0;
+        Leaderboard.showLoading();
         Leaderboard.loadLeaderboard();
     },
 
@@ -187,12 +256,14 @@ const Leaderboard = {
     }
 };
 
+// Auto-refresh when tab becomes visible again
 document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && App.currentTab === 'leaderboard') {
+    if (!document.hidden && App && App.currentTab === 'leaderboard') {
         Leaderboard.refresh();
     }
 });
 
+// Cleanup on page unload
 window.addEventListener('beforeunload', () => {
     Leaderboard.cleanup();
 });
