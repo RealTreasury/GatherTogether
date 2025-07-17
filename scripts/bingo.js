@@ -101,7 +101,7 @@ const BingoTracker = {
             });
         });
 
-        // Ensure leaderboard hidden on init
+        // Ensure leaderboard is hidden on init
         BingoTracker.hideLeaderboard();
     },
 

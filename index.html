@@ -102,7 +102,6 @@
 
 
     <script src="scripts/utils.js"></script>
-    <script src="scripts/serverStatus.js"></script>
     <script src="scripts/storage.js"></script>
     <script src="scripts/bingo.js"></script>
     <script src="scripts/verse.js"></script>
@@ -165,11 +164,6 @@
 
             console.log('✅ Firebase initialized successfully');
 
-            // Update status indicator
-            const firebaseStatus = document.getElementById('firebase-status');
-            if (firebaseStatus) {
-                firebaseStatus.innerHTML = '🔥 Firebase: <span class="text-green-600">Connected</span>';
-            }
 
             // Notify that Firebase is ready
             window.dispatchEvent(new CustomEvent('firebaseReady'));
@@ -177,11 +171,6 @@
         } catch (error) {
             console.error('❌ Firebase initialization failed:', error);
 
-            // Update status indicator
-            const firebaseStatus = document.getElementById('firebase-status');
-            if (firebaseStatus) {
-                firebaseStatus.innerHTML = '🔥 Firebase: <span class="text-red-600">Failed</span>';
-            }
 
             // Show user-friendly error
             if (window.Utils && Utils.showNotification) {
@@ -190,12 +179,5 @@
         }
     </script>
 
-    <script>
-        // Firebase-only mode
-        const nodeStatus = document.getElementById('nodejs-status');
-        if (nodeStatus) {
-            nodeStatus.innerHTML = '📡 Backend: <span class="text-green-600">Firebase Only</span>';
-        }
-    </script>
 </body>
 </html>

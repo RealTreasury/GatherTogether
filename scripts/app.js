@@ -31,9 +31,6 @@ const App = {
     init: async () => {
         // Initialize all modules
         App.setupEventListeners();
-        if (typeof ServerStatus !== 'undefined' && typeof ServerStatus.init === 'function') {
-            ServerStatus.init();
-        }
         BingoTracker.init();
         VerseManager.init();
         Leaderboard.init();
