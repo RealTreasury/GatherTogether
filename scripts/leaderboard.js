@@ -272,6 +272,9 @@ const Leaderboard = {
     }
 };
 
+// Expose globally for other modules
+window.Leaderboard = Leaderboard;
+
 // Auto-refresh when tab becomes visible again
 document.addEventListener('visibilitychange', () => {
     if (!document.hidden && App && App.currentTab === 'leaderboard') {
