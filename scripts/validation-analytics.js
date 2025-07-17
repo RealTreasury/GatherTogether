@@ -15,6 +15,7 @@ class ValidationAnalytics {
             peakUsageHours: new Map(),
             userRetentionAfterCleaning: 0
         };
+        this.antiCheatEvents = [];
         
         // Initialize analytics
         this.init();
@@ -54,6 +55,8 @@ class ValidationAnalytics {
         if (this.events.length > 10000) {
             this.events = this.events.slice(-5000);
         }
+    }
+
     trackAntiCheat(event) {
         const acEvent = {
             timestamp: new Date().toISOString(),
@@ -63,10 +66,6 @@ class ValidationAnalytics {
         if (this.antiCheatEvents.length > 1000) {
             this.antiCheatEvents = this.antiCheatEvents.slice(-500);
         }
-    }
-
-
-
     }
 
     // Update statistics based on validation event
