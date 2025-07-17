@@ -11,11 +11,11 @@ const App = {
         BingoTracker.init();
         VerseManager.init();
         PollManager.init(); // This is the corrected line
-        Leaderboard.init();
+        leaderboard.init();
 
         try {
             // Wait for critical initializations to complete
-            await Leaderboard.initializationPromise;
+            await leaderboard.initializationPromise;
             
             // --- NEW: Enforce a minimum display time for the loader ---
             // This ensures the loader is visible for at least a moment, preventing a jarring flash.
