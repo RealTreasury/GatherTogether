@@ -29,9 +29,10 @@ GatherTogether/
 
 ## Running the server
 
-The polls feature relies on a small Node.js API. Install dependencies and start
-the server. You can optionally provide `SSL_KEY_PATH` and `SSL_CERT_PATH`
-environment variables to enable HTTPS:
+The polls feature relies on a small Node.js API. The same backend also stores
+progress for the Bingo tracker and serves the leaderboard. Install
+dependencies and start the server. You can optionally provide
+`SSL_KEY_PATH` and `SSL_CERT_PATH` environment variables to enable HTTPS:
 
 ```bash
 npm install
@@ -43,8 +44,9 @@ SSL_CERT_PATH=/path/server.crt npm start
 ```
 
 The app will be available at `http://localhost:3000` (or
-`https://localhost:3000` when using HTTPS) and the polls API can be
-reached at `/api/polls`.
+`https://localhost:3000` when using HTTPS). The polls API is
+accessible at `/api/polls` and the Bingo leaderboard at
+`/api/bingo/leaderboard`.
 
 ## Running Tests
 
