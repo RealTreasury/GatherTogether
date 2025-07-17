@@ -62,7 +62,22 @@ npm start
 ```
 
 The local server will serve the app at `http://localhost:3000` and expose the
-`/api/polls` and `/api/bingo/leaderboard` endpoints.
+`/api/polls`, `/api/bingo/leaderboard` and `/api/users` endpoints. The
+`/api/users` route lets you save simple profile information (user ID,
+username and email) to `data/users.json`.
+
+### Hosting on WordPress
+
+If you only have static hosting such as a WordPress.com site, deploy the
+frontend files (`index.html`, `styles/`, `scripts/`) to your WordPress media
+library or theme and embed the page via `<iframe>`:
+
+```html
+<iframe src="https://your-node-backend.example.com/index.html" width="100%" height="800"></iframe>
+```
+
+Run the Node server on a separate host (e.g. Render or Fly.io) and set the
+`FRONTEND_URL` environment variable so CORS allows your WordPress domain.
 
 ## Running Tests
 

@@ -10,6 +10,7 @@ const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
 const DATA_PATH = path.join(DATA_DIR, 'polls.json');
 const RESPONSES_DATA_PATH = path.join(DATA_DIR, 'poll_responses.json');
 const BINGO_PROGRESS_PATH = path.join(DATA_DIR, 'bingo_progress.json');
+const USERS_DATA_PATH = path.join(DATA_DIR, 'users.json');
 
 const SAMPLE_POLLS = [
   {
@@ -101,9 +102,28 @@ function saveBingoProgress(progress) {
   fs.writeFileSync(BINGO_PROGRESS_PATH, JSON.stringify(progress, null, 2));
 }
 
+function loadUsers() {
+  ensureDataDir();
+  if (fs.existsSync(USERS_DATA_PATH)) {
+    try {
+      const data = fs.readFileSync(USERS_DATA_PATH, 'utf8');
+      return JSON.parse(data);
+    } catch (err) {
+      console.error('Error reading users file:', err);
+    }
+  }
+  return [];
+}
+
+function saveUsers(users) {
+  ensureDataDir();
+  fs.writeFileSync(USERS_DATA_PATH, JSON.stringify(users, null, 2));
+}
+
 let polls = loadPolls();
 let pollResponses = loadPollResponses();
 let bingoProgress = loadBingoProgress();
+let users = loadUsers();
 
 function getPollsWithVotes() {
   return polls.map(poll => {
@@ -275,6 +295,34 @@ app.post('/api/bingo/leaderboard', (req, res) => {
   io.emit('leaderboardUpdate', leaderboard);
   
   res.json({ message: 'Score updated successfully' });
+});
+
+// User info endpoints
+app.post('/api/users', (req, res) => {
+  const { userId, username, email } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
+
+  let user = users.find(u => u.userId === userId);
+  if (user) {
+    user.username = username || user.username;
+    user.email = email || user.email;
+    user.updatedAt = new Date().toISOString();
+  } else {
+    user = { userId, username: username || '', email: email || '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+    users.push(user);
+  }
+
+  saveUsers(users);
+  res.status(200).json({ message: 'User info saved' });
+});
+
+app.get('/api/users/:id', (req, res) => {
+  const user = users.find(u => u.userId === req.params.id);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  res.json(user);
 });
 
 // 404 handler

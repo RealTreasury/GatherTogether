@@ -83,3 +83,18 @@ test('Leaderboard ranks users and updates existing entries', async () => {
   expect(res.body[1].playerName).toBe('User2');
   expect(res.body[1].score).toBe(3);
 });
+
+test('POST /api/users stores user info and can be retrieved', async () => {
+  const user = { userId: 'user42', username: 'Tester', email: 't@example.com' };
+  const res = await request(app)
+    .post('/api/users')
+    .send(user);
+
+  expect(res.status).toBe(200);
+  expect(res.body.message).toBe('User info saved');
+
+  const getRes = await request(app).get('/api/users/user42');
+  expect(getRes.status).toBe(200);
+  expect(getRes.body.username).toBe('Tester');
+  expect(getRes.body.email).toBe('t@example.com');
+});
