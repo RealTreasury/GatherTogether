@@ -530,6 +530,11 @@ body {
     box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
 }
 
+.btn-compact {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+}
+
 .poll-container {
     background: var(--glass-bg);
     backdrop-filter: blur(10px);

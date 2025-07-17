@@ -77,13 +77,13 @@
                     </div>
 
                     <div id="leaderboard" class="hidden mt-8">
-                        <div class="text-center mb-6">
-                            <h2 class="text-3xl font-bold text-gray-800 mb-2">Top 25 Leaders</h2>
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-3xl font-bold text-gray-800">Top 25 Leaders</h2>
+                            <button onclick="Leaderboard.refresh()" class="btn-secondary btn-compact">Refresh</button>
                         </div>
                         <ul id="leaderboard-list" class="space-y-1 text-sm max-w-md mx-auto"></ul>
-                        <div class="text-center mt-4 space-x-2">
+                        <div class="text-center mt-4">
                             <button id="submit-score-btn" onclick="Leaderboard.saveCurrentProgress()" class="btn-primary">Submit Score</button>
-                            <button onclick="Leaderboard.refresh()" class="btn-secondary">Refresh Leaderboard</button>
                         </div>
                     </div>
                 </div>
