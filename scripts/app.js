@@ -2,6 +2,36 @@
 
 const App = {
     currentTab: null,
+    openTab: (targetId) => {
+        const tabLinks = document.querySelectorAll('.tab-link');
+        const tabSections = document.querySelectorAll('.tab-section');
+
+        App.currentTab = targetId;
+
+        tabSections.forEach(section => {
+            section.classList.toggle('hidden', section.id !== targetId);
+        });
+
+        tabLinks.forEach(l => l.classList.remove('active'));
+        const targetLink = document.querySelector(`.tab-link[href="#${targetId}"]`);
+        if (targetLink) {
+            targetLink.classList.add('active');
+        }
+
+        const leaderboardBtn = document.getElementById('leaderboard-btn');
+        if (leaderboardBtn) {
+            if (targetId === 'leaderboard') {
+                leaderboardBtn.classList.add('active');
+            } else {
+                leaderboardBtn.classList.remove('active');
+            }
+        }
+
+        const nav = document.getElementById('nav');
+        if (nav && nav.classList.contains('open')) {
+            nav.classList.remove('open');
+        }
+    },
     // Initialize the application
     init: async () => {
         // Initialize all modules
@@ -40,11 +70,11 @@ const App = {
     // Set up event listeners
     setupEventListeners: () => {
         const tabLinks = document.querySelectorAll('.tab-link');
-        const tabSections = document.querySelectorAll('.tab-section');
         const activeLink = document.querySelector('.tab-link.active');
         if (activeLink) {
             App.currentTab = activeLink.getAttribute('href').substring(1);
         }
+
         const menuToggle = document.getElementById('menu-toggle');
         const nav = document.getElementById('nav');
 
@@ -53,21 +83,19 @@ const App = {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const targetId = link.getAttribute('href').substring(1);
-                App.currentTab = targetId;
-                
-                tabSections.forEach(section => {
-                    section.classList.toggle('hidden', section.id !== targetId);
-                });
-
-                tabLinks.forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
-
-                // Close mobile menu on navigation
-                if (nav.classList.contains('open')) {
-                    nav.classList.remove('open');
-                }
+                App.openTab(targetId);
             });
         });
+
+        const leaderboardBtn = document.getElementById('leaderboard-btn');
+        if (leaderboardBtn) {
+            leaderboardBtn.addEventListener('click', () => App.openTab('leaderboard'));
+        }
+
+        const startChallengesBtn = document.getElementById('start-challenges-btn');
+        if (startChallengesBtn) {
+            startChallengesBtn.addEventListener('click', () => App.openTab('bingo'));
+        }
 
         // Mobile menu toggle
         menuToggle.addEventListener('click', () => {

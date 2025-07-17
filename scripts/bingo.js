@@ -77,12 +77,13 @@ const BingoTracker = {
     },
 
     initCardSelector: () => {
-        const buttons = document.querySelectorAll('.card-type-btn');
+        const buttons = document.querySelectorAll('.card-type-btn[data-type]');
         buttons.forEach(btn => {
             btn.addEventListener('click', () => {
                 buttons.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 BingoTracker.currentMode = btn.dataset.type;
+                App.openTab('bingo');
                 BingoTracker.renderGrid();
                 BingoTracker.updateStats();
             });
