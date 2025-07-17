@@ -1,20 +1,26 @@
 const Leaderboard = {
     firebaseLeaderboard: null,
     isInitialized: false,
+    _resolveInitialization: null,
+    initializationPromise: null,
     pendingScores: {},
 
-    init: async () => {
+    init: () => {
         if (Leaderboard.isInitialized) return;
         Leaderboard.isInitialized = true;
-        console.log('🚀 Initializing Leaderboard...');
 
-        // Wait for Firebase to be ready
+        // Promise that resolves when Firebase is initialized
+        Leaderboard.initializationPromise = new Promise(resolve => {
+            Leaderboard._resolveInitialization = resolve;
+        });
+
+        console.log('🚀 Scheduling Leaderboard Initialization...');
+
+        // Initialize Firebase when available
         if (window.firebaseApp && window.FirebaseLeaderboard) {
-            await Leaderboard.initFirebase();
+            Leaderboard.initFirebase();
         } else {
-            window.addEventListener('firebaseReady', async () => {
-                await Leaderboard.initFirebase();
-            });
+            window.addEventListener('firebaseReady', () => Leaderboard.initFirebase());
         }
 
         const usernameInput = document.getElementById('username');
@@ -26,38 +32,45 @@ const Leaderboard = {
             });
         }
 
-        Leaderboard.showLoading();
     },
 
     initFirebase: async () => {
         try {
             const firebaseLeaderboard = new window.FirebaseLeaderboard();
-            await firebaseLeaderboard.init(window.firebaseApp);
-            Leaderboard.firebaseLeaderboard = firebaseLeaderboard;
-            
-            // Update status
-            const firebaseStatus = document.getElementById('firebase-status');
-            if (firebaseStatus) {
-                firebaseStatus.innerHTML = '🔥 Firebase: <span class="text-green-600">Connected</span>';
+            const success = await firebaseLeaderboard.init(window.firebaseApp);
+
+            if (success) {
+                Leaderboard.firebaseLeaderboard = firebaseLeaderboard;
+
+                const firebaseStatus = document.getElementById('firebase-status');
+                if (firebaseStatus) {
+                    firebaseStatus.innerHTML = '🔥 Firebase: <span class="text-green-600">Connected</span>';
+                }
+
+                // Subscribe to real-time updates
+                Leaderboard.firebaseLeaderboard.subscribeToLeaderboard((scores) => {
+                    console.log('📡 Real-time leaderboard update received:', scores);
+                    if (App.currentTab === 'leaderboard') {
+                        Leaderboard.renderLeaderboard(scores);
+                    }
+                });
+
+                // Resolve the initialization promise
+                Leaderboard._resolveInitialization();
+                console.log('✅ Leaderboard is ready for use.');
+
+            } else {
+                throw new Error('FirebaseLeaderboard.init() returned false.');
             }
-            
-            await Leaderboard.loadLeaderboard();
-
-            // Subscribe to real-time updates
-            Leaderboard.firebaseLeaderboard.subscribeToLeaderboard((scores) => {
-                console.log('📡 Real-time leaderboard update received:', scores);
-                Leaderboard.renderLeaderboard(scores);
-            });
-
-            await Leaderboard.flushPendingScores();
-            await Leaderboard.saveCurrentProgress();
         } catch (error) {
             console.error('Failed to initialize Firebase leaderboard:', error);
             const firebaseStatus = document.getElementById('firebase-status');
             if (firebaseStatus) {
                 firebaseStatus.innerHTML = '🔥 Firebase: <span class="text-red-600">Error</span>';
             }
-            Leaderboard.showError('Failed to connect to Firebase. Check console for details.');
+            if (App.currentTab === 'leaderboard') {
+                Leaderboard.showError('Failed to connect to Firebase. Check console for details.');
+            }
         }
     },
 
@@ -79,7 +92,11 @@ const Leaderboard = {
     },
 
     loadLeaderboard: async () => {
+        // Wait for initialization before loading data
+        await Leaderboard.initializationPromise;
+
         if (Leaderboard.firebaseLeaderboard && Leaderboard.firebaseLeaderboard.isAvailable()) {
+            Leaderboard.showLoading();
             try {
                 const scores = await Leaderboard.firebaseLeaderboard.getTopScores(50);
                 Leaderboard.renderLeaderboard(scores);
@@ -90,20 +107,22 @@ const Leaderboard = {
                 return false;
             }
         } else {
-            console.log('📊 Firebase not available yet.');
+            console.warn('📊 Firebase not available for loading leaderboard.');
             Leaderboard.showPlaceholderLeaderboard();
             return false;
         }
     },
 
     saveScore: async (userId, username, score) => {
+        // Wait for Firebase initialization
+        await Leaderboard.initializationPromise;
+
         if (!userId || !username || score === undefined) {
             console.error('Invalid parameters for saveScore:', { userId, username, score });
             return false;
         }
 
         if (Leaderboard.firebaseLeaderboard && Leaderboard.firebaseLeaderboard.isAvailable()) {
-            await Leaderboard.flushPendingScores();
             try {
                 console.log('💾 Saving score to Firebase:', { userId, username, score });
                 await Leaderboard.firebaseLeaderboard.submitScore(userId, username, score);
@@ -112,7 +131,7 @@ const Leaderboard = {
             } catch (error) {
                 console.error('❌ Failed to save score to Firebase:', error);
                 if (window.Utils && Utils.showNotification) {
-                    Utils.showNotification('Failed to save score. Check if Firestore is enabled.', 'error');
+                    Utils.showNotification('Failed to save score. Check console for details.', 'error');
                 }
                 throw error;
             }
@@ -240,7 +259,7 @@ const Leaderboard = {
 
     refresh: () => {
         console.log('🔄 Manual leaderboard refresh requested');
-        Leaderboard.showLoading();
+        // loadLeaderboard will now safely wait for the connection before fetching
         Leaderboard.loadLeaderboard();
     }
 };
