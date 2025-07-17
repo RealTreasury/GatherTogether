@@ -32,12 +32,24 @@ GatherTogether/
 └── README.md               # Documentation
 ```
 
-## Running the server
+## Usage
 
-### Firebase backend
+The project is now entirely static. All data for polls and the bingo
+leaderboard is stored directly in Firebase **Firestore** from the browser.
+Simply open `index.html` or visit the live GitHub Pages site and the app
+will connect to Firebase without any additional server setup.
 
-Polls and leaderboard data are stored in Firebase **Firestore**. Run the Node service
-inside `gathertogether-backend/` to expose the required API:
+If you want to use your own Firebase project, edit the `firebaseConfig`
+object at the bottom of `index.html` with your project credentials.
+
+## Legacy Node.js server (optional)
+
+The repository still includes a small Express service under
+`gathertogether-backend/` that mirrors the Firebase API. This is useful for
+offline testing or if you need to proxy requests through your own backend.
+It is **not** required for normal usage.
+
+To run it locally:
 
 ```bash
 cd gathertogether-backend
@@ -45,25 +57,23 @@ npm install
 npm start
 ```
 
-The backend listens on `http://localhost:3001` by default. For local
-development provide a Firebase service account file at
-`gathertogether-backend/config/serviceAccountKey.json`. In production you can
-set environment variables such as `FIREBASE_PROJECT_ID`, `FIREBASE_PRIVATE_KEY`
-and `FIREBASE_CLIENT_EMAIL` instead.
+The service listens on `http://localhost:3001`. Set environment variables like
+`FIREBASE_PROJECT_ID`, `FIREBASE_PRIVATE_KEY` and `FIREBASE_CLIENT_EMAIL` to
+connect it to Firebase, or provide a service account file at
+`gathertogether-backend/config/serviceAccountKey.json`.
 
 ### Google Sheets backend (optional)
 
-If you prefer not to use Firebase, set `GOOGLE_SHEETS_ID`,
-`GOOGLE_SHEETS_CLIENT_EMAIL` and `GOOGLE_SHEETS_PRIVATE_KEY` when starting the
-backend. When these variables are present the server stores leaderboard rows in
-a Google Sheet using the Sheets API. Install dependencies in the backend folder
-with `npm install` before running.
+The Node service can also write leaderboard entries to Google Sheets. Set
+`GOOGLE_SHEETS_ID`, `GOOGLE_SHEETS_CLIENT_EMAIL` and
+`GOOGLE_SHEETS_PRIVATE_KEY` before starting the server and any submitted scores
+will be written to the specified spreadsheet.
 
 ### Local server.js (optional)
 
-The original `server.js` at the repository root stores data in JSON files and
-mirrors the same API routes. It can still be run for offline testing but is not
-required when using the Firebase backend. To start it:
+The legacy `server.js` at the repository root stores everything in local JSON
+files. It's handy for quick demos without Firebase but is no longer maintained.
+To try it anyway:
 
 ```bash
 npm install
