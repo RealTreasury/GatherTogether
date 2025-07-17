@@ -113,8 +113,14 @@ const BingoTracker = {
             });
         });
 
-        // Ensure leaderboard is hidden on init
-        BingoTracker.hideLeaderboard();
+        // Handle initially active button
+        const activeBtn = document.querySelector('.card-type-btn.active');
+        if (activeBtn && activeBtn.dataset.type === 'leaderboard') {
+            BingoTracker.showLeaderboard();
+        } else {
+            if (activeBtn) BingoTracker.currentMode = activeBtn.dataset.type;
+            BingoTracker.hideLeaderboard();
+        }
     },
 
     showLeaderboard: () => {
