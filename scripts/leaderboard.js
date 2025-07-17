@@ -65,6 +65,8 @@ const Leaderboard = {
 
                 // Resolve the initialization promise
                 Leaderboard._resolveInitialization();
+                // Flush any scores that were queued while Firebase was unavailable
+                Leaderboard.flushPendingScores();
                 console.log('✅ Leaderboard is ready for use.');
 
             } else {
