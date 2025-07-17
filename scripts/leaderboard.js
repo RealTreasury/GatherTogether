@@ -24,11 +24,36 @@ const Leaderboard = {
         }
 
         const usernameInput = document.getElementById('username');
+        const usernameDisplay = document.getElementById('username-display');
+        const currentUsername = document.getElementById('current-username');
+        const changeUsernameBtn = document.getElementById('change-username-btn');
+
         if (usernameInput) {
-            usernameInput.value = localStorage.getItem('username') || '';
+            const saved = localStorage.getItem('username') || '';
+            usernameInput.value = saved;
+            if (saved && usernameDisplay && currentUsername) {
+                currentUsername.textContent = saved;
+                usernameInput.classList.add('hidden');
+                usernameDisplay.classList.remove('hidden');
+            }
+
             usernameInput.addEventListener('change', () => {
-                localStorage.setItem('username', usernameInput.value);
+                const name = usernameInput.value.trim();
+                localStorage.setItem('username', name);
+                if (usernameDisplay && currentUsername) {
+                    currentUsername.textContent = name || '';
+                    usernameInput.classList.add('hidden');
+                    usernameDisplay.classList.remove('hidden');
+                }
                 Leaderboard.saveCurrentProgress();
+            });
+        }
+
+        if (changeUsernameBtn && usernameInput && usernameDisplay) {
+            changeUsernameBtn.addEventListener('click', () => {
+                usernameDisplay.classList.add('hidden');
+                usernameInput.classList.remove('hidden');
+                usernameInput.focus();
             });
         }
 
