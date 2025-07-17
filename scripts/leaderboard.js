@@ -50,10 +50,6 @@ const Leaderboard = {
             if (success) {
                 Leaderboard.firebaseLeaderboard = firebaseLeaderboard;
 
-                const firebaseStatus = document.getElementById('firebase-status');
-                if (firebaseStatus) {
-                    firebaseStatus.innerHTML = '🔥 Firebase: <span class="text-green-600">Connected</span>';
-                }
 
                 // Subscribe to real-time updates
                 Leaderboard.firebaseLeaderboard.subscribeToLeaderboard((scores) => {
@@ -74,10 +70,6 @@ const Leaderboard = {
             }
         } catch (error) {
             console.error('Failed to initialize Firebase leaderboard:', error);
-            const firebaseStatus = document.getElementById('firebase-status');
-            if (firebaseStatus) {
-                firebaseStatus.innerHTML = '🔥 Firebase: <span class="text-red-600">Error</span>';
-            }
             if (App.currentTab === 'leaderboard') {
                 Leaderboard.showError('Failed to connect to Firebase. Check console for details.');
             }
