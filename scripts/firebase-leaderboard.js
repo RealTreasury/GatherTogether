@@ -10,11 +10,12 @@ class FirebaseLeaderboard {
     // Initialize Firebase connection
     async init(firebaseApp) {
         try {
-            if (typeof getFirestore === 'undefined') {
+            if (!window.firestoreModules || typeof window.firestoreModules.getFirestore === 'undefined') {
                 console.warn('Firebase Firestore not available');
                 return false;
             }
 
+            const { getFirestore } = window.firestoreModules;
             this.db = getFirestore(firebaseApp);
             this.initialized = true;
             console.log('Firebase Leaderboard initialized successfully');
