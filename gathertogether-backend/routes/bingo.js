@@ -23,7 +23,7 @@ router.get('/leaderboard', async (req, res) => {
     }
 
     const leaderboardSnapshot = await db
-      .collection('bingo_leaderboard')
+      .collection('leaderboard') // <-- CHANGED
       .orderBy('score', 'desc')
       .limit(50)
       .get();
@@ -75,7 +75,7 @@ router.post('/leaderboard', async (req, res) => {
       return res.json({ message: 'Score updated successfully' });
     }
 
-    const playerRef = db.collection('bingo_leaderboard').doc(playerId);
+    const playerRef = db.collection('leaderboard').doc(playerId); // <-- CHANGED
 
     await playerRef.set(
       {
