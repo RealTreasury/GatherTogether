@@ -392,9 +392,12 @@ body {
 
 
 .bingo-sub-progress {
+    position: absolute;
+    left: 0.5rem;
+    bottom: 0.25rem;
     font-size: 0.7rem;
     color: #4b5563;
-    margin-top: 0.25rem;
+    margin-top: 0;
 }
 
 .sublist-overlay {
