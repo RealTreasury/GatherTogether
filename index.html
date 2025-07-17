@@ -22,15 +22,7 @@
                         <h1 class="text-2xl font-bold text-gray-800">ENDURE 2025</h1>
                         <p class="text-sm text-gray-600">LCMS Youth Gathering 2025</p>
                     </div>
-                    <button id="menu-toggle" class="md:hidden text-gray-800 focus:outline-none text-2xl">
-                        &#9776;
-                    </button>
-                    <button id="invite-btn-mobile" class="btn-primary md:hidden ml-2">Invite a Friend</button>
-                    <ul id="nav" class="hidden fixed nav-glass p-8 flex flex-col justify-center items-center space-y-6 text-2xl z-50 md:static md:flex md:flex-row md:space-x-2 md:space-y-0 md:p-0 md:relative md:inset-auto md:text-base md:rounded-md">
-                        <li><a href="#bingo" class="tab-link active">Challenge Tracker</a></li>
-                        <li><a href="#verse" class="tab-link">Hourly Verse</a></li>
-                        <li class="hidden md:block"><button id="invite-btn" class="btn-primary">Invite a Friend</button></li>
-                    </ul>
+                    <button id="invite-btn" class="btn-primary">Invite a Friend</button>
                 </div>
             </nav>
         </header>
@@ -38,9 +30,8 @@
         <main class="container mx-auto px-4 pb-8">
             <section id="bingo" class="tab-section">
                 <div class="glass p-6">
-                    <div class="text-center mb-6">
-                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Faith Challenges</h2>
-                        <p class="text-gray-600">Complete challenges to grow in faith during the gathering!</p>
+                    <div class="text-center mb-2">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Gathering Challenge</h2>
                     </div>
 
                     <div class="verse-container verse-compact mb-4">
@@ -105,24 +96,6 @@
                 </div>
             </section>
 
-            <section id="verse" class="tab-section hidden">
-                <div class="glass p-6">
-                    <div class="text-center mb-6">
-                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Hourly Verse</h2>
-                        <p class="text-gray-600">A new verse every hour to inspire your faith journey</p>
-                    </div>
-                    
-                    <div class="verse-container" id="verse-container">
-                        <div class="verse-text" id="verse-text">Loading...</div>
-                        <div class="verse-reference" id="verse-reference"></div>
-                    </div>
-                    
-                    <div class="text-center mt-6">
-                        <button class="btn-primary" onclick="VerseManager.refresh()">New Verse</button>
-                        <button class="btn-primary ml-2" onclick="VerseManager.favorite()">❤️ Favorite</button>
-                    </div>
-                </div>
-            </section>
 
 
         </main>
