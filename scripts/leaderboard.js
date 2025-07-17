@@ -151,21 +151,21 @@ const Leaderboard = {
     },
 
     saveCurrentProgress: async () => {
-    const usernameInput = document.getElementById('username');
-    const username = usernameInput ? usernameInput.value.trim() || 'Anonymous' : 'Anonymous';
-    const userId = Utils.getUserId();
-    
-    if (window.BingoTracker) { // Simplified the check
-        const score = BingoTracker.countAchievements(); // Correct way to get the score
-        if (score > 0) {
-            try {
-                await Leaderboard.saveScore(userId, username, score);
-            } catch (error) {
-                console.error('Failed to save current progress:', error);
+        const usernameInput = document.getElementById('username');
+        const username = usernameInput ? usernameInput.value.trim() || 'Anonymous' : 'Anonymous';
+        const userId = Utils.getUserId();
+        
+        if (window.BingoTracker && BingoTracker.completedTiles) {
+            const completedCount = BingoTracker.completedTiles[BingoTracker.currentMode || 'regular'].size;
+            if (completedCount > 0) {
+                try {
+                    await Leaderboard.saveScore(userId, username, completedCount);
+                } catch (error) {
+                    console.error('Failed to save current progress:', error);
+                }
             }
         }
-    }
-},
+    },
 
     flushPendingScores: async () => {
         if (!Leaderboard.firebaseLeaderboard || !Leaderboard.firebaseLeaderboard.isAvailable()) {
