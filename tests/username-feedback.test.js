@@ -31,7 +31,7 @@ test('displays warning when username is blocked', () => {
   input.dispatchEvent(new dom.window.Event('input'));
 
   const feedback = dom.window.document.getElementById('username-feedback');
-  expect(feedback.textContent).toBe('Please choose a more appropriate username');
+  expect(feedback.textContent).toBe('Please choose a more appropriate username Using: "Clean"');
   expect(feedback.classList.contains('warning')).toBe(true);
   expect(input.classList.contains('invalid')).toBe(true);
 });
