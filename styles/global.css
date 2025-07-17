@@ -611,3 +611,21 @@ body {
 
     /* Mobile dropdown navigation removed */
 }
+/* Username validation feedback styles */
+#username.valid {
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+#username.invalid {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+#username-feedback.success {
+    color: #10b981;
+}
+
+#username-feedback.error {
+    color: #ef4444;
+}
