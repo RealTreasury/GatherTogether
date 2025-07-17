@@ -50,7 +50,7 @@ const COMPLETIONIST_CHALLENGES = [
     { text: 'Share testimony in 3 different venues', sublist: Array.from({length:3},(_,i)=>`Venue ${i+1}`), freeText: true },
     { text: 'Complete daily random acts of kindness', sublist: Array.from({length:7},(_,i)=>`Day ${i+1}`), freeText: true },
     { text: 'Fast for a meal and donate savings' },
-    { text: 'Get photos with all main speakers', sublist: ['Speaker 1', 'Speaker 2', 'etc.'], freeText: true },
+    { text: 'Get photos with all main speakers', sublist: ['Shelly Schwalm', 'Tanner Olsen', 'Brady Finnern'], freeText: true },
     { text: 'Visit every exhibitor booth', sublist: Array.from({length:50},(_,i)=>`Booth ${i+1}`) },
     { text: 'Attend all main sessions', sublist: ['Opening', 'Session 1', 'Session 2', 'etc.'], freeText: true }
 ];
