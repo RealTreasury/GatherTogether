@@ -32,6 +32,22 @@ class FirebaseLeaderboard {
         return this.initialized && this.db !== null;
     }
 
+    // Validate a username using the global UsernameValidator if available
+    validateUsername(username) {
+        try {
+            if (window.UsernameValidator && typeof window.UsernameValidator.getCleanUsername === 'function') {
+                return window.UsernameValidator.getCleanUsername(username);
+            }
+        } catch (err) {
+            console.warn('Username validation failed:', err);
+        }
+        if (typeof username === 'string') {
+            const trimmed = username.trim();
+            return trimmed || 'Anonymous';
+        }
+        return 'Anonymous';
+    }
+
     // Submit score to Firebase
     async submitScore(userId, username, score) {
         if (!this.isAvailable()) {
@@ -44,12 +60,13 @@ class FirebaseLeaderboard {
             const leaderboardRef = collection(this.db, 'leaderboard');
             const q = query(leaderboardRef, where('userId', '==', userId));
             const snapshot = await getDocs(q);
+            const cleanUsername = this.validateUsername(username);
 
             if (!snapshot.empty) {
                 // Update existing entry
                 const docRef = snapshot.docs[0];
                 await updateDoc(doc(this.db, 'leaderboard', docRef.id), {
-                    username: username,
+                    username: cleanUsername,
                     score: score,
                     lastUpdated: new Date().toISOString()
                 });
@@ -58,7 +75,7 @@ class FirebaseLeaderboard {
                 // Create new entry
                 await addDoc(leaderboardRef, {
                     userId: userId,
-                    username: username,
+                    username: cleanUsername,
                     score: score,
                     createdAt: new Date().toISOString(),
                     lastUpdated: new Date().toISOString()
