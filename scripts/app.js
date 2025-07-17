@@ -106,17 +106,22 @@ const App = {
     // Initialize all modules
     initModules: async () => {
         try {
-            // Initialize Leaderboard first to ensure its initialization promise
-            // is available for other modules.
-            // This call is synchronous and kicks off the async setup work.
+            // Initialize the leaderboard first and wait for Firebase to connect
             Leaderboard.init();
+            await Leaderboard.initializationPromise;
 
-            // Initialize other modules in parallel.
+            // Once the leaderboard is ready, initialize the other modules
             await Promise.all([
                 BingoTracker.init(),
                 VerseManager.init(),
                 PollManager.init()
             ]);
+
+            // Remove loading overlay and enable the bingo board
+            const bingoGrid = document.getElementById('bingo-grid');
+            if (bingoGrid) {
+                bingoGrid.classList.add('loaded');
+            }
         } catch (error) {
             console.error('Error initializing modules:', error);
             Utils.showNotification('Some features may not work properly', 'error');
