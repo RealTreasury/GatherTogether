@@ -210,6 +210,7 @@ const Leaderboard = {
         }
     },
 
+    // Enhanced renderLeaderboard with anti-cheat protection
     renderLeaderboard: (leaderboard) => {
         const list = document.getElementById('leaderboard-list');
         if (!list) return;
@@ -224,8 +225,24 @@ const Leaderboard = {
             return;
         }
 
+        // Filter out flagged users from leaderboard display
+        const filteredLeaderboard = Leaderboard.filterSuspiciousUsers(leaderboard);
+
         // Sort by score descending (in case not sorted)
-        const sortedLeaderboard = [...leaderboard].sort((a, b) => b.score - a.score).slice(0, 25);
+        const sortedLeaderboard = [...filteredLeaderboard]
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 25);
+
+        if (sortedLeaderboard.length === 0) {
+            list.innerHTML = `
+                <li class="text-center py-4 text-gray-500">
+                    <div class="text-4xl mb-2">🛡️</div>
+                    <div>All current scores are under review for fair play.</div>
+                    <div class="text-sm mt-2">Complete challenges authentically to appear here!</div>
+                </li>
+            `;
+            return;
+        }
 
         list.innerHTML = sortedLeaderboard.map((entry, index) => {
             const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
@@ -233,16 +250,20 @@ const Leaderboard = {
                            index === 1 ? 'bg-gray-100 border-gray-300' :
                            index === 2 ? 'bg-orange-100 border-orange-300' :
                            'bg-white border-gray-200';
-            
+
             // Handle different property names
             const username = entry.playerName || entry.username || 'Anonymous';
             const score = entry.score || 0;
-            
+
+            // Add verification badge for clean players
+            const verificationBadge = Leaderboard.isVerifiedPlayer(entry) ?
+                '<span class="text-green-500 text-xs ml-1" title="Verified fair play">✓</span>' : '';
+
             return `
                 <li class="flex justify-between items-center p-2 rounded-lg border ${bgClass} transition-all hover:shadow-md text-sm">
                     <div class="flex items-center">
                         <span class="w-6">${medal || `${index + 1}.`}</span>
-                        <span class="font-medium ml-1">${username}</span>
+                        <span class="font-medium ml-1">${username}${verificationBadge}</span>
                     </div>
                     <div class="flex items-center">
                         <span class="font-bold">${score}</span>
@@ -251,6 +272,18 @@ const Leaderboard = {
                 </li>
             `;
         }).join('');
+
+        // Show filtered count if any users were removed
+        const filteredCount = leaderboard.length - filteredLeaderboard.length;
+        if (filteredCount > 0) {
+            const filterNotice = document.createElement('div');
+            filterNotice.className = 'text-center text-xs text-gray-500 mt-2 p-2 bg-blue-50 rounded';
+            filterNotice.innerHTML = `
+                🛡️ ${filteredCount} entries hidden due to suspicious activity. 
+                <br>Play fairly to ensure your score appears!
+            `;
+            list.parentNode.appendChild(filterNotice);
+        }
     },
 
     showPlaceholderLeaderboard: () => {
@@ -294,6 +327,177 @@ const Leaderboard = {
         Leaderboard.loadLeaderboard();
     }
 };
+
+// PHASE 5: Enhanced leaderboard protection
+
+// NEW: Filter suspicious users from leaderboard
+Leaderboard.filterSuspiciousUsers = (leaderboard) => {
+    if (!window.AntiCheatSystem) return leaderboard;
+
+    return leaderboard.filter(entry => {
+        const userId = entry.id || entry.userId;
+        const score = entry.score || 0;
+
+        // Check if user is flagged by anti-cheat system
+        if (window.AntiCheatSystem.isFlagged(userId)) {
+            console.log(`Filtering flagged user from leaderboard: ${userId}`);
+            return false;
+        }
+
+        // Check for impossible scores (more than total challenges available)
+        const maxPossibleScore = 25 + 16; // 25 regular + 16 completionist challenges
+        if (score > maxPossibleScore) {
+            console.log(`Filtering user with impossible score: ${userId} (${score} > ${maxPossibleScore})`);
+            window.AntiCheatSystem.flagUser(userId, 'Impossible score detected');
+            return false;
+        }
+
+        // Check for suspicious rapid progression
+        if (Leaderboard.hasSuspiciousProgression(entry)) {
+            console.log(`Filtering user with suspicious progression: ${userId}`);
+            window.AntiCheatSystem.flagUser(userId, 'Suspicious rapid progression');
+            return false;
+        }
+
+        return true;
+    });
+};
+
+// NEW: Check for suspicious progression patterns
+Leaderboard.hasSuspiciousProgression = (entry) => {
+    const score = entry.score || 0;
+    const createdAt = entry.createdAt || entry.updatedAt;
+
+    if (!createdAt || score < 5) return false; // Skip check for low scores
+
+    try {
+        const accountAge = Date.now() - new Date(createdAt).getTime();
+        const hoursOld = accountAge / (1000 * 60 * 60);
+
+        // Flag if user completed more than 10 challenges in first hour
+        if (hoursOld < 1 && score > 10) {
+            return true;
+        }
+
+        // Flag if user has extremely high score relative to account age
+        const maxReasonableRate = 8; // Max 8 challenges per hour seems reasonable
+        if (score > (hoursOld * maxReasonableRate)) {
+            return true;
+        }
+
+        return false;
+    } catch (error) {
+        console.warn('Error checking progression for user:', entry, error);
+        return false;
+    }
+};
+
+// NEW: Check if player is verified (has consistent, reasonable progression)
+Leaderboard.isVerifiedPlayer = (entry) => {
+    const score = entry.score || 0;
+    const userId = entry.id || entry.userId;
+
+    // Consider players verified if they have moderate scores and aren't flagged
+    if (score >= 5 && score <= 30 && !window.AntiCheatSystem?.isFlagged(userId)) {
+        return true;
+    }
+
+    return false;
+};
+
+// Enhanced saveScore with additional validation
+const originalSaveScore = Leaderboard.saveScore;
+Leaderboard.saveScore = async (userId, username, score) => {
+    // Pre-submission validation
+    if (window.AntiCheatSystem?.isFlagged(userId)) {
+        console.warn('Blocked score submission from flagged user:', userId);
+        if (window.Utils?.showNotification) {
+            Utils.showNotification('Score submission blocked due to suspicious activity.', 'error');
+        }
+        return false;
+    }
+
+    // Check for reasonable score progression
+    const maxReasonableScore = 25 + 16; // Total possible challenges
+    if (score > maxReasonableScore) {
+        console.warn('Blocked impossible score submission:', { userId, score, max: maxReasonableScore });
+        window.AntiCheatSystem?.flagUser(userId, 'Attempted impossible score submission');
+        if (window.Utils?.showNotification) {
+            Utils.showNotification('Invalid score detected. Please refresh and try again.', 'error');
+        }
+        return false;
+    }
+
+    // Proceed with original save if validation passes
+    return originalSaveScore.call(Leaderboard, userId, username, score);
+};
+
+// NEW: Enhanced refresh with anti-cheat status indicator
+const originalRefresh = Leaderboard.refresh;
+Leaderboard.refresh = () => {
+    // Update anti-cheat status indicator
+    Leaderboard.updateAntiCheatStatus();
+
+    // Call original refresh
+    originalRefresh.call(Leaderboard);
+};
+
+// NEW: Update anti-cheat status indicator
+Leaderboard.updateAntiCheatStatus = () => {
+    const statusElement = document.getElementById('anticheat-status');
+    const statusText = document.getElementById('anticheat-text');
+
+    if (!statusElement || !statusText) return;
+
+    const flaggedCount = window.AntiCheatSystem?.flaggedUsers?.size || 0;
+    const eventStatus = window.AntiCheatSystem?.getEventStatus() || {};
+
+    // Show status indicator
+    statusElement.style.display = 'block';
+
+    if (flaggedCount > 0) {
+        statusElement.className = 'anticheat-status warning';
+        statusText.textContent = `Protection active (${flaggedCount} flagged)`;
+    } else if (eventStatus.isActive) {
+        statusElement.className = 'anticheat-status';
+        statusText.textContent = 'Fair play protection active';
+    } else {
+        statusElement.className = 'anticheat-status';
+        statusText.textContent = 'System ready';
+    }
+};
+
+// NEW: Admin function to manually review flagged users (for testing)
+Leaderboard.reviewFlaggedUsers = () => {
+    if (!window.AntiCheatSystem) {
+        console.log('Anti-cheat system not available');
+        return;
+    }
+
+    const flaggedUsers = Array.from(window.AntiCheatSystem.flaggedUsers);
+    console.log('Flagged users:', flaggedUsers);
+
+    const recentEvents = window.AntiCheatSystem.events
+        .filter(e => e.type === 'flag')
+        .slice(-10);
+
+    console.log('Recent flag events:', recentEvents);
+
+    return {
+        flaggedUsers,
+        recentEvents,
+        totalEvents: window.AntiCheatSystem.events.length
+    };
+};
+
+// Initialize anti-cheat status on load
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        Leaderboard.updateAntiCheatStatus();
+    }, 1000);
+});
+
+console.log('✅ Enhanced leaderboard protection loaded');
 
 // Expose globally for other modules
 window.Leaderboard = Leaderboard;
