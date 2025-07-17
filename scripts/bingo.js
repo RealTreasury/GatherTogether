@@ -95,7 +95,6 @@ const BingoTracker = {
                 } else {
                     BingoTracker.currentMode = type;
                     BingoTracker.hideLeaderboard();
-                    App.openTab('bingo');
                     BingoTracker.renderGrid();
                     BingoTracker.updateStats();
                 }
@@ -107,27 +106,38 @@ const BingoTracker = {
     },
 
     showLeaderboard: () => {
-        const section = document.getElementById('leaderboard');
+        // Hide ALL challenge content (both regular and hard mode)
         const grid = document.getElementById('bingo-grid');
         const stats = document.querySelector('.stats-container');
-        if (section) section.classList.remove('hidden');
+        const resetButtons = document.querySelector('.text-center.mt-6');
+
         if (grid) grid.classList.add('hidden');
         if (stats) stats.classList.add('hidden');
-        App.openTab('bingo');
-        App.currentTab = 'leaderboard';
+        if (resetButtons) resetButtons.classList.add('hidden');
+
+        // Show leaderboard section
+        const section = document.getElementById('leaderboard');
+        if (section) section.classList.remove('hidden');
+
+        // Load leaderboard data
         if (window.Leaderboard && typeof Leaderboard.loadLeaderboard === 'function') {
             Leaderboard.loadLeaderboard();
         }
     },
 
     hideLeaderboard: () => {
+        // Hide leaderboard section
         const section = document.getElementById('leaderboard');
+        if (section) section.classList.add('hidden');
+
+        // Show challenge content
         const grid = document.getElementById('bingo-grid');
         const stats = document.querySelector('.stats-container');
-        if (section) section.classList.add('hidden');
+        const resetButtons = document.querySelector('.text-center.mt-6');
+
         if (grid) grid.classList.remove('hidden');
         if (stats) stats.classList.remove('hidden');
-        App.currentTab = 'bingo';
+        if (resetButtons) resetButtons.classList.remove('hidden');
     },
 
     getCurrentChallenges: () => {
