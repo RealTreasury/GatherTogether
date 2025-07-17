@@ -3,6 +3,7 @@ const Leaderboard = {
     retryCount: 0,
     maxRetries: 3,
     isFirebaseEnabled: false,
+    firebaseLeaderboard: null,
 
     init: async () => {
         console.log('🚀 Initializing Leaderboard...');
@@ -18,6 +19,7 @@ const Leaderboard = {
 
         Leaderboard.showLoading();
         Leaderboard.setupSocket();
+        Leaderboard.initFirebase();
         await Leaderboard.loadLeaderboard();
     },
 
@@ -65,10 +67,44 @@ const Leaderboard = {
         }
     },
 
+    initFirebase: () => {
+        const connect = async () => {
+            if (typeof FirebaseLeaderboard !== 'function' || !window.firebaseApp) {
+                return;
+            }
+            Leaderboard.firebaseLeaderboard = new FirebaseLeaderboard();
+            const ok = await Leaderboard.firebaseLeaderboard.init(window.firebaseApp);
+            Leaderboard.isFirebaseEnabled = ok;
+            if (ok) {
+                Leaderboard.firebaseLeaderboard.subscribeToLeaderboard(data => {
+                    Leaderboard.renderLeaderboard(data);
+                }, 50);
+            }
+        };
+
+        if (window.firebaseApp) {
+            connect();
+        } else {
+            window.addEventListener('firebaseReady', connect, { once: true });
+        }
+    },
+
     loadLeaderboard: async () => {
-        // Use Firebase only - the Firebase leaderboard will handle this
-        console.log('📊 Using Firebase-only leaderboard');
-        return true;
+        if (Leaderboard.firebaseLeaderboard && Leaderboard.firebaseLeaderboard.isAvailable()) {
+            try {
+                const data = await Leaderboard.firebaseLeaderboard.getTopScores(50);
+                Leaderboard.renderLeaderboard(data);
+                return true;
+            } catch (error) {
+                console.error('Failed to load leaderboard from Firebase:', error);
+                Leaderboard.showError('Failed to load leaderboard');
+                return false;
+            }
+        }
+
+        console.warn('Firebase leaderboard not initialized');
+        Leaderboard.showError('Leaderboard unavailable');
+        return false;
     },
 
     saveScore: async (userId, username, score) => {
@@ -79,7 +115,16 @@ const Leaderboard = {
 
         try {
             console.log('💾 Saving score:', { userId, username, score });
-            
+
+            if (Leaderboard.firebaseLeaderboard && Leaderboard.firebaseLeaderboard.isAvailable()) {
+                try {
+                    await Leaderboard.firebaseLeaderboard.submitScore(userId, username, score);
+                    console.log('✅ Score submitted to Firebase');
+                } catch (fbError) {
+                    console.error('Firebase score submit failed:', fbError);
+                }
+            }
+
             // Try the leaderboard endpoint first (matches server expectations)
             const response = await fetch('/api/bingo/leaderboard', {
                 method: 'POST',
