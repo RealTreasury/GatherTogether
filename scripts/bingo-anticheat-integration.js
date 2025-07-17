@@ -29,7 +29,7 @@
                 if (validation.type === 'temporal_lock') {
                     const eventStatus = ac.getEventStatus();
                     if (eventStatus.dayOfEvent < 1) {
-                        message = `Challenges unlock on July 19th, 2025! Check back during the Youth Gathering.`;
+                        message = `Challenges unlock on July 17th, 2025! Check back during the Youth Gathering.`;
                     } else if (mode === 'completionist') {
                         message = `This Hard Mode challenge unlocks later in the event. Keep checking back!`;
                     }
@@ -168,7 +168,7 @@
                 const daysUntil = Math.ceil((ac.eventConfig.startDate - new Date()) / (1000 * 60 * 60 * 24));
                 statusContainer.innerHTML = `
                     <div class="text-center text-blue-600">
-                        ⏰ Challenges unlock in ${daysUntil} days (July 19th)
+                        ⏰ Challenges unlock in ${daysUntil} days (July 17th)
                     </div>
                 `;
             } else {

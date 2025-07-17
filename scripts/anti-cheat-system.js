@@ -10,7 +10,7 @@ const AntiCheatSystem = {
     
     // NEW: Event date configuration
     eventConfig: {
-        startDate: new Date('2025-07-19T00:00:00'), // July 19, 2025
+        startDate: new Date('2025-07-17T00:00:00'), // July 17, 2025
         endDate: new Date('2025-07-25T23:59:59'),   // July 25, 2025
         isEventActive: function() {
             const now = new Date();
