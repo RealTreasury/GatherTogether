@@ -6,7 +6,9 @@ vanilla JavaScript without external frameworks. The bingo tracker now supports
 both a regular card and a more difficult **completionist** card that can be
 toggled in the interface. Completionist challenges with multiple tasks open in a
 sublist view that can be dismissed via the close button, clicking outside the
-list or pressing <kbd>Esc</kbd>.
+list or pressing <kbd>Esc</kbd>. For sublists with numbered placeholders such as
+"Meet people from 5 different countries," tapping a placeholder lets you enter
+the actual item name so each country can be recorded individually.
 An "Invite a Friend" button lets you quickly share the site link using your
 device's native share sheet or by copying the invite text to the clipboard.
 
