@@ -48,11 +48,6 @@
                     <button class="card-type-btn active" data-type="regular">🎯 Regular</button>
                     <button class="card-type-btn completionist" data-type="completionist">🏆 Completionist</button>
                 </div>
-
-                <div class="bingo-grid regular mb-6" id="bingo-grid">
-                    <!-- Bingo tiles will be generated here -->
-                </div>
-
                 <div class="stats-container">
                     <div class="stat-card">
                         <div class="stat-number" id="completed-count">0</div>
@@ -71,6 +66,11 @@
                         <div class="stat-label">Achievements</div>
                     </div>
                 </div>
+
+                <div class="bingo-grid regular mb-6" id="bingo-grid">
+                    <!-- Bingo tiles will be generated here -->
+                </div>
+
 
                 <div class="text-center mt-6 flex justify-center space-x-4">
                     <button class="btn-primary" onclick="BingoTracker.reset()">Reset Progress</button>
