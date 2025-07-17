@@ -48,7 +48,7 @@ const COMPLETIONIST_CHALLENGES = [
     { text: 'Document journey with 100+ photos', sublist: Array.from({length:100},(_,i)=>`Photo ${i+1}`) },
     { text: 'Learn 5 new hymns/songs by heart', sublist: Array.from({length:5},(_,i)=>`Song ${i+1}`), freeText: true },
     { text: 'Share testimony in 3 different venues', sublist: Array.from({length:3},(_,i)=>`Venue ${i+1}`), freeText: true },
-    { text: 'Complete daily random acts of kindness', sublist: Array.from({length:7},(_,i)=>`Day ${i+1}`) },
+    { text: 'Complete daily random acts of kindness', sublist: Array.from({length:7},(_,i)=>`Day ${i+1}`), freeText: true },
     { text: 'Fast for a meal and donate savings' },
     { text: 'Get photos with all main speakers', sublist: ['Speaker 1', 'Speaker 2', 'etc.'], freeText: true },
     { text: 'Visit every exhibitor booth', sublist: Array.from({length:50},(_,i)=>`Booth ${i+1}`) },
@@ -318,7 +318,7 @@ const BingoTracker = {
             if (challenge.freeText) {
                 const val = progress[i] || '';
                 const selected = val ? 'selected' : '';
-                return `<li><button class="sub-item-btn ${selected}" data-sub="${i}">${val || item}</button></li>`;
+                return `<li><input class="sub-item-input ${selected}" data-sub="${i}" placeholder="${item}" value="${val}"></li>`;
             }
             const selected = progress.has(i) ? 'selected' : '';
             return `<li><button class="sub-item-btn ${selected}" data-sub="${i}">${item}</button></li>`;
@@ -334,52 +334,50 @@ const BingoTracker = {
         const handleClick = (e) => {
             if (e.target.matches('.sub-item-btn')) {
                 const sub = parseInt(e.target.dataset.sub,10);
-                if (challenge.freeText) {
-                    const current = progress[sub] || '';
-                    const input = prompt('Enter text', current);
-                    if (input !== null) {
-                        const trimmed = input.trim();
-                        if (trimmed === '') {
-                            delete progress[sub];
-                            e.target.classList.remove('selected');
-                            e.target.textContent = challenge.sublist[sub];
-                        } else {
-                            progress[sub] = trimmed;
-                            e.target.classList.add('selected');
-                            e.target.textContent = trimmed;
-                        }
-                        BingoTracker.subItemProgress[index] = progress;
-                        if (Object.keys(progress).length === challenge.sublist.length) {
-                            BingoTracker.completedTiles.completionist.add(index);
-                        } else {
-                            BingoTracker.completedTiles.completionist.delete(index);
-                        }
-                        BingoTracker.saveProgress();
-                        BingoTracker.renderGrid();
-                        BingoTracker.updateStats();
-                    }
+                if (progress.has(sub)) {
+                    progress.delete(sub);
+                    e.target.classList.remove('selected');
                 } else {
-                    if (progress.has(sub)) {
-                        progress.delete(sub);
-                        e.target.classList.remove('selected');
-                    } else {
-                        progress.add(sub);
-                        e.target.classList.add('selected');
-                    }
-                    BingoTracker.subItemProgress[index] = [...progress];
-                    if (progress.size === challenge.sublist.length) {
-                        BingoTracker.completedTiles.completionist.add(index);
-                    } else {
-                        BingoTracker.completedTiles.completionist.delete(index);
-                    }
-                    BingoTracker.saveProgress();
-                    BingoTracker.renderGrid();
-                    BingoTracker.updateStats();
+                    progress.add(sub);
+                    e.target.classList.add('selected');
                 }
+                BingoTracker.subItemProgress[index] = [...progress];
+                if (progress.size === challenge.sublist.length) {
+                    BingoTracker.completedTiles.completionist.add(index);
+                } else {
+                    BingoTracker.completedTiles.completionist.delete(index);
+                }
+                BingoTracker.saveProgress();
+                BingoTracker.renderGrid();
+                BingoTracker.updateStats();
+            }
+        };
+
+        const handleInput = (e) => {
+            if (e.target.matches('.sub-item-input')) {
+                const sub = parseInt(e.target.dataset.sub,10);
+                const trimmed = e.target.value.trim();
+                if (trimmed === '') {
+                    delete progress[sub];
+                    e.target.classList.remove('selected');
+                } else {
+                    progress[sub] = trimmed;
+                    e.target.classList.add('selected');
+                }
+                BingoTracker.subItemProgress[index] = progress;
+                if (Object.keys(progress).length === challenge.sublist.length) {
+                    BingoTracker.completedTiles.completionist.add(index);
+                } else {
+                    BingoTracker.completedTiles.completionist.delete(index);
+                }
+                BingoTracker.saveProgress();
+                BingoTracker.renderGrid();
+                BingoTracker.updateStats();
             }
         };
 
         overlay.addEventListener('click', handleClick);
+        overlay.addEventListener('input', handleInput);
         overlay.addEventListener('click', (e) => {
             if (e.target.classList.contains('sublist-close') || e.target === overlay) {
                 BingoTracker.closeSublist();
