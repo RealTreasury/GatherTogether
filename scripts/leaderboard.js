@@ -1,4 +1,5 @@
 const Leaderboard = {
+    socket: null,
     init: () => {
         const usernameInput = document.getElementById('username');
         if (usernameInput) {
@@ -13,6 +14,7 @@ const Leaderboard = {
             });
         }
         Leaderboard.loadLeaderboard();
+        Leaderboard.setupSocket();
     },
 
     loadLeaderboard: async () => {
@@ -43,6 +45,14 @@ const Leaderboard = {
                 <span class="font-bold">${entry.score}</span>
             </li>
         `).join('');
+    },
+
+    setupSocket: () => {
+        if (typeof io !== 'function' || Leaderboard.socket) return;
+        Leaderboard.socket = io();
+        Leaderboard.socket.on('leaderboardUpdate', data => {
+            Leaderboard.renderLeaderboard(data);
+        });
     }
 };
 
