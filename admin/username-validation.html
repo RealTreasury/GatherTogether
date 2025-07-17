@@ -430,7 +430,9 @@
         function loadBlockedWords() {
             const container = document.getElementById('blocked-words-list');
             const blockedWords = [
-                'damn', 'hell', 'crap', 'stupid', 'idiot', 'hate', 'kill', 'sex', 'porn', 'drug'
+                'damn', 'hell', 'crap', 'stupid', 'idiot', 'hate', 'kill', 'sex', 'porn', 'drug',
+                // Toilet talk / body function references
+                'poop', 'poo', 'pee', 'peepee', 'poopoo', 'fart', 'butt', 'toilet'
             ];
 
             container.innerHTML = blockedWords.map(word => `
