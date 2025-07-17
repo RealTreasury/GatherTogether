@@ -107,14 +107,7 @@ const BingoTracker = {
         const grid = document.getElementById('bingo-grid');
         if (!grid) return;
 
-        // Preserve the loading overlay if it exists so that we can
-        // show it while the application is initializing. Clearing
-        // innerHTML would remove it, so reattach after the reset.
-        const overlay = grid.querySelector('.loading-overlay');
-        grid.innerHTML = '';
-        if (overlay) {
-            grid.appendChild(overlay);
-        }
+        grid.innerHTML = ''; // Clear previous tiles
 
         const challenges = BingoTracker.getCurrentChallenges();
         const completedSet = BingoTracker.completedTiles[BingoTracker.currentMode];
