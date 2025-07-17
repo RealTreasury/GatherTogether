@@ -5,7 +5,9 @@ const App = {
     init: async () => {
         // Initialize all modules
         App.setupEventListeners();
-        ServerStatus.init();
+        if (typeof ServerStatus !== 'undefined' && typeof ServerStatus.init === 'function') {
+            ServerStatus.init();
+        }
         BingoTracker.init();
         VerseManager.init();
         Polls.init();
