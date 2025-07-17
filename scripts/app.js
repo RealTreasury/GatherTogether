@@ -25,10 +25,7 @@ const App = {
             if (leaderboardBtn) leaderboardBtn.classList.remove('active');
         }
 
-        const nav = document.getElementById('nav');
-        if (nav && nav.classList.contains('open')) {
-            nav.classList.remove('open');
-        }
+        // navigation menu removed
     },
     // Initialize the application
     init: async () => {
@@ -72,8 +69,6 @@ const App = {
             App.currentTab = activeLink.getAttribute('href').substring(1);
         }
 
-        const menuToggle = document.getElementById('menu-toggle');
-        const nav = document.getElementById('nav');
 
         // Tab navigation
         tabLinks.forEach(link => {
@@ -84,12 +79,7 @@ const App = {
             });
         });
 
-
-
-        // Mobile menu toggle
-        menuToggle.addEventListener('click', () => {
-            nav.classList.toggle('open');
-        });
+        // Mobile menu removed
     }
 };
 
