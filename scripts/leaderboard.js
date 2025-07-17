@@ -108,11 +108,11 @@ const Leaderboard = {
                 Leaderboard.renderLeaderboard(scores);
             } catch (error) {
                 console.error('❌ Failed to load leaderboard from Firebase:', error);
-                Leaderboard.showError('Could not load leaderboard.');
+                Leaderboard.showPlaceholderLeaderboard();
             }
         } else {
             console.log('📊 Using Firebase-only leaderboard, but Firebase is not available.');
-            Leaderboard.showError('Firebase is not connected.');
+            Leaderboard.showPlaceholderLeaderboard();
         }
         return true;
     },
@@ -178,9 +178,9 @@ const Leaderboard = {
 
         list.innerHTML = sortedLeaderboard.map((entry, index) => {
             const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
-            const bgClass = index === 0 ? 'bg-yellow-100 border-yellow-300' : 
-                           index === 1 ? 'bg-gray-100 border-gray-300' : 
-                           index === 2 ? 'bg-orange-100 border-orange-300' : 
+            const bgClass = index === 0 ? 'bg-yellow-100 border-yellow-300' :
+                           index === 1 ? 'bg-gray-100 border-gray-300' :
+                           index === 2 ? 'bg-orange-100 border-orange-300' :
                            'bg-white border-gray-200';
             
             // Handle different property names from server
@@ -200,6 +200,22 @@ const Leaderboard = {
                 </li>
             `;
         }).join('');
+    },
+
+    showPlaceholderLeaderboard: () => {
+        const placeholders = [
+            { username: 'LutherLad', score: 30 },
+            { username: 'GraceGal', score: 25 },
+            { username: 'AugsburgAce', score: 20 },
+            { username: 'HymnHero', score: 15 },
+            { username: 'WittenbergWizard', score: 10 }
+        ];
+        Leaderboard.renderLeaderboard(placeholders);
+        const list = document.getElementById('leaderboard-list');
+        if (list) {
+            list.insertAdjacentHTML('afterbegin',
+                '<li class="text-center py-2 text-gray-500">Connection lost - showing sample scores</li>');
+        }
     },
 
     showError: (message) => {
