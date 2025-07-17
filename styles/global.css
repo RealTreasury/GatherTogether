@@ -197,6 +197,14 @@ body {
     margin-bottom: 2rem;
 }
 
+.total-points {
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-purple);
+    margin-bottom: 1rem;
+}
+
 .card-type-btn {
     padding: 0.75rem 1.5rem;
     border-radius: 0.5rem;
