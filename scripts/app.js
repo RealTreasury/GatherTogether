@@ -1,6 +1,7 @@
 // Main application logic
 
 const App = {
+    currentTab: null,
     // Initialize the application
     init: async () => {
         // Initialize all modules
@@ -40,6 +41,10 @@ const App = {
     setupEventListeners: () => {
         const tabLinks = document.querySelectorAll('.tab-link');
         const tabSections = document.querySelectorAll('.tab-section');
+        const activeLink = document.querySelector('.tab-link.active');
+        if (activeLink) {
+            App.currentTab = activeLink.getAttribute('href').substring(1);
+        }
         const menuToggle = document.getElementById('menu-toggle');
         const nav = document.getElementById('nav');
 
@@ -48,6 +53,7 @@ const App = {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const targetId = link.getAttribute('href').substring(1);
+                App.currentTab = targetId;
                 
                 tabSections.forEach(section => {
                     section.classList.toggle('hidden', section.id !== targetId);
