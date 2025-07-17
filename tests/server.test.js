@@ -109,3 +109,19 @@ test('GET /api/bingo/lines/:userId returns line count', async () => {
   expect(res.status).toBe(200);
   expect(res.body.lines).toBe(3);
 });
+
+test('Submitting zero completed tiles resets leaderboard score', async () => {
+  await request(app)
+    .post('/api/bingo/progress')
+    .send({ userId: 'resetUser', username: 'Reset', completedTiles: [1, 2] });
+
+  await request(app)
+    .post('/api/bingo/progress')
+    .send({ userId: 'resetUser', username: 'Reset', completedTiles: [] });
+
+  const res = await request(app).get('/api/bingo/leaderboard');
+  expect(res.status).toBe(200);
+  const entry = res.body.find(e => e.playerName === 'Reset');
+  expect(entry).toBeTruthy();
+  expect(entry.score).toBe(0);
+});

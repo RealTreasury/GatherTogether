@@ -325,7 +325,8 @@ const BingoTracker = {
         const username = usernameInput ? usernameInput.value || 'Anonymous' : 'Anonymous';
         const score = BingoTracker.countAchievements();
 
-        if (score > 0 && window.Leaderboard && typeof Leaderboard.saveScore === 'function') {
+        // Always save score so a user can reset their leaderboard entry to zero
+        if (window.Leaderboard && typeof Leaderboard.saveScore === 'function') {
             try {
                 // Ensure Firebase is ready before attempting to save
                 await Leaderboard.initializationPromise;
