@@ -80,17 +80,11 @@
                         <div class="text-center mb-6">
                             <h2 class="text-3xl font-bold text-gray-800 mb-2">Top 25 Challenge Leaders</h2>
                             <p class="text-gray-600">See who's leading the Faith Challenge!</p>
-                            <div id="backend-status" class="text-sm text-gray-500 mt-2">
-                                <span id="firebase-status">🔥 Firebase: <span class="loading">Connecting...</span></span>
-                                <span class="mx-2">|</span>
-                                <span id="nodejs-status">📡 Node.js: <span class="loading">Connecting...</span></span>
-                            </div>
                         </div>
                         <ul id="leaderboard-list" class="space-y-1 text-sm max-w-md mx-auto"></ul>
                         <div class="text-center mt-4 space-x-2">
                             <button id="submit-score-btn" onclick="Leaderboard.saveCurrentProgress()" class="btn-primary">Submit Score</button>
                             <button onclick="Leaderboard.refresh()" class="btn-secondary">Refresh Leaderboard</button>
-                            <button id="start-challenges-btn" class="btn-secondary">Start Challenges</button>
                         </div>
                     </div>
                 </div>
