@@ -26,8 +26,12 @@ const Leaderboard = {
         const usernameInput = document.getElementById('username');
         if (usernameInput) {
             usernameInput.value = localStorage.getItem('username') || '';
+            usernameInput.addEventListener('input', Leaderboard.validateUsernameInput);
             usernameInput.addEventListener('change', () => {
-                localStorage.setItem('username', usernameInput.value);
+                const validation = Leaderboard.validateAndCleanUsername(usernameInput.value);
+                const cleanUsername = validation.cleanUsername;
+                usernameInput.value = cleanUsername;
+                localStorage.setItem('username', cleanUsername);
                 Leaderboard.saveCurrentProgress();
             });
         }
@@ -148,14 +152,17 @@ const Leaderboard = {
 
     saveCurrentProgress: async () => {
         const usernameInput = document.getElementById('username');
-        const username = usernameInput ? usernameInput.value.trim() || 'Anonymous' : 'Anonymous';
+        const username = usernameInput ? usernameInput.value.trim() : '';
+        const validation = Leaderboard.validateAndCleanUsername(username);
+        const cleanUsername = validation.cleanUsername;
+        const finalName = cleanUsername || 'Anonymous';
         const userId = Utils.getUserId();
         
         if (window.BingoTracker && BingoTracker.completedTiles) {
             const completedCount = BingoTracker.completedTiles[BingoTracker.currentMode || 'regular'].size;
             if (completedCount > 0) {
                 try {
-                    await Leaderboard.saveScore(userId, username, completedCount);
+                    await Leaderboard.saveScore(userId, finalName, completedCount);
                 } catch (error) {
                     console.error('Failed to save current progress:', error);
                 }
