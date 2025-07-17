@@ -140,5 +140,35 @@
     <script src="scripts/polls.js"></script>
     <script src="scripts/leaderboard.js"></script>
     <script src="scripts/app.js"></script>
+
+    <!-- Firebase config and initialization -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "your-project-id.firebaseapp.com",
+            projectId: "your-project-id",
+            storageBucket: "your-project-id.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        window.firebaseDB = db; // Make it accessible globally
+    </script>
+
+    <script type="module">
+        import { submitScore, getTopScores } from './leaderboard.js';
+
+        const db = window.firebaseDB;
+
+        await submitScore(db, 'tim123', 'Tim', 150);
+
+        const topPlayers = await getTopScores(db);
+        console.log(topPlayers);
+    </script>
 </body>
 </html>
