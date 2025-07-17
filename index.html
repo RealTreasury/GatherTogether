@@ -27,7 +27,7 @@
                     </button>
                     <button id="invite-btn-mobile" class="btn-primary md:hidden ml-2">Invite a Friend</button>
                     <ul id="nav" class="hidden fixed nav-glass p-8 flex flex-col justify-center items-center space-y-6 text-2xl z-50 md:static md:flex md:flex-row md:space-x-2 md:space-y-0 md:p-0 md:relative md:inset-auto md:text-base md:rounded-md">
-                        <li><a href="#bingo" class="tab-link active">Bingo Tracker</a></li>
+                        <li><a href="#bingo" class="tab-link active">Challenge Tracker</a></li>
                         <li><a href="#verse" class="tab-link">Hourly Verse</a></li>
                         <li><a href="#polls" class="tab-link">Polls & Q&A</a></li>
                         <li><a href="#leaderboard" class="tab-link">Leaderboard</a></li>
@@ -41,7 +41,7 @@
             <section id="bingo" class="tab-section">
                 <div class="glass p-6">
                     <div class="text-center mb-6">
-                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Faith Challenge Bingo</h2>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Faith Challenges</h2>
                         <p class="text-gray-600">Complete challenges to grow in faith during the gathering!</p>
                     </div>
 
@@ -61,10 +61,6 @@
                         <div class="stat-card">
                             <div class="stat-number" id="progress-percent">0%</div>
                             <div class="stat-label">Progress</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="bingo-count">0</div>
-                            <div class="stat-label">Bingo Lines</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-number" id="achievement-count">0</div>
@@ -118,7 +114,7 @@
             <section id="leaderboard" class="tab-section hidden">
                 <div class="glass p-6">
                     <div class="text-center mb-6">
-                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Bingo Leaderboard</h2>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Challenge Leaderboard</h2>
                         <p class="text-gray-600">See who's leading the Faith Challenge!</p>
                         <div id="backend-status" class="text-sm text-gray-500 mt-2">
                             <span id="firebase-status">🔥 Firebase: <span class="loading">Connecting...</span></span>

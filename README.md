@@ -3,8 +3,8 @@
 This demo is publicly hosted through [GitHub Pages](https://realtreasury.github.io/GatherTogether/).
 It is **not** running on WordPress.com and the page is served directly rather than being embedded in an iframe. Simply visit the link above to use the
 app without any additional setup. The project is intentionally lightweight and uses
-vanilla JavaScript without external frameworks. The bingo tracker now supports
-both a regular card and a more difficult **completionist** card that can be
+vanilla JavaScript without external frameworks. The challenge tracker now supports
+both a regular list and a more difficult **completionist** mode that can be
 toggled in the interface. Completionist challenges with multiple tasks open in a
 sublist view that can be dismissed via the close button, clicking outside the
 list or pressing <kbd>Esc</kbd>. For sublists with numbered placeholders such as
@@ -24,7 +24,7 @@ GatherTogether/
 │   └── global.css          # All styling
 ├── scripts/
 │   ├── app.js              # Main app initialization
-│   ├── bingo.js            # Bingo tracker functionality
+│   ├── bingo.js            # Challenge tracker functionality
 │   ├── verse.js            # Bible verse management
 │   ├── polls.js            # Polls and Q&A
 │   ├── storage.js          # Local storage utilities
@@ -34,7 +34,7 @@ GatherTogether/
 
 ## Usage
 
-The project is now entirely static. All data for polls and the bingo
+The project is now entirely static. All data for polls and the challenge
 leaderboard is stored directly in Firebase **Firestore** from the browser.
 Simply open `index.html` or visit the live GitHub Pages site and the app
 will connect to Firebase without any additional server setup.
