@@ -50,6 +50,14 @@ development provide a Firebase service account file at
 set environment variables such as `FIREBASE_PROJECT_ID`, `FIREBASE_PRIVATE_KEY`
 and `FIREBASE_CLIENT_EMAIL` instead.
 
+### Google Sheets backend (optional)
+
+If you prefer not to use Firebase, set `GOOGLE_SHEETS_ID`,
+`GOOGLE_SHEETS_CLIENT_EMAIL` and `GOOGLE_SHEETS_PRIVATE_KEY` when starting the
+backend. When these variables are present the server stores leaderboard rows in
+a Google Sheet using the Sheets API. Install dependencies in the backend folder
+with `npm install` before running.
+
 ### Local server.js (optional)
 
 The original `server.js` at the repository root stores data in JSON files and
