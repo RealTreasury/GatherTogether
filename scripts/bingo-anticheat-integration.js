@@ -10,7 +10,7 @@
         const userId = window.Utils && typeof Utils.getUserId === 'function'
             ? Utils.getUserId()
             : 'anonymous';
-        ac.recordTileCompletion(userId, index);
+        ac.recordTileCompletion(userId, index, tracker.currentMode || 'regular');
         return originalToggle.call(tracker, index);
     };
 })();
