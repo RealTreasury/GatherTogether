@@ -1,7 +1,7 @@
 # GatherTogether
 
 This demo is publicly hosted through [GitHub Pages](https://realtreasury.github.io/GatherTogether/).
-It is **not** running on WordPress.com. Simply visit the link above to use the
+It is **not** running on WordPress.com and the page is served directly rather than being embedded in an iframe. Simply visit the link above to use the
 app without any additional setup. The project is intentionally lightweight and uses
 vanilla JavaScript without external frameworks. The bingo tracker now supports
 both a regular card and a more difficult **completionist** card that can be
@@ -36,7 +36,7 @@ GatherTogether/
 
 ### Firebase backend
 
-Polls and leaderboard data are now stored in Firebase. Run the Node service
+Polls and leaderboard data are stored in Firebase **Firestore**. Run the Node service
 inside `gathertogether-backend/` to expose the required API:
 
 ```bash
@@ -77,7 +77,7 @@ username and email) to `data/users.json`.
 
 ### Embedding in WordPress (optional)
 
-The official app runs from GitHub Pages and does **not** require WordPress.
+The official app runs from GitHub Pages and does **not** require WordPress or any iframe.
 If you wish to integrate it into a WordPress.com site, deploy the frontend
 files (`index.html`, `styles/`, `scripts/`) to your media library or theme and
 embed the page via `<iframe>`:
