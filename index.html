@@ -153,7 +153,7 @@
 
     <!-- Firebase config and initialization -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
         import { 
             getFirestore, 
             collection, 
@@ -167,16 +167,15 @@
             getDocs, 
             onSnapshot,
             deleteDoc 
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
-        // 🔥 REPLACE THIS WITH YOUR ACTUAL FIREBASE CONFIG FROM THE CONSOLE
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY_FROM_FIREBASE_CONSOLE",
-            authDomain: "your-project-id.firebaseapp.com",
-            projectId: "your-project-id",
-            storageBucket: "your-project-id.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyA5b2wM78FddDtOh61yN7hVCT7Da7xoJos",
+            authDomain: "gathertogether-1090b.firebaseapp.com",
+            projectId: "gathertogether-1090b",
+            storageBucket: "gathertogether-1090b.firebasestorage.app",
+            messagingSenderId: "65697335784",
+            appId: "1:65697335784:web:294cbb03face37ac9dfc5d"
         };
 
         try {
