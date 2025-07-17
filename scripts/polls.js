@@ -31,14 +31,13 @@ const SAMPLE_POLLS = [
 const PollManager = {
     polls: [],
     userResponses: new Map(),
-    socket: null,
 
     // Initialize polls
     init: async () => {
         await PollManager.loadPolls();
         PollManager.loadResponses();
         PollManager.renderPolls();
-        PollManager.setupSocket();
+        // No Socket.IO setup needed for static hosting
     },
 
     // Load polls (using sample data only)
@@ -102,26 +101,40 @@ const PollManager = {
         `;
     },
 
-    // Handle voting by sending the selection to the API
+    // Handle voting (local only for static hosting)
     vote: async (pollId, optionId, allowMultiple) => {
         const poll = PollManager.polls.find(p => p.id === pollId);
         if (!poll) return;
 
         let userResponse = PollManager.userResponses.get(pollId) || [];
-        let shouldSend = false;
-
+        
         if (allowMultiple) {
             if (userResponse.includes(optionId)) {
-                // Toggle off locally (cannot remove vote server-side)
+                // Toggle off
                 userResponse = userResponse.filter(id => id !== optionId);
+                // Decrease vote count
+                const option = poll.options.find(o => o.id === optionId);
+                if (option && option.votes > 0) option.votes--;
             } else {
+                // Toggle on
                 userResponse.push(optionId);
-                shouldSend = true;
+                // Increase vote count
+                const option = poll.options.find(o => o.id === optionId);
+                if (option) option.votes++;
             }
         } else {
+            // Remove previous vote
+            if (userResponse.length > 0) {
+                const prevOptionId = userResponse[0];
+                const prevOption = poll.options.find(o => o.id === prevOptionId);
+                if (prevOption && prevOption.votes > 0) prevOption.votes--;
+            }
+            
             if (!userResponse.includes(optionId)) {
                 userResponse = [optionId];
-                shouldSend = true;
+                // Add new vote
+                const option = poll.options.find(o => o.id === optionId);
+                if (option) option.votes++;
             } else {
                 userResponse = [];
             }
@@ -129,21 +142,6 @@ const PollManager = {
 
         PollManager.userResponses.set(pollId, userResponse);
         PollManager.saveResponses();
-
-        if (shouldSend) {
-            try {
-                const userId = Utils.getUserId();
-                await fetch(`/api/polls/${pollId}/vote`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ optionId, userId })
-                });
-                await PollManager.loadPolls();
-            } catch (err) {
-                console.error('Failed to submit vote:', err);
-            }
-        }
-
         PollManager.renderPolls();
     },
 
@@ -164,16 +162,6 @@ const PollManager = {
     loadResponses: () => {
         const saved = Storage.load(Storage.KEYS.POLL_RESPONSES, {});
         PollManager.userResponses = new Map(Object.entries(saved));
-    },
-
-    // Setup realtime updates via Socket.IO
-    setupSocket: () => {
-        if (typeof io !== 'function') return;
-        PollManager.socket = io();
-        PollManager.socket.on('pollsUpdate', polls => {
-            PollManager.polls = polls;
-            PollManager.renderPolls();
-        });
     },
 
     // Get poll results
