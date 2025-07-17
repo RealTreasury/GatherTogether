@@ -10,7 +10,7 @@ const App = {
         }
         BingoTracker.init();
         VerseManager.init();
-        PollManager.init();
+        PollManager.init(); // Corrected from Polls.init()
         Leaderboard.init();
 
         try {
