@@ -114,6 +114,7 @@ const BingoTracker = {
         if (grid) grid.classList.add('hidden');
         if (stats) stats.classList.add('hidden');
         App.openTab('bingo');
+        App.currentTab = 'leaderboard';
         if (window.Leaderboard && typeof Leaderboard.loadLeaderboard === 'function') {
             Leaderboard.loadLeaderboard();
         }
@@ -126,6 +127,7 @@ const BingoTracker = {
         if (section) section.classList.add('hidden');
         if (grid) grid.classList.remove('hidden');
         if (stats) stats.classList.remove('hidden');
+        App.currentTab = 'bingo';
     },
 
     getCurrentChallenges: () => {
