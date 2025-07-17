@@ -38,21 +38,21 @@ const COMPLETIONIST_CHALLENGES = [
     { text: 'Meet people from 5 different countries', sublist: Array.from({length:5},(_,i)=>`Country ${i+1}`) },
     { text: 'Collect all district booth prizes', sublist: Array.from({length:10},(_,i)=>`Prize ${i+1}`) },
     { text: 'Compete in every convention center game', sublist: Array.from({length:8},(_,i)=>`Game ${i+1}`) },
-    { text: 'Attend 15+ sessions/workshops', sublist: Array.from({length:15},(_,i)=>`Session ${i+1}`) },
+    { text: 'Attend 15+ sessions/workshops', sublist: Array.from({length:15},(_,i)=>`Session ${i+1}`), freeText: true },
     { text: 'Take photos at all major landmarks', sublist: Array.from({length:10},(_,i)=>`Landmark ${i+1}`) },
     { text: 'Volunteer for 3+ service opportunities', sublist: Array.from({length:3},(_,i)=>`Service ${i+1}`) },
-    { text: 'Get autographs from all guest speakers', sublist: Array.from({length:5},(_,i)=>`Speaker ${i+1}`) },
-    { text: 'Participate in every worship service', sublist: Array.from({length:5},(_,i)=>`Service ${i+1}`) },
+    { text: 'Get autographs from all guest speakers', sublist: Array.from({length:5},(_,i)=>`Speaker ${i+1}`), freeText: true },
+    { text: 'Participate in every worship service', sublist: Array.from({length:5},(_,i)=>`Service ${i+1}`), freeText: true },
     { text: 'Lead a prayer circle with strangers' },
     { text: 'Exchange contacts with 25+ new friends', sublist: Array.from({length:25},(_,i)=>`Friend ${i+1}`) },
     { text: 'Document journey with 100+ photos', sublist: Array.from({length:100},(_,i)=>`Photo ${i+1}`) },
-    { text: 'Learn 5 new hymns/songs by heart', sublist: Array.from({length:5},(_,i)=>`Song ${i+1}`) },
-    { text: 'Share testimony in 3 different venues', sublist: Array.from({length:3},(_,i)=>`Venue ${i+1}`) },
+    { text: 'Learn 5 new hymns/songs by heart', sublist: Array.from({length:5},(_,i)=>`Song ${i+1}`), freeText: true },
+    { text: 'Share testimony in 3 different venues', sublist: Array.from({length:3},(_,i)=>`Venue ${i+1}`), freeText: true },
     { text: 'Complete daily random acts of kindness', sublist: Array.from({length:7},(_,i)=>`Day ${i+1}`) },
     { text: 'Fast for a meal and donate savings' },
-    { text: 'Get photos with all main speakers', sublist: ['Speaker 1', 'Speaker 2', 'etc.'] },
+    { text: 'Get photos with all main speakers', sublist: ['Speaker 1', 'Speaker 2', 'etc.'], freeText: true },
     { text: 'Visit every exhibitor booth', sublist: Array.from({length:50},(_,i)=>`Booth ${i+1}`) },
-    { text: 'Attend all main sessions', sublist: ['Opening', 'Session 1', 'Session 2', 'etc.'] }
+    { text: 'Attend all main sessions', sublist: ['Opening', 'Session 1', 'Session 2', 'etc.'], freeText: true }
 ];
 
 const BingoTracker = {
@@ -95,6 +95,13 @@ const BingoTracker = {
         return BingoTracker.currentMode === 'regular' ? 5 : 4;
     },
 
+    getProgressCount: (progress) => {
+        if (Array.isArray(progress)) return progress.length;
+        if (progress && typeof progress === 'object') return Object.keys(progress).length;
+        if (progress instanceof Set) return progress.size;
+        return 0;
+    },
+
     // Render the bingo grid
     renderGrid: () => {
         const grid = document.getElementById('bingo-grid');
@@ -122,7 +129,8 @@ const BingoTracker = {
             const label = typeof challenge === 'string' ? challenge : challenge.text;
             tile.innerHTML = `<div class="bingo-tile-text">${label}</div>`;
             if (typeof challenge !== 'string' && challenge.sublist) {
-                const progress = BingoTracker.subItemProgress[index] ? BingoTracker.subItemProgress[index].length : 0;
+                const stored = BingoTracker.subItemProgress[index];
+                const progress = BingoTracker.getProgressCount(stored);
                 tile.innerHTML += `<div class="bingo-sub-progress">${progress}/${challenge.sublist.length}</div>`;
             }
             tile.addEventListener('click', () => BingoTracker.toggleTile(index));
@@ -255,8 +263,8 @@ const BingoTracker = {
         }
         let total = 0;
         COMPLETIONIST_CHALLENGES.forEach((ch, idx) => {
-            const progress = BingoTracker.subItemProgress[idx] || [];
-            total += progress.length;
+            const progress = BingoTracker.subItemProgress[idx];
+            total += BingoTracker.getProgressCount(progress);
             if (BingoTracker.completedTiles.completionist.has(idx)) {
                 total += 1;
             }
@@ -300,42 +308,74 @@ const BingoTracker = {
 
     openSublist: (index) => {
         const challenge = COMPLETIONIST_CHALLENGES[index];
-        const progress = new Set(BingoTracker.subItemProgress[index] || []);
+        const progress = challenge.freeText
+            ? (BingoTracker.subItemProgress[index] || {})
+            : new Set(BingoTracker.subItemProgress[index] || []);
 
         const overlay = document.createElement('div');
         overlay.className = 'sublist-overlay';
+        const listItems = challenge.sublist.map((item,i)=>{
+            if (challenge.freeText) {
+                const val = progress[i] || '';
+                const selected = val ? 'selected' : '';
+                return `<li><button class="sub-item-btn ${selected}" data-sub="${i}">${val || item}</button></li>`;
+            }
+            const selected = progress.has(i) ? 'selected' : '';
+            return `<li><button class="sub-item-btn ${selected}" data-sub="${i}">${item}</button></li>`;
+        }).join('');
         overlay.innerHTML = `
             <div class="sublist-content relative">
                 <button class="sublist-close" aria-label="Close">&times;</button>
                 <h3 class="text-xl font-bold mb-4">${challenge.text}</h3>
-                <ul class="sublist-items">
-                    ${challenge.sublist.map((item,i)=>`
-                        <li>
-                            <button class="sub-item-btn ${progress.has(i)?'selected':''}" data-sub="${i}">${item}</button>
-                        </li>`).join('')}
-                </ul>
+                <ul class="sublist-items">${listItems}</ul>
             </div>
         `;
 
         const handleClick = (e) => {
             if (e.target.matches('.sub-item-btn')) {
                 const sub = parseInt(e.target.dataset.sub,10);
-                if (progress.has(sub)) {
-                    progress.delete(sub);
-                    e.target.classList.remove('selected');
+                if (challenge.freeText) {
+                    const current = progress[sub] || '';
+                    const input = prompt('Enter text', current);
+                    if (input !== null) {
+                        const trimmed = input.trim();
+                        if (trimmed === '') {
+                            delete progress[sub];
+                            e.target.classList.remove('selected');
+                            e.target.textContent = challenge.sublist[sub];
+                        } else {
+                            progress[sub] = trimmed;
+                            e.target.classList.add('selected');
+                            e.target.textContent = trimmed;
+                        }
+                        BingoTracker.subItemProgress[index] = progress;
+                        if (Object.keys(progress).length === challenge.sublist.length) {
+                            BingoTracker.completedTiles.completionist.add(index);
+                        } else {
+                            BingoTracker.completedTiles.completionist.delete(index);
+                        }
+                        BingoTracker.saveProgress();
+                        BingoTracker.renderGrid();
+                        BingoTracker.updateStats();
+                    }
                 } else {
-                    progress.add(sub);
-                    e.target.classList.add('selected');
+                    if (progress.has(sub)) {
+                        progress.delete(sub);
+                        e.target.classList.remove('selected');
+                    } else {
+                        progress.add(sub);
+                        e.target.classList.add('selected');
+                    }
+                    BingoTracker.subItemProgress[index] = [...progress];
+                    if (progress.size === challenge.sublist.length) {
+                        BingoTracker.completedTiles.completionist.add(index);
+                    } else {
+                        BingoTracker.completedTiles.completionist.delete(index);
+                    }
+                    BingoTracker.saveProgress();
+                    BingoTracker.renderGrid();
+                    BingoTracker.updateStats();
                 }
-                BingoTracker.subItemProgress[index] = [...progress];
-                if (progress.size === challenge.sublist.length) {
-                    BingoTracker.completedTiles.completionist.add(index);
-                } else {
-                    BingoTracker.completedTiles.completionist.delete(index);
-                }
-                BingoTracker.saveProgress();
-                BingoTracker.renderGrid();
-                BingoTracker.updateStats();
             }
         };
 
