@@ -39,7 +39,15 @@ const SAMPLE_POLLS = [
   }
 ];
 
+// Ensure data directory exists
+function ensureDataDir() {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+  }
+}
+
 function loadPolls() {
+  ensureDataDir();
   if (fs.existsSync(DATA_PATH)) {
     try {
       const data = fs.readFileSync(DATA_PATH, 'utf8');
@@ -53,11 +61,12 @@ function loadPolls() {
 }
 
 function savePolls(polls) {
-  fs.mkdirSync(path.dirname(DATA_PATH), { recursive: true });
+  ensureDataDir();
   fs.writeFileSync(DATA_PATH, JSON.stringify(polls, null, 2));
 }
 
 function loadPollResponses() {
+  ensureDataDir();
   if (fs.existsSync(RESPONSES_DATA_PATH)) {
     try {
       const data = fs.readFileSync(RESPONSES_DATA_PATH, 'utf8');
@@ -70,11 +79,12 @@ function loadPollResponses() {
 }
 
 function savePollResponses(responses) {
-  fs.mkdirSync(path.dirname(RESPONSES_DATA_PATH), { recursive: true });
+  ensureDataDir();
   fs.writeFileSync(RESPONSES_DATA_PATH, JSON.stringify(responses, null, 2));
 }
 
 function loadBingoProgress() {
+  ensureDataDir();
   if (fs.existsSync(BINGO_PROGRESS_PATH)) {
     try {
       const data = fs.readFileSync(BINGO_PROGRESS_PATH, 'utf8');
@@ -87,7 +97,7 @@ function loadBingoProgress() {
 }
 
 function saveBingoProgress(progress) {
-  fs.mkdirSync(path.dirname(BINGO_PROGRESS_PATH), { recursive: true });
+  ensureDataDir();
   fs.writeFileSync(BINGO_PROGRESS_PATH, JSON.stringify(progress, null, 2));
 }
 
@@ -106,32 +116,65 @@ function getPollsWithVotes() {
 }
 
 function getLeaderboard() {
-  return bingoProgress
-    .map(p => ({ username: p.username, score: p.completedTiles.length }))
+  const leaderboard = bingoProgress
+    .map(p => ({ 
+      id: p.userId,
+      playerName: p.username, 
+      score: p.completedTiles ? p.completedTiles.length : 0,
+      updatedAt: p.updatedAt || new Date().toISOString()
+    }))
     .sort((a, b) => b.score - a.score)
-    .slice(0, 10);
+    .slice(0, 50); // Top 50 players
+  
+  console.log('Current leaderboard:', leaderboard);
+  return leaderboard;
 }
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: '*' } });
+const io = new Server(server, { 
+  cors: { 
+    origin: "*",
+    methods: ["GET", "POST"]
+  } 
+});
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname));
 
+// Socket.IO connection handling
 io.on('connection', socket => {
-  console.log('Socket connected');
+  console.log('Socket connected:', socket.id);
   socket.emit('pollsUpdate', getPollsWithVotes());
   socket.emit('leaderboardUpdate', getLeaderboard());
+  
+  socket.on('disconnect', () => {
+    console.log('Socket disconnected:', socket.id);
+  });
 });
 
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    server: 'GatherTogether Node.js Backend'
+  });
+});
+
+// Polls endpoints
 app.get('/api/polls', (req, res) => {
+  console.log('GET /api/polls requested');
   res.json(getPollsWithVotes());
 });
 
 app.post('/api/polls/:pollId/vote', (req, res) => {
   const { pollId } = req.params;
   const { optionId, userId } = req.body;
+  
+  console.log('Vote received:', { pollId, optionId, userId });
 
   if (!userId) {
     return res.status(400).json({ error: 'User ID is required' });
@@ -139,6 +182,7 @@ app.post('/api/polls/:pollId/vote', (req, res) => {
 
   const poll = polls.find(p => p.id === pollId);
   if (!poll) return res.status(404).json({ error: 'Poll not found' });
+  
   const option = poll.options.find(o => o.id === optionId);
   if (!option) return res.status(400).json({ error: 'Option not found' });
 
@@ -148,38 +192,105 @@ app.post('/api/polls/:pollId/vote', (req, res) => {
     optionId,
     timestamp: new Date().toISOString()
   };
+  
   pollResponses.push(newResponse);
   savePollResponses(pollResponses);
 
+  // Emit update to all connected clients
   io.emit('pollsUpdate', getPollsWithVotes());
 
   res.status(201).json({ message: 'Vote recorded' });
 });
 
+// Bingo endpoints
 app.post('/api/bingo/progress', (req, res) => {
   const { userId, username, completedTiles } = req.body;
+  console.log('Bingo progress update:', { userId, username, completedTiles });
+  
   if (!userId || !username) {
     return res.status(400).json({ error: 'User ID and username are required' });
   }
 
   let userProgress = bingoProgress.find(p => p.userId === userId);
   if (userProgress) {
-    userProgress.completedTiles = completedTiles;
+    userProgress.completedTiles = completedTiles || [];
     userProgress.username = username;
+    userProgress.updatedAt = new Date().toISOString();
   } else {
-    bingoProgress.push({ userId, username, completedTiles });
+    bingoProgress.push({ 
+      userId, 
+      username, 
+      completedTiles: completedTiles || [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    });
   }
 
   saveBingoProgress(bingoProgress);
-  io.emit('leaderboardUpdate', getLeaderboard());
+  
+  const leaderboard = getLeaderboard();
+  io.emit('leaderboardUpdate', leaderboard);
+  
   res.status(200).json({ message: 'Progress saved' });
 });
 
 app.get('/api/bingo/leaderboard', (req, res) => {
-  res.json(getLeaderboard());
+  console.log('GET /api/bingo/leaderboard requested');
+  const leaderboard = getLeaderboard();
+  res.json(leaderboard);
 });
 
-if (require.main === module && module.parent === null) {
+// New endpoint for updating leaderboard scores (matches frontend expectations)
+app.post('/api/bingo/leaderboard', (req, res) => {
+  const { playerId, playerName, score } = req.body;
+  console.log('Leaderboard score update:', { playerId, playerName, score });
+  
+  if (!playerId || !playerName || score === undefined) {
+    return res.status(400).json({ error: 'Player ID, player name, and score are required' });
+  }
+
+  let userProgress = bingoProgress.find(p => p.userId === playerId);
+  if (userProgress) {
+    userProgress.username = playerName;
+    userProgress.score = score;
+    userProgress.updatedAt = new Date().toISOString();
+    // Update completedTiles to match score if needed
+    if (!userProgress.completedTiles || userProgress.completedTiles.length !== score) {
+      userProgress.completedTiles = Array.from({length: score}, (_, i) => i);
+    }
+  } else {
+    bingoProgress.push({ 
+      userId: playerId, 
+      username: playerName, 
+      score: score,
+      completedTiles: Array.from({length: score}, (_, i) => i),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    });
+  }
+
+  saveBingoProgress(bingoProgress);
+  
+  const leaderboard = getLeaderboard();
+  io.emit('leaderboardUpdate', leaderboard);
+  
+  res.json({ message: 'Score updated successfully' });
+});
+
+// 404 handler
+app.use((req, res) => {
+  console.log('404 - Route not found:', req.method, req.path);
+  res.status(404).json({ error: 'Route not found' });
+});
+
+// Error handler
+app.use((err, req, res, next) => {
+  console.error('Server error:', err.stack);
+  res.status(500).json({ error: 'Something went wrong!' });
+});
+
+// Start server
+if (require.main === module) {
   const PORT = process.env.PORT || 3000;
   const keyPath = process.env.SSL_KEY_PATH;
   const certPath = process.env.SSL_CERT_PATH;
@@ -195,14 +306,16 @@ if (require.main === module && module.parent === null) {
     const httpsServer = https.createServer({ key, cert }, app);
     io.attach(httpsServer);
     httpsServer.listen(PORT, () => {
-      console.log(`Server running on https://localhost:${PORT}`);
+      console.log(`🚀 HTTPS Server running on https://localhost:${PORT}`);
+      console.log(`📊 API available at https://localhost:${PORT}/api`);
     });
   } else {
     server.listen(PORT, () => {
-      console.log(`Server running on http://localhost:${PORT}`);
+      console.log(`🚀 HTTP Server running on http://localhost:${PORT}`);
+      console.log(`📊 API available at http://localhost:${PORT}/api`);
+      console.log(`🎮 Bingo Leaderboard: http://localhost:${PORT}/api/bingo/leaderboard`);
     });
   }
 }
 
 module.exports = app;
-
