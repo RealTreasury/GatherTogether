@@ -393,7 +393,7 @@ const BingoTracker = {
     },
 
     // Save progress
-    saveProgress: () => {
+    saveProgress: async () => {
         const key = BingoTracker.currentMode === 'regular'
             ? Storage.KEYS.BINGO_PROGRESS_REGULAR
             : Storage.KEYS.BINGO_PROGRESS_COMPLETIONIST;
@@ -405,22 +405,50 @@ const BingoTracker = {
         const userId = Utils.getUserId();
         const username = document.getElementById('username') ? document.getElementById('username').value || 'Anonymous' : 'Anonymous';
         const completedTiles = [...BingoTracker.completedTiles[BingoTracker.currentMode]];
-        return fetch('/api/bingo/progress', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId, username, completedTiles })
-        })
-            .then(() => {
-                if (typeof Leaderboard !== 'undefined' && App.currentTab === 'leaderboard') {
-                    Leaderboard.loadLeaderboard();
-                }
-            })
-            .catch(err => {
-                console.error('Failed to save progress to server:', err);
-                if (window.Utils && Utils.showNotification) {
-                    Utils.showNotification('Unable to save progress. Is the backend running?', 'error');
-                }
+        const score = completedTiles.length;
+
+        // Save to both Firebase and Node.js backend
+        let firebaseSuccess = false;
+        let nodeSuccess = false;
+
+        // Try Firebase first (if available)
+        if (window.Leaderboard && Leaderboard.saveScore) {
+            try {
+                await Leaderboard.saveScore(userId, username, score);
+                firebaseSuccess = true;
+                console.log('✅ Progress saved to Firebase via Leaderboard');
+            } catch (error) {
+                console.warn('Failed to save to Firebase:', error);
+            }
+        }
+
+        // Always try Node.js backend as fallback
+        try {
+            await fetch('/api/bingo/progress', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId, username, completedTiles })
             });
+            nodeSuccess = true;
+            console.log('✅ Progress saved to Node.js backend');
+        } catch (err) {
+            console.error('Failed to save progress to Node.js server:', err);
+        }
+
+        // Handle results
+        if (!firebaseSuccess && !nodeSuccess) {
+            if (window.Utils && Utils.showNotification) {
+                Utils.showNotification('Unable to save progress. Check your connection.', 'error');
+            }
+        } else if (firebaseSuccess || nodeSuccess) {
+            // Update leaderboard if we're viewing it
+            if (typeof Leaderboard !== 'undefined' && App.currentTab === 'leaderboard') {
+                // Small delay to ensure the save is processed
+                setTimeout(() => Leaderboard.refresh(), 500);
+            }
+        }
+
+        return firebaseSuccess || nodeSuccess;
     },
 
     // Load progress
