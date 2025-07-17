@@ -106,12 +106,16 @@ const App = {
     // Initialize all modules
     initModules: async () => {
         try {
-            // Initialize modules in parallel
+            // Initialize Leaderboard first to ensure its initialization promise
+            // is available for other modules.
+            // This call is synchronous and kicks off the async setup work.
+            Leaderboard.init();
+
+            // Initialize other modules in parallel.
             await Promise.all([
                 BingoTracker.init(),
                 VerseManager.init(),
-                PollManager.init(),
-                Leaderboard.init()
+                PollManager.init()
             ]);
         } catch (error) {
             console.error('Error initializing modules:', error);
