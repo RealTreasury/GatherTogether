@@ -76,7 +76,62 @@ const App = {
             });
         });
 
+        const inviteBtn = document.getElementById('invite-btn');
+        if (inviteBtn) {
+            inviteBtn.addEventListener('click', App.inviteFriend);
+        }
+
         // Mobile menu removed
+    },
+
+    // Share app link via native share or clipboard
+    inviteFriend: async () => {
+        const inviteText = `Check out this Faith Challenge app for the LCMS Youth Gathering! ${window.location.href}`;
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: 'GatherTogether Invite',
+                    text: inviteText,
+                    url: window.location.href
+                });
+                return;
+            } catch (err) {
+                console.error('Share failed', err);
+                // fall back to copy if share was cancelled or failed
+            }
+        }
+        App.copyInvite(inviteText);
+    },
+
+    copyInvite: (text) => {
+        const fallbackCopy = (str) => {
+            const tempInput = document.createElement('textarea');
+            tempInput.value = str;
+            tempInput.style.position = 'fixed';
+            tempInput.style.top = '-9999px';
+            document.body.appendChild(tempInput);
+            tempInput.focus();
+            tempInput.select();
+            try {
+                document.execCommand('copy');
+                Utils.showNotification('Invite link copied to clipboard!');
+            } catch (err) {
+                console.error('Fallback copy failed', err);
+                Utils.showNotification('Unable to copy invite', 'error');
+            }
+            document.body.removeChild(tempInput);
+        };
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text)
+                .then(() => Utils.showNotification('Invite link copied to clipboard!'))
+                .catch(err => {
+                    console.error('Clipboard copy failed', err);
+                    fallbackCopy(text);
+                });
+        } else {
+            fallbackCopy(text);
+        }
     }
 };
 
