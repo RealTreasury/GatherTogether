@@ -41,16 +41,10 @@ const PollManager = {
         PollManager.setupSocket();
     },
 
-    // Load polls from the API (fallback to sample data on failure)
+    // Load polls (using sample data only)
     loadPolls: async () => {
-        try {
-            const res = await fetch('/api/polls');
-            if (!res.ok) throw new Error('Failed to fetch polls');
-            PollManager.polls = await res.json();
-        } catch (err) {
-            console.warn('Using sample polls due to error:', err);
-            PollManager.polls = [...SAMPLE_POLLS];
-        }
+        console.log('Using sample polls (Firebase-only mode)');
+        PollManager.polls = [...SAMPLE_POLLS];
     },
 
     // Render all polls

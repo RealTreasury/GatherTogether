@@ -101,7 +101,7 @@
                 <div class="text-center mb-6">
                     <h2 class="text-3xl font-bold text-gray-800 mb-2">Live Polls & Q&A</h2>
                     <p class="text-gray-600">Connect with other youth and share your thoughts</p>
-                    <p class="text-gray-600">Poll data is loaded from <code>/api/polls</code>. Start the server to enable voting.</p>
+                    <p class="text-gray-600">Polls and leaderboard powered by Firebase!</p>
                 </div>
                 
                 <div id="polls-container">
@@ -232,28 +232,11 @@
 
     <!-- Status update script -->
     <script>
-        // Update Node.js backend status
-        document.addEventListener('DOMContentLoaded', () => {
-            const nodeStatus = document.getElementById('nodejs-status');
-            
-            // Check Node.js backend connectivity
-            fetch('/api/polls')
-                .then(res => {
-                    if (res.ok) {
-                        if (nodeStatus) {
-                            nodeStatus.innerHTML = '📡 Node.js: <span class="text-green-600">Connected</span>';
-                        }
-                    } else {
-                        throw new Error('Server responded with error');
-                    }
-                })
-                .catch(err => {
-                    console.warn('Node.js backend not available:', err);
-                    if (nodeStatus) {
-                        nodeStatus.innerHTML = '📡 Node.js: <span class="text-yellow-600">Offline</span>';
-                    }
-                });
-        });
+        // Firebase-only mode
+        const nodeStatus = document.getElementById('nodejs-status');
+        if (nodeStatus) {
+            nodeStatus.innerHTML = '📡 Backend: <span class="text-green-600">Firebase Only</span>';
+        }
     </script>
 </body>
 </html>
