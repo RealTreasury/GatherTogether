@@ -5,6 +5,8 @@ const UsernameValidator = {
     blockedWords: [
         // Profanity (basic examples - you'd want a more comprehensive list)
         'damn', 'hell', 'crap', 'stupid', 'idiot', 'moron', 'dumb',
+        // Toilet talk / body function references
+        'poop', 'poo', 'pee', 'peepee', 'poopoo', 'fart', 'butt', 'toilet',
         // Inappropriate references
         'sex', 'porn', 'nude', 'naked', 'drug', 'weed', 'cocaine',
         // Hate speech indicators
