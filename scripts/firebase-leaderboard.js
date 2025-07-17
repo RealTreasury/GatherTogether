@@ -34,6 +34,13 @@ class FirebaseLeaderboard {
 
     // Basic username validation/sanitization
     validateUsername(username) {
+        // Use advanced validator if available
+        if (window.UsernameValidator &&
+            typeof window.UsernameValidator.getCleanUsername === 'function') {
+            return window.UsernameValidator.getCleanUsername(username);
+        }
+
+        // Fallback simple sanitization
         if (!username || typeof username !== 'string') {
             return 'Anonymous';
         }
@@ -45,7 +52,7 @@ class FirebaseLeaderboard {
             .substring(0, 30) || 'Anonymous';
     }
 
-    // Submit score to Firebase
+    // Add validation to Firebase operations
     async submitScore(userId, username, score) {
         if (!this.isAvailable()) {
             throw new Error('Firebase not available');
