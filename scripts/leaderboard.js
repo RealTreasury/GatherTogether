@@ -1,151 +1,280 @@
-// scripts/leaderboard.js
+const Leaderboard = {
+    firebaseLeaderboard: null,
+    isInitialized: false,
+    _resolveInitialization: null,
+    initializationPromise: null,
+    pendingScores: {},
 
-const leaderboard = {
-  // DOM elements
-  list: document.getElementById('leaderboard-list'),
-  playerNameInput: document.getElementById('player-name'),
-  setPlayerNameBtn: document.getElementById('set-player-name'),
-  currentPlayerDisplay: document.getElementById('current-player'),
+    init: () => {
+        if (Leaderboard.isInitialized) return;
+        Leaderboard.isInitialized = true;
 
-  // State
-  currentPlayer: null,
-  
-  /**
-   * Initializes the leaderboard functionality
-   */
-  init() {
-    console.log('✅ Leaderboard Initialized');
-    this.setPlayerNameBtn.addEventListener('click', () => this.setPlayer());
-    this.loadPlayer();
-    this.fetchLeaderboard();
-    // Refresh leaderboard every 30 seconds
-    setInterval(() => this.fetchLeaderboard(), 30000);
-  },
+        // Promise that resolves when Firebase is initialized
+        Leaderboard.initializationPromise = new Promise(resolve => {
+            Leaderboard._resolveInitialization = resolve;
+        });
 
-  /**
-   * Sets the current player name from the input field
-   */
-  setPlayer() {
-    const playerName = this.playerNameInput.value.trim();
-    if (playerName) {
-      let player = storage.get('player');
-      if (!player) {
-        player = { id: utils.generateId(), playerName, score: 0 };
-      }
-      player.playerName = playerName;
-      this.currentPlayer = player;
-      storage.set('player', player);
-      this.updatePlayerDisplay();
-      this.playerNameInput.value = '';
+        console.log('🚀 Scheduling Leaderboard Initialization...');
+
+        // Initialize Firebase when available
+        if (window.firebaseApp && window.FirebaseLeaderboard) {
+            Leaderboard.initFirebase();
+        } else {
+            window.addEventListener('firebaseReady', () => Leaderboard.initFirebase());
+        }
+
+        const usernameInput = document.getElementById('username');
+        if (usernameInput) {
+            usernameInput.value = localStorage.getItem('username') || '';
+            usernameInput.addEventListener('change', () => {
+                localStorage.setItem('username', usernameInput.value);
+                Leaderboard.saveCurrentProgress();
+            });
+        }
+
+        const submitScoreBtn = document.getElementById('submit-score-btn');
+        if (submitScoreBtn) {
+            submitScoreBtn.addEventListener('click', () => {
+                Leaderboard.saveCurrentProgress();
+                Utils.showNotification('Score submitted successfully!');
+            });
+        }
+
+    },
+
+    initFirebase: async () => {
+        try {
+            const firebaseLeaderboard = new window.FirebaseLeaderboard();
+            const success = await firebaseLeaderboard.init(window.firebaseApp);
+
+            if (success) {
+                Leaderboard.firebaseLeaderboard = firebaseLeaderboard;
+
+                const firebaseStatus = document.getElementById('firebase-status');
+                if (firebaseStatus) {
+                    firebaseStatus.innerHTML = '🔥 Firebase: <span class="text-green-600">Connected</span>';
+                }
+
+                // Subscribe to real-time updates
+                Leaderboard.firebaseLeaderboard.subscribeToLeaderboard((scores) => {
+                    console.log('📡 Real-time leaderboard update received:', scores);
+                    if (App.currentTab === 'leaderboard') {
+                        Leaderboard.renderLeaderboard(scores);
+                    }
+                });
+
+                // Resolve the initialization promise
+                Leaderboard._resolveInitialization();
+                console.log('✅ Leaderboard is ready for use.');
+
+            } else {
+                throw new Error('FirebaseLeaderboard.init() returned false.');
+            }
+        } catch (error) {
+            console.error('Failed to initialize Firebase leaderboard:', error);
+            const firebaseStatus = document.getElementById('firebase-status');
+            if (firebaseStatus) {
+                firebaseStatus.innerHTML = '🔥 Firebase: <span class="text-red-600">Error</span>';
+            }
+            if (App.currentTab === 'leaderboard') {
+                Leaderboard.showError('Failed to connect to Firebase. Check console for details.');
+            }
+        }
+    },
+
+    showLoading: () => {
+        const list = document.getElementById('leaderboard-list');
+        if (list) {
+            list.innerHTML = `
+                <li class="text-center py-4 text-gray-500">
+                    <div class="text-4xl mb-2">⏳</div>
+                    <div>Loading leaderboard...</div>
+                </li>
+            `;
+        }
+    },
+
+    setupSocket: () => {
+        // Socket.IO disabled for static hosting
+        console.log('Using Firebase real-time updates instead of Socket.IO');
+    },
+
+    loadLeaderboard: async () => {
+        // Wait for initialization before loading data
+        await Leaderboard.initializationPromise;
+
+        if (Leaderboard.firebaseLeaderboard && Leaderboard.firebaseLeaderboard.isAvailable()) {
+            Leaderboard.showLoading();
+            try {
+                const scores = await Leaderboard.firebaseLeaderboard.getTopScores(50);
+                Leaderboard.renderLeaderboard(scores);
+                return true;
+            } catch (error) {
+                console.error('❌ Failed to load leaderboard from Firebase:', error);
+                Leaderboard.showError('Failed to load leaderboard. Is Firestore enabled?');
+                return false;
+            }
+        } else {
+            console.warn('📊 Firebase not available for loading leaderboard.');
+            Leaderboard.showPlaceholderLeaderboard();
+            return false;
+        }
+    },
+
+    saveScore: async (userId, username, score) => {
+        // Wait for Firebase initialization
+        await Leaderboard.initializationPromise;
+
+        if (!userId || !username || score === undefined) {
+            console.error('Invalid parameters for saveScore:', { userId, username, score });
+            return false;
+        }
+
+        if (Leaderboard.firebaseLeaderboard && Leaderboard.firebaseLeaderboard.isAvailable()) {
+            try {
+                console.log('💾 Saving score to Firebase:', { userId, username, score });
+                await Leaderboard.firebaseLeaderboard.submitScore(userId, username, score);
+                console.log('✅ Score saved successfully to Firebase');
+                return true;
+            } catch (error) {
+                console.error('❌ Failed to save score to Firebase:', error);
+                if (window.Utils && Utils.showNotification) {
+                    Utils.showNotification('Failed to save score. Check console for details.', 'error');
+                }
+                throw error;
+            }
+        } else {
+            console.warn('Firebase not available, queuing score.');
+            Leaderboard.pendingScores[userId] = { userId, username, score };
+            return false;
+        }
+    },
+
+    saveCurrentProgress: async () => {
+        const usernameInput = document.getElementById('username');
+        const username = usernameInput ? usernameInput.value.trim() || 'Anonymous' : 'Anonymous';
+        const userId = Utils.getUserId();
+        
+        if (window.BingoTracker && BingoTracker.completedTiles) {
+            const completedCount = BingoTracker.completedTiles[BingoTracker.currentMode || 'regular'].size;
+            if (completedCount > 0) {
+                try {
+                    await Leaderboard.saveScore(userId, username, completedCount);
+                } catch (error) {
+                    console.error('Failed to save current progress:', error);
+                }
+            }
+        }
+    },
+
+    flushPendingScores: async () => {
+        if (!Leaderboard.firebaseLeaderboard || !Leaderboard.firebaseLeaderboard.isAvailable()) {
+            console.warn('Firebase still not ready, cannot flush scores');
+            return;
+        }
+
+        const entries = Object.values(Leaderboard.pendingScores);
+        if (entries.length === 0) return;
+
+        console.log('Flushing pending leaderboard scores:', entries.length);
+        for (const entry of entries) {
+            try {
+                await Leaderboard.firebaseLeaderboard.submitScore(entry.userId, entry.username, entry.score);
+                delete Leaderboard.pendingScores[entry.userId];
+            } catch (err) {
+                console.error('Failed to flush score for', entry.userId, err);
+            }
+        }
+    },
+
+    renderLeaderboard: (leaderboard) => {
+        const list = document.getElementById('leaderboard-list');
+        if (!list) return;
+
+        if (!leaderboard || leaderboard.length === 0) {
+            list.innerHTML = `
+                <li class="text-center py-4 text-gray-500">
+                    <div class="text-4xl mb-2">🏆</div>
+                    <div>No scores yet. Complete some bingo challenges!</div>
+                </li>
+            `;
+            return;
+        }
+
+        // Sort by score descending (in case not sorted)
+        const sortedLeaderboard = [...leaderboard].sort((a, b) => b.score - a.score);
+
+        list.innerHTML = sortedLeaderboard.map((entry, index) => {
+            const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
+            const bgClass = index === 0 ? 'bg-yellow-100 border-yellow-300' :
+                           index === 1 ? 'bg-gray-100 border-gray-300' :
+                           index === 2 ? 'bg-orange-100 border-orange-300' :
+                           'bg-white border-gray-200';
+            
+            // Handle different property names
+            const username = entry.playerName || entry.username || 'Anonymous';
+            const score = entry.score || 0;
+            
+            return `
+                <li class="flex justify-between items-center p-3 rounded-lg border ${bgClass} transition-all hover:shadow-md">
+                    <div class="flex items-center">
+                        <span class="w-8 text-lg">${medal || `${index + 1}.`}</span>
+                        <span class="font-medium">${username}</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="font-bold text-lg">${score}</span>
+                        <span class="text-sm text-gray-500 ml-2">pts</span>
+                    </div>
+                </li>
+            `;
+        }).join('');
+    },
+
+    showPlaceholderLeaderboard: () => {
+        const placeholders = [
+            { username: 'Complete bingo challenges', score: '???' },
+            { username: 'to see real scores!', score: '???' }
+        ];
+        const list = document.getElementById('leaderboard-list');
+        if (list) {
+            list.innerHTML = `
+                <li class="text-center py-4 text-gray-500">
+                    <div class="text-4xl mb-2">🔥</div>
+                    <div>Waiting for Firebase connection...</div>
+                    <div class="text-sm mt-2">Complete bingo challenges and they'll save when connected!</div>
+                </li>
+            `;
+        }
+    },
+
+    showError: (message) => {
+        const list = document.getElementById('leaderboard-list');
+        if (list) {
+            list.innerHTML = `
+                <li class="text-center py-4 text-red-500">
+                    <div class="text-4xl mb-2">⚠️</div>
+                    <div class="font-bold mb-2">${message}</div>
+                    <div class="text-sm mb-4">
+                        Make sure Firestore is enabled in your Firebase project
+                    </div>
+                    <button onclick="Leaderboard.refresh()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                        Try Again
+                    </button>
+                </li>
+            `;
+        }
+    },
+
+    refresh: () => {
+        console.log('🔄 Manual leaderboard refresh requested');
+        // loadLeaderboard will now safely wait for the connection before fetching
+        Leaderboard.loadLeaderboard();
     }
-  },
-
-  /**
-   * Loads the player from local storage
-   */
-  loadPlayer() {
-    const player = storage.get('player');
-    if (player) {
-      this.currentPlayer = player;
-      this.updatePlayerDisplay();
-    }
-  },
-
-  /**
-   * Updates the display showing the current player's name
-   */
-  updatePlayerDisplay() {
-    if (this.currentPlayer) {
-      this.currentPlayerDisplay.textContent = `Playing as: ${this.currentPlayer.playerName}`;
-    } else {
-      this.currentPlayerDisplay.textContent = 'Set your name to join the game!';
-    }
-  },
-
-  /**
-   * Gets the current player object
-   * @returns {object | null} The current player object or null
-   */
-  getCurrentPlayer() {
-    return this.currentPlayer;
-  },
-
-  /**
-   * Records a win for the current player
-   * @param {object} player - The player object
-   * @param {number} score - The score to add for the win
-   */
-  recordWin(player, score) {
-    if (!player || !player.id) {
-      // **THE FIX IS HERE**
-      // This alert provides clear feedback to the user.
-      alert('Please set your player name before a score can be submitted!');
-      console.error('No player found to record win');
-      return; // Stop the function
-    }
-    console.log('🏆 Recording win for', player.playerName);
-    const currentScore = player.score || 0;
-    const newScore = currentScore + score;
-    this.updateScore(player.id, player.playerName, newScore);
-  },
-
-  /**
-   * Updates a player's score in both local storage and the backend
-   * @param {string} id - The player's ID
-   * @param {string} playerName - The player's name
-   * @param {number} score - The new score
-   */
-  async updateScore(id, playerName, score) {
-    this.currentPlayer.score = score;
-    storage.set('player', this.currentPlayer);
-    await firebaseLeaderboard.updateScore(id, playerName, score);
-    this.fetchLeaderboard(); // Refresh leaderboard after updating
-  },
-
-  /**
-   * Fetches the leaderboard data from Firebase
-   */
-  async fetchLeaderboard() {
-    try {
-      const data = await firebaseLeaderboard.getLeaderboard();
-      this.renderLeaderboard(data);
-    } catch (error) {
-      console.error('Failed to fetch leaderboard from Firebase', error);
-    }
-  },
-
-  /**
-   * Renders the leaderboard data to the UI
-   * @param {Array<object>} data - The leaderboard data
-   */
-  renderLeaderboard(data) {
-    this.list.innerHTML = '';
-    if (!data || data.length === 0) {
-      this.list.innerHTML = '<li class="text-gray-500">No scores yet. Be the first!</li>';
-      return;
-    }
-
-    data.forEach((player, index) => {
-      const li = document.createElement('li');
-      li.className = 'flex justify-between items-center p-2 rounded-md';
-      li.classList.add(index % 2 === 0 ? 'bg-gray-50' : 'bg-white');
-      
-      const rank = index + 1;
-      let medal = '';
-      if (rank === 1) medal = '🥇';
-      if (rank === 2) medal = '🥈';
-      if (rank === 3) medal = '🥉';
-
-      li.innerHTML = `
-        <div>
-          <span class="font-bold w-6 inline-block">${rank}. ${medal}</span>
-          <span>${player.playerName}</span>
-        </div>
-        <span class="font-bold text-indigo-600">${player.score}</span>
-      `;
-      this.list.appendChild(li);
-    });
-  },
 };
 
-leaderboard.init();
+// Auto-refresh when tab becomes visible again
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && App && App.currentTab === 'leaderboard') {
+        Leaderboard.refresh();
+    }
+});
