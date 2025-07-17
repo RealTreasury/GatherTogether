@@ -36,25 +36,6 @@ const Utils = {
         };
     },
 
-    // Create confetti animation
-    createConfetti: (count = 50) => {
-        const colors = ['#302984', '#a23bb0', '#f5de39', '#27a2c2', '#7ab492'];
-        
-        for (let i = 0; i < count; i++) {
-            const confetti = document.createElement('div');
-            confetti.className = 'confetti';
-            confetti.style.left = Math.random() * 100 + '%';
-            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            confetti.style.animationDelay = Math.random() * 3 + 's';
-            confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
-            document.body.appendChild(confetti);
-        }
-    },
-
-    // Remove confetti
-    removeConfetti: () => {
-        document.querySelectorAll('.confetti').forEach(el => el.remove());
-    },
 
     // Show notification
     showNotification: (message, type = 'success') => {

@@ -165,95 +165,10 @@ const BingoTracker = {
             tile.classList.add('completed');
             tile.style.animation = 'bounceIn 0.6s ease';
 
-            // Check for bingo
-            if (BingoTracker.checkForBingo()) {
-                setTimeout(() => BingoTracker.showCelebration(), 300);
-            }
         }
 
         BingoTracker.saveProgress();
         BingoTracker.updateStats();
-    },
-
-    // Check for bingo lines
-    checkForBingo: () => {
-        const size = BingoTracker.getGridSize();
-        const completedSet = BingoTracker.completedTiles[BingoTracker.currentMode];
-        
-        // Check rows
-        for (let row = 0; row < size; row++) {
-            let complete = true;
-            for (let col = 0; col < size; col++) {
-                if (!completedSet.has(row * size + col)) {
-                    complete = false;
-                    break;
-                }
-            }
-            if (complete) return true;
-        }
-        
-        // Check columns
-        for (let col = 0; col < size; col++) {
-            let complete = true;
-            for (let row = 0; row < size; row++) {
-                if (!completedSet.has(row * size + col)) {
-                    complete = false;
-                    break;
-                }
-            }
-            if (complete) return true;
-        }
-        
-        // Check diagonals
-        let diagonal1 = true, diagonal2 = true;
-        for (let i = 0; i < size; i++) {
-            if (!completedSet.has(i * size + i)) diagonal1 = false;
-            if (!completedSet.has(i * size + (size - 1 - i))) diagonal2 = false;
-        }
-        
-        return diagonal1 || diagonal2;
-    },
-
-    // Count bingo lines
-    countBingoLines: () => {
-        const size = BingoTracker.getGridSize();
-        const completedSet = BingoTracker.completedTiles[BingoTracker.currentMode];
-        let count = 0;
-        
-        // Check rows
-        for (let row = 0; row < size; row++) {
-            let complete = true;
-            for (let col = 0; col < size; col++) {
-                if (!completedSet.has(row * size + col)) {
-                    complete = false;
-                    break;
-                }
-            }
-            if (complete) count++;
-        }
-        
-        // Check columns
-        for (let col = 0; col < size; col++) {
-            let complete = true;
-            for (let row = 0; row < size; row++) {
-                if (!completedSet.has(row * size + col)) {
-                    complete = false;
-                    break;
-                }
-            }
-            if (complete) count++;
-        }
-        
-        // Check diagonals
-        let diagonal1 = true, diagonal2 = true;
-        for (let i = 0; i < size; i++) {
-            if (!completedSet.has(i * size + i)) diagonal1 = false;
-            if (!completedSet.has(i * size + (size - 1 - i))) diagonal2 = false;
-        }
-        if (diagonal1) count++;
-        if (diagonal2) count++;
-
-        return count;
     },
 
     // Count total achievements including sub items
@@ -270,40 +185,6 @@ const BingoTracker = {
             }
         });
         return total;
-    },
-
-    // Show celebration
-    showCelebration: () => {
-        const overlay = document.createElement('div');
-        overlay.className = 'celebration-overlay';
-        const title = BingoTracker.currentMode === 'completionist' ? 'LEGENDARY BINGO!' : 'BINGO!';
-        const emoji = BingoTracker.currentMode === 'completionist' ? '🏆' : '🎉';
-        overlay.innerHTML = `
-            <div class="celebration-content">
-                <div class="text-6xl mb-4">${emoji}</div>
-                <h3 class="text-3xl font-bold text-purple-600 mb-2">${title}</h3>
-                <p class="text-gray-600 mb-6">Amazing! You've completed a line of ${BingoTracker.currentMode} challenges!</p>
-                <button class="btn-primary" onclick="BingoTracker.closeCelebration()">Continue</button>
-            </div>
-        `;
-        document.body.appendChild(overlay);
-
-        // Add confetti
-        Utils.createConfetti(BingoTracker.currentMode === 'completionist' ? 200 : 100);
-
-        // Auto-close after 5 seconds (longer for completionist)
-        setTimeout(() => {
-            BingoTracker.closeCelebration();
-        }, BingoTracker.currentMode === 'completionist' ? 7000 : 5000);
-    },
-
-    // Close celebration
-    closeCelebration: () => {
-        const overlay = document.querySelector('.celebration-overlay');
-        if (overlay) {
-            overlay.remove();
-        }
-        Utils.removeConfetti();
     },
 
     openSublist: (index) => {
@@ -408,13 +289,11 @@ const BingoTracker = {
         const completedCount = BingoTracker.completedTiles[BingoTracker.currentMode].size;
         const totalCount = BingoTracker.getCurrentChallenges().length;
         const progressPercent = Math.round((completedCount / totalCount) * 100);
-        const bingoLines = BingoTracker.countBingoLines();
         const achievements = BingoTracker.countAchievements();
         
         const elements = {
             'completed-count': completedCount,
             'progress-percent': progressPercent + '%',
-            'bingo-count': bingoLines,
             'achievement-count': achievements,
             'total-points': achievements
         };
@@ -489,7 +368,7 @@ const BingoTracker = {
         const progressPercent = Math.round((completedCount / totalCount) * 100);
         const mode = BingoTracker.currentMode === 'completionist' ? 'Completionist' : 'Regular';
 
-        const shareText = `I'm ${progressPercent}% done with my ${mode} Faith Challenge Bingo at #LCMSGathering2025!`;
+        const shareText = `I'm ${progressPercent}% done with my ${mode} Faith Challenges at #LCMSGathering2025!`;
 
         if (navigator.share) {
             navigator.share({
