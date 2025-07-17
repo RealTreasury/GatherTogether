@@ -105,6 +105,13 @@ function getPollsWithVotes() {
   });
 }
 
+function getLeaderboard() {
+  return bingoProgress
+    .map(p => ({ username: p.username, score: p.completedTiles.length }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 10);
+}
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
@@ -115,6 +122,7 @@ app.use(express.static(__dirname));
 io.on('connection', socket => {
   console.log('Socket connected');
   socket.emit('pollsUpdate', getPollsWithVotes());
+  socket.emit('leaderboardUpdate', getLeaderboard());
 });
 
 app.get('/api/polls', (req, res) => {
@@ -163,15 +171,12 @@ app.post('/api/bingo/progress', (req, res) => {
   }
 
   saveBingoProgress(bingoProgress);
+  io.emit('leaderboardUpdate', getLeaderboard());
   res.status(200).json({ message: 'Progress saved' });
 });
 
 app.get('/api/bingo/leaderboard', (req, res) => {
-  const leaderboard = bingoProgress
-    .map(p => ({ username: p.username, score: p.completedTiles.length }))
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 10);
-  res.json(leaderboard);
+  res.json(getLeaderboard());
 });
 
 if (require.main === module && module.parent === null) {
