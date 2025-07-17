@@ -61,7 +61,7 @@ const Leaderboard = {
                     if (App.currentTab === 'leaderboard') {
                         Leaderboard.renderLeaderboard(scores);
                     }
-                });
+                }, 25);
 
                 // Resolve the initialization promise
                 Leaderboard._resolveInitialization();
@@ -110,7 +110,7 @@ const Leaderboard = {
         if (Leaderboard.firebaseLeaderboard && Leaderboard.firebaseLeaderboard.isAvailable()) {
             Leaderboard.showLoading();
             try {
-                const scores = await Leaderboard.firebaseLeaderboard.getTopScores(50);
+                const scores = await Leaderboard.firebaseLeaderboard.getTopScores(25);
                 Leaderboard.renderLeaderboard(scores);
                 return true;
             } catch (error) {
@@ -206,7 +206,7 @@ const Leaderboard = {
         }
 
         // Sort by score descending (in case not sorted)
-        const sortedLeaderboard = [...leaderboard].sort((a, b) => b.score - a.score);
+        const sortedLeaderboard = [...leaderboard].sort((a, b) => b.score - a.score).slice(0, 25);
 
         list.innerHTML = sortedLeaderboard.map((entry, index) => {
             const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
@@ -220,14 +220,14 @@ const Leaderboard = {
             const score = entry.score || 0;
             
             return `
-                <li class="flex justify-between items-center p-3 rounded-lg border ${bgClass} transition-all hover:shadow-md">
+                <li class="flex justify-between items-center p-2 rounded-lg border ${bgClass} transition-all hover:shadow-md text-sm">
                     <div class="flex items-center">
-                        <span class="w-8 text-lg">${medal || `${index + 1}.`}</span>
-                        <span class="font-medium">${username}</span>
+                        <span class="w-6">${medal || `${index + 1}.`}</span>
+                        <span class="font-medium ml-1">${username}</span>
                     </div>
                     <div class="flex items-center">
-                        <span class="font-bold text-lg">${score}</span>
-                        <span class="text-sm text-gray-500 ml-2">pts</span>
+                        <span class="font-bold">${score}</span>
+                        <span class="text-xs text-gray-500 ml-1">pts</span>
                     </div>
                 </li>
             `;
