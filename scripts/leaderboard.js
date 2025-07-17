@@ -1,6 +1,7 @@
 const Leaderboard = {
     firebaseLeaderboard: null,
     isInitialized: false,
+    pendingScores: {},
 
     init: async () => {
         if (Leaderboard.isInitialized) return;
@@ -47,6 +48,9 @@ const Leaderboard = {
                 console.log('📡 Real-time leaderboard update received:', scores);
                 Leaderboard.renderLeaderboard(scores);
             });
+
+            await Leaderboard.flushPendingScores();
+            await Leaderboard.saveCurrentProgress();
         } catch (error) {
             console.error('Failed to initialize Firebase leaderboard:', error);
             const firebaseStatus = document.getElementById('firebase-status');
@@ -99,6 +103,7 @@ const Leaderboard = {
         }
 
         if (Leaderboard.firebaseLeaderboard && Leaderboard.firebaseLeaderboard.isAvailable()) {
+            await Leaderboard.flushPendingScores();
             try {
                 console.log('💾 Saving score to Firebase:', { userId, username, score });
                 await Leaderboard.firebaseLeaderboard.submitScore(userId, username, score);
@@ -112,7 +117,8 @@ const Leaderboard = {
                 throw error;
             }
         } else {
-            console.warn('Firebase not available, cannot save score.');
+            console.warn('Firebase not available, queuing score.');
+            Leaderboard.pendingScores[userId] = { userId, username, score };
             return false;
         }
     },
@@ -130,6 +136,26 @@ const Leaderboard = {
                 } catch (error) {
                     console.error('Failed to save current progress:', error);
                 }
+            }
+        }
+    },
+
+    flushPendingScores: async () => {
+        if (!Leaderboard.firebaseLeaderboard || !Leaderboard.firebaseLeaderboard.isAvailable()) {
+            console.warn('Firebase still not ready, cannot flush scores');
+            return;
+        }
+
+        const entries = Object.values(Leaderboard.pendingScores);
+        if (entries.length === 0) return;
+
+        console.log('Flushing pending leaderboard scores:', entries.length);
+        for (const entry of entries) {
+            try {
+                await Leaderboard.firebaseLeaderboard.submitScore(entry.userId, entry.username, entry.score);
+                delete Leaderboard.pendingScores[entry.userId];
+            } catch (err) {
+                console.error('Failed to flush score for', entry.userId, err);
             }
         }
     },
