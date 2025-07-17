@@ -1,7 +1,10 @@
 const Leaderboard = {
     firebaseLeaderboard: null,
+    isInitialized: false,
 
     init: async () => {
+        if (Leaderboard.isInitialized) return;
+        Leaderboard.isInitialized = true;
         console.log('🚀 Initializing Leaderboard...');
 
         // Wait for Firebase to be ready
