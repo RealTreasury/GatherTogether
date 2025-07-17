@@ -98,7 +98,7 @@ const App = {
                 // Polls are initialized on app load
                 break;
             case 'leaderboard':
-                Leaderboard.init();
+                Leaderboard.refresh();
                 break;
         }
     },
@@ -110,7 +110,8 @@ const App = {
             await Promise.all([
                 BingoTracker.init(),
                 VerseManager.init(),
-                PollManager.init()
+                PollManager.init(),
+                Leaderboard.init()
             ]);
         } catch (error) {
             console.error('Error initializing modules:', error);
