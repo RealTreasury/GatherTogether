@@ -273,22 +273,32 @@ body {
 .card-type-btn {
     padding: 0.75rem 1.5rem;
     border-radius: 0.5rem;
-    border: 2px solid var(--glass-border);
+    border: 2px solid var(--primary-purple);
     background: var(--glass-bg);
+    color: var(--primary-purple);
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
+.card-type-btn:hover {
+    background: var(--primary-purple);
+    color: white;
+}
 .card-type-btn.active {
     border-color: var(--primary-purple);
     background: var(--primary-purple);
     color: white;
 }
-
-.card-type-btn.completionist.active {
+.card-type-btn.completionist {
     border-color: var(--completionist-color);
+    color: var(--completionist-color);
+}
+.card-type-btn.completionist:hover,
+.card-type-btn.completionist.active {
     background: var(--completionist-color);
+    color: white;
+    border-color: var(--completionist-color);
 }
 
 .verse-container {
