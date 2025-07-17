@@ -71,13 +71,7 @@ const Leaderboard = {
             });
         }
 
-        const submitScoreBtn = document.getElementById('submit-score-btn');
-        if (submitScoreBtn) {
-            submitScoreBtn.addEventListener('click', () => {
-                Leaderboard.saveCurrentProgress();
-                Utils.showNotification('Score submitted successfully!');
-            });
-        }
+
 
     },
 
