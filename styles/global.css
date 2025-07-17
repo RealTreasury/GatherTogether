@@ -307,6 +307,18 @@ body {
     margin-top: 1rem;
 }
 
+.verse-compact {
+    padding: 1rem;
+}
+
+.verse-compact .verse-text {
+    font-size: 1rem;
+}
+
+.verse-compact .verse-reference {
+    font-size: 0.875rem;
+}
+
 .verse-container::before,
 .verse-container::after {
     content: '"';
