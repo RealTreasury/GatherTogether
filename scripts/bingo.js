@@ -226,8 +226,9 @@ const BingoTracker = {
     },
 
     // Count total achievements including sub items
-    countAchievements: () => {
-        if (BingoTracker.currentMode === 'regular') {
+    // Optionally provide a mode ('regular' or 'completionist') to override
+    countAchievements: (mode = BingoTracker.currentMode) => {
+        if (mode === 'regular') {
             return BingoTracker.completedTiles.regular.size;
         }
         let total = 0;
@@ -239,6 +240,13 @@ const BingoTracker = {
             }
         });
         return total;
+    },
+
+    // Calculate total points across both modes
+    getTotalPoints: () => {
+        const regular = BingoTracker.countAchievements('regular');
+        const completionist = BingoTracker.countAchievements('completionist');
+        return regular + completionist;
     },
 
     openSublist: (index) => {
@@ -359,12 +367,13 @@ const BingoTracker = {
         const totalCount = BingoTracker.getCurrentChallenges().length;
         const progressPercent = Math.round((completedCount / totalCount) * 100);
         const achievements = BingoTracker.countAchievements();
-        
+        const totalPoints = BingoTracker.getTotalPoints();
+
         const elements = {
             'completed-count': completedCount,
             'progress-percent': progressPercent + '%',
             'achievement-count': achievements,
-            'total-points': achievements
+            'total-points': totalPoints
         };
         
         Object.entries(elements).forEach(([id, value]) => {
