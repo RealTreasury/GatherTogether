@@ -22,6 +22,11 @@
     --glass-border: rgba(255, 255, 255, 0.2);
 }
 
+/* Brand text helpers */
+.brand-title {
+    color: var(--primary-purple);
+}
+
 /* --- Global Loading Indicator --- */
 #loading-indicator {
     position: fixed;
