@@ -402,20 +402,17 @@ const BingoTracker = {
             Storage.save(Storage.KEYS.BINGO_SUBITEMS_COMPLETIONIST, BingoTracker.subItemProgress);
         }
 
-        // Save to leaderboard (simplified)
         const userId = Utils.getUserId();
         const usernameInput = document.getElementById('username');
         const username = usernameInput ? usernameInput.value || 'Anonymous' : 'Anonymous';
         const score = BingoTracker.completedTiles[BingoTracker.currentMode].size;
 
-        // Only save if there are completed tiles and leaderboard is available
         if (score > 0 && window.Leaderboard && typeof Leaderboard.saveScore === 'function') {
             try {
                 await Leaderboard.saveScore(userId, username, score);
                 console.log('✅ Progress saved to leaderboard');
             } catch (error) {
                 console.warn('Failed to save to leaderboard:', error);
-                // Don't show error to user for leaderboard saves, just log it
             }
         }
 
