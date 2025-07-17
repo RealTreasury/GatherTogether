@@ -27,8 +27,7 @@
                     </button>
                     <button id="invite-btn-mobile" class="btn-primary md:hidden ml-2">Invite a Friend</button>
                     <ul id="nav" class="hidden fixed nav-glass p-8 flex flex-col justify-center items-center space-y-6 text-2xl z-50 md:static md:flex md:flex-row md:space-x-2 md:space-y-0 md:p-0 md:relative md:inset-auto md:text-base md:rounded-md">
-                        <li><a href="#leaderboard" class="tab-link active">Leaderboard</a></li>
-                        <li><a href="#bingo" class="tab-link">Challenge Tracker</a></li>
+                        <li><a href="#bingo" class="tab-link active">Challenge Tracker</a></li>
                         <li><a href="#verse" class="tab-link">Hourly Verse</a></li>
                         <li><a href="#polls" class="tab-link">Polls & Q&A</a></li>
                         <li class="hidden md:block"><button id="invite-btn" class="btn-primary">Invite a Friend</button></li>
@@ -38,7 +37,7 @@
         </header>
 
         <main class="container mx-auto px-4 pb-8">
-            <section id="bingo" class="tab-section hidden">
+            <section id="bingo" class="tab-section">
                 <div class="glass p-6">
                     <div class="text-center mb-6">
                         <h2 class="text-3xl font-bold text-gray-800 mb-2">Faith Challenges</h2>
@@ -50,6 +49,7 @@
                     </div>
 
                     <div class="card-selector">
+                        <button id="leaderboard-btn" class="card-type-btn">🏅 Leaderboard</button>
                         <button class="card-type-btn active" data-type="regular">🎯 Regular</button>
                         <button class="card-type-btn completionist" data-type="completionist">🏆 Completionist</button>
                     </div>
@@ -111,7 +111,7 @@
                 </div>
             </section>
 
-            <section id="leaderboard" class="tab-section">
+            <section id="leaderboard" class="tab-section hidden">
                 <div class="glass p-6">
                     <div class="text-center mb-6">
                         <h2 class="text-3xl font-bold text-gray-800 mb-2">Challenge Leaderboard</h2>
@@ -130,7 +130,7 @@
                     <div class="text-center mt-4 space-x-2">
                         <button id="submit-score-btn" onclick="Leaderboard.saveCurrentProgress()" class="btn-primary">Submit Score</button>
                         <button onclick="Leaderboard.refresh()" class="btn-secondary">Refresh Leaderboard</button>
-                        <button onclick="document.querySelector('a[href=\'#bingo\']').click()" class="btn-secondary">Start Challenges</button>
+                        <button id="start-challenges-btn" class="btn-secondary">Start Challenges</button>
                     </div>
                 </div>
             </section>
