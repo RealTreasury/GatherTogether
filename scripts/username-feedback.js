@@ -14,6 +14,9 @@ const UsernameFeedback = {
         const applyResult = () => {
             const result = window.UsernameValidator.validateWithFeedback(input.value);
             feedback.textContent = result.message;
+            if (!result.isValid && result.cleanUsername && result.cleanUsername !== input.value.trim()) {
+                feedback.textContent += ` Using: "${result.cleanUsername}"`;
+            }
             feedback.classList.remove('success', 'error', 'warning', 'hide');
             input.classList.remove('valid', 'invalid');
             if (result.isValid) {

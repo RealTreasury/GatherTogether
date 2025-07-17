@@ -52,9 +52,21 @@ const Leaderboard = {
             if (usernameInput.value) {
                 showDisplay(usernameInput.value);
             }
+
             usernameInput.addEventListener('change', () => {
-                localStorage.setItem('username', usernameInput.value);
-                showDisplay(usernameInput.value);
+                let name = usernameInput.value.trim();
+                if (window.UsernameValidator &&
+                    typeof window.UsernameValidator.getCleanUsername === 'function') {
+                    const clean = window.UsernameValidator.getCleanUsername(name);
+                    if (clean !== name && window.Utils?.showNotification) {
+                        Utils.showNotification(`Username changed to "${clean}" due to policy.`, 'warning');
+                    }
+                    name = clean;
+                }
+
+                usernameInput.value = name;
+                localStorage.setItem('username', name);
+                showDisplay(name);
                 Leaderboard.saveCurrentProgress();
             });
         }
