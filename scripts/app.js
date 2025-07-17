@@ -1,221 +1,72 @@
-// Main application initialization and tab management
+// Main application logic
 
 const App = {
-    currentTab: 'bingo',
-
     // Initialize the application
-    init: () => {
-        console.log('Initializing GatherTogether app...');
-        
-        App.initTabs();
-        App.initMenu();
-        const inviteBtn = document.getElementById('invite-btn');
-        if (inviteBtn) {
-            inviteBtn.addEventListener('click', App.inviteFriend);
-        }
-        const inviteBtnMobile = document.getElementById('invite-btn-mobile');
-        if (inviteBtnMobile) {
-            inviteBtnMobile.addEventListener('click', App.inviteFriend);
-        }
-        App.initModules();
-        App.handleResize();
-        
-        console.log('App initialized successfully');
-    },
+    init: async () => {
+        // Initialize all modules
+        App.setupEventListeners();
+        ServerStatus.init();
+        BingoTracker.init();
+        VerseManager.init();
+        Polls.init();
+        Leaderboard.init();
 
-    // Initialize tab functionality
-    initTabs: () => {
-        const links = document.querySelectorAll('.tab-link');
-        const sections = document.querySelectorAll('.tab-section');
-
-        links.forEach(link => {
-            link.addEventListener('click', e => {
-                e.preventDefault();
-                const targetId = link.getAttribute('href').substring(1);
-                App.switchTab(targetId);
-
-                // Hide the navigation menu on mobile after selecting a tab
-                const nav = document.getElementById('nav');
-                if (nav && (window.innerWidth < 768 || nav.classList.contains('md:hidden'))) {
-                    nav.classList.add('hidden');
-                    nav.classList.remove('open');
-                }
-            });
-        });
-
-        // Set initial active tab
-        App.switchTab(App.currentTab);
-    },
-
-    // Initialize mobile menu toggle
-    initMenu: () => {
-        const toggle = document.getElementById('menu-toggle');
-        const nav = document.getElementById('nav');
-        if (toggle && nav) {
-            toggle.addEventListener('click', () => {
-                if (nav.classList.contains('hidden')) {
-                    nav.classList.remove('hidden');
-                    nav.classList.add('open');
-                } else {
-                    nav.classList.add('hidden');
-                    nav.classList.remove('open');
-                }
-            });
-        }
-    },
-
-    // Switch between tabs
-    switchTab: (tabId) => {
-        const links = document.querySelectorAll('.tab-link');
-        const sections = document.querySelectorAll('.tab-section');
-
-        // Update active states
-        links.forEach(link => {
-            link.classList.toggle('active', link.getAttribute('href') === `#${tabId}`);
-        });
-
-        // Show/hide sections
-        sections.forEach(section => {
-            section.classList.toggle('hidden', section.id !== tabId);
-        });
-
-        App.currentTab = tabId;
-
-        // Load tab-specific content if needed
-        App.onTabChange(tabId);
-    },
-
-    // Handle tab change events
-    onTabChange: (tabId) => {
-        switch (tabId) {
-            case 'bingo':
-                // Bingo is initialized on app load
-                break;
-            case 'verse':
-                // Verse is initialized on app load
-                break;
-            case 'polls':
-                // Polls are initialized on app load
-                break;
-            case 'leaderboard':
-                Leaderboard.refresh();
-                break;
-        }
-    },
-
-    // Initialize all modules
-    initModules: async () => {
         try {
-            console.log("Starting module initialization...");
-
-            // Initialize Leaderboard and wait for Firebase to be ready.
-            Leaderboard.init();
+            // Wait for critical initializations to complete
             await Leaderboard.initializationPromise;
-            console.log("Firebase and Leaderboard initialized.");
+            
+            // --- NEW: Enforce a minimum display time for the loader ---
+            // This ensures the loader is visible for at least a moment, preventing a jarring flash.
+            await new Promise(resolve => setTimeout(resolve, 500)); // 0.5 second delay
 
-            // Now initialize all other modules that might depend on Firebase/Leaderboard.
-            await Promise.all([
-                BingoTracker.init(),
-                VerseManager.init(),
-                PollManager.init()
-            ]);
-            console.log("All modules initialized.");
-
-            // Everything is ready. Enable the UI by removing the loading class from the body.
+            // Remove the loading class to show the app
             document.body.classList.remove('app-loading');
-            console.log('App is fully loaded and interactive.');
+            console.log('✅ Application is ready and displayed.');
 
         } catch (error) {
-            console.error('Error initializing modules:', error);
-            Utils.showNotification('Some features may not work properly', 'error');
-            // If an error occurs, we should still remove the loading state
-            // to not leave the user with a perpetually disabled UI.
-            document.body.classList.remove('app-loading');
-        }
-    },
-
-    // Handle window resize
-    handleResize: () => {
-        const debouncedResize = Utils.debounce(() => {
-            // Handle any resize-specific logic here
-            console.log('Window resized');
-        }, 250);
-
-        window.addEventListener('resize', debouncedResize);
-    },
-
-    // Share app link via native share or clipboard
-    inviteFriend: async () => {
-        const inviteText = `Check out this Faith Challenge app for the LCMS Youth Gathering! ${window.location.href}`;
-        if (navigator.share) {
-            try {
-                await navigator.share({
-                    title: 'GatherTogether Invite',
-                    text: inviteText,
-                    url: window.location.href
-                });
-                return;
-            } catch (err) {
-                console.error('Share failed', err);
-                // fall back to copy if share was cancelled or failed
+            console.error("❌ Critical application initialization failed:", error);
+            // Optionally, handle the failure by showing an error message
+            // instead of removing the loading screen.
+            const loadingIndicator = document.getElementById('loading-indicator');
+            if (loadingIndicator) {
+                loadingIndicator.innerHTML = '<p style="color: red;">Application failed to load. Please refresh.</p>';
             }
         }
-        App.copyInvite(inviteText);
     },
 
-    copyInvite: (text) => {
-        const fallbackCopy = (str) => {
-            const tempInput = document.createElement('textarea');
-            tempInput.value = str;
-            tempInput.style.position = 'fixed';
-            tempInput.style.top = '-9999px';
-            document.body.appendChild(tempInput);
-            tempInput.focus();
-            tempInput.select();
-            try {
-                document.execCommand('copy');
-                Utils.showNotification('Invite link copied to clipboard!');
-            } catch (err) {
-                console.error('Fallback copy failed', err);
-                Utils.showNotification('Unable to copy invite', 'error');
-            }
-            document.body.removeChild(tempInput);
-        };
+    // Set up event listeners
+    setupEventListeners: () => {
+        const tabLinks = document.querySelectorAll('.tab-link');
+        const tabSections = document.querySelectorAll('.tab-section');
+        const menuToggle = document.getElementById('menu-toggle');
+        const nav = document.getElementById('nav');
 
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text)
-                .then(() => Utils.showNotification('Invite link copied to clipboard!'))
-                .catch(err => {
-                    console.error('Clipboard copy failed', err);
-                    fallbackCopy(text);
+        // Tab navigation
+        tabLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                
+                tabSections.forEach(section => {
+                    section.classList.toggle('hidden', section.id !== targetId);
                 });
-        } else {
-            fallbackCopy(text);
-        }
-    },
 
-    // Error handling
-    handleError: (error) => {
-        console.error('App error:', error);
-        Utils.showNotification('An error occurred. Please refresh the page.', 'error');
+                tabLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+
+                // Close mobile menu on navigation
+                if (nav.classList.contains('open')) {
+                    nav.classList.remove('open');
+                }
+            });
+        });
+
+        // Mobile menu toggle
+        menuToggle.addEventListener('click', () => {
+            nav.classList.toggle('open');
+        });
     }
 };
 
-// Initialize app when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    try {
-        App.init();
-    } catch (error) {
-        App.handleError(error);
-    }
-});
-
-// Global error handler
-window.addEventListener('error', (event) => {
-    App.handleError(event.error);
-});
-
-// Handle unhandled promise rejections
-window.addEventListener('unhandledrejection', (event) => {
-    App.handleError(event.reason);
-});
+// Initialize the app when the DOM is ready
+document.addEventListener('DOMContentLoaded', App.init);
