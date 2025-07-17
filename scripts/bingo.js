@@ -415,7 +415,8 @@ const BingoTracker = {
             'completed-count': completedCount,
             'progress-percent': progressPercent + '%',
             'bingo-count': bingoLines,
-            'achievement-count': achievements
+            'achievement-count': achievements,
+            'total-points': achievements
         };
         
         Object.entries(elements).forEach(([id, value]) => {
