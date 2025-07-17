@@ -1,7 +1,8 @@
 # GatherTogether
 
-Simple web app demo featuring a bingo challenge tracker, hourly verse and
-placeholder live polls. The project is intentionally lightweight and uses
+This demo is publicly hosted through [GitHub Pages](https://realtreasury.github.io/GatherTogether/).
+It is **not** running on WordPress.com. Simply visit the link above to use the
+app without any additional setup. The project is intentionally lightweight and uses
 vanilla JavaScript without external frameworks. The bingo tracker now supports
 both a regular card and a more difficult **completionist** card that can be
 toggled in the interface. Completionist challenges with multiple tasks open in a
@@ -74,11 +75,12 @@ The local server will serve the app at `http://localhost:3000` and expose the
 `/api/users` route lets you save simple profile information (user ID,
 username and email) to `data/users.json`.
 
-### Hosting on WordPress
+### Embedding in WordPress (optional)
 
-If you only have static hosting such as a WordPress.com site, deploy the
-frontend files (`index.html`, `styles/`, `scripts/`) to your WordPress media
-library or theme and embed the page via `<iframe>`:
+The official app runs from GitHub Pages and does **not** require WordPress.
+If you wish to integrate it into a WordPress.com site, deploy the frontend
+files (`index.html`, `styles/`, `scripts/`) to your media library or theme and
+embed the page via `<iframe>`:
 
 ```html
 <iframe src="https://your-node-backend.example.com/index.html" width="100%" height="800"></iframe>
