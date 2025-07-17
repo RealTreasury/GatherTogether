@@ -35,6 +35,8 @@
     align-items: center;
     flex-direction: column;
     z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.5s ease-out; /* Add transition for fade-out */
 }
 
 #loading-indicator p {
@@ -65,8 +67,10 @@ body.app-loading #app-container {
     opacity: 0;
 }
 
+/* Animate loader out */
 body:not(.app-loading) #loading-indicator {
-    display: none;
+    opacity: 0;
+    pointer-events: none; /* Prevent interaction during fade-out */
 }
 
 #app-container {
@@ -74,6 +78,7 @@ body:not(.app-loading) #loading-indicator {
     opacity: 1;
     transition: opacity 0.5s ease-in-out;
 }
+
 
 body {
     background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
