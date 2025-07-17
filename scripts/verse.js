@@ -107,10 +107,17 @@ const VerseManager = {
     },
 
     // Refresh to new verse
-    refresh: () => {
-        const newVerse = VerseManager.getRandomVerse();
-        VerseManager.displayVerse(newVerse);
-        Utils.showNotification('New verse loaded!');
+    refresh: async () => {
+        try {
+            const verse = await VerseManager.fetchFromAPI('endure');
+            VerseManager.displayVerse(verse);
+            Utils.showNotification('New verse loaded!');
+        } catch (err) {
+            console.warn('Verse API failed, using local verse', err);
+            const fallback = VerseManager.getVerseByTheme('endure');
+            VerseManager.displayVerse(fallback);
+            Utils.showNotification('Loaded fallback verse');
+        }
     },
 
     // Toggle favorite status
@@ -146,19 +153,25 @@ const VerseManager = {
         VerseManager.favoriteVerses = new Set(saved);
     },
 
-    // Future: Connect to Bible API
-    // This function demonstrates how you might connect to a real Bible API
-    fetchFromAPI: async (reference) => {
-        // Example implementation for Bible API
-        // const apiKey = 'your-api-key';
-        // const response = await fetch(`https://api.scripture.api.bible/v1/bibles/de4e12af7f28f599-02/verses/${reference}`, {
-        //     headers: {
-        //         'api-key': apiKey
-        //     }
-        // });
-        // return await response.json();
-        
-        // For now, return from local data
-        return VERSES.find(v => v.reference === reference) || VerseManager.getRandomVerse();
+    // Fetch a verse from an external API
+    fetchFromAPI: async (query) => {
+        const endpoint = `https://bible-api.com/search?query=${encodeURIComponent(query)}`;
+        const res = await fetch(endpoint);
+        if (!res.ok) throw new Error('API request failed');
+        const data = await res.json();
+        if (data.verses && data.verses.length > 0) {
+            const pick = data.verses[Math.floor(Math.random() * data.verses.length)];
+            return {
+                text: pick.text.trim(),
+                reference: `${pick.book_name} ${pick.chapter}:${pick.verse}`,
+                theme: 'endure'
+            };
+        }
+        throw new Error('No verses found');
     }
 };
+
+// Expose globally
+if (typeof window !== 'undefined') {
+    window.VerseManager = VerseManager;
+}
