@@ -444,7 +444,7 @@ const BingoTracker = {
         const userId = Utils.getUserId();
         const usernameInput = document.getElementById('username');
         const username = usernameInput ? usernameInput.value || 'Anonymous' : 'Anonymous';
-        const score = BingoTracker.completedTiles[BingoTracker.currentMode].size;
+        const score = BingoTracker.countAchievements();
 
         if (score > 0 && window.Leaderboard && typeof Leaderboard.saveScore === 'function') {
             try {
