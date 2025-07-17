@@ -636,6 +636,12 @@ body {
     position: relative;
 }
 
+#username-display {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 /* Username input styling based on validation state */
 #username {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;

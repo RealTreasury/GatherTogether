@@ -24,10 +24,37 @@ const Leaderboard = {
         }
 
         const usernameInput = document.getElementById('username');
+        const usernameContainer = document.getElementById('username-container');
+        const usernameDisplay = document.getElementById('username-display');
+        const currentUsername = document.getElementById('current-username');
+        const changeUsernameBtn = document.getElementById('change-username-btn');
+
+        const showDisplay = (name) => {
+            if (currentUsername) currentUsername.textContent = name;
+            if (usernameDisplay) usernameDisplay.classList.remove('hidden');
+            if (usernameContainer) usernameContainer.classList.add('hidden');
+        };
+
+        const showInput = () => {
+            if (usernameDisplay) usernameDisplay.classList.add('hidden');
+            if (usernameContainer) usernameContainer.classList.remove('hidden');
+        };
+
+        if (changeUsernameBtn) {
+            changeUsernameBtn.addEventListener('click', () => {
+                showInput();
+                if (usernameInput) usernameInput.focus();
+            });
+        }
+
         if (usernameInput) {
             usernameInput.value = localStorage.getItem('username') || '';
+            if (usernameInput.value) {
+                showDisplay(usernameInput.value);
+            }
             usernameInput.addEventListener('change', () => {
                 localStorage.setItem('username', usernameInput.value);
+                showDisplay(usernameInput.value);
                 Leaderboard.saveCurrentProgress();
             });
         }
