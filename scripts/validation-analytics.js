@@ -58,10 +58,10 @@ class ValidationAnalytics {
     }
 
     trackAntiCheat(event) {
-        const acEvent = {
-            timestamp: new Date().toISOString(),
-            ...event
-        };
+        const acEvent = Object.assign(
+            { timestamp: new Date().toISOString() },
+            event || {}
+        );
         this.antiCheatEvents.push(acEvent);
         if (this.antiCheatEvents.length > 1000) {
             this.antiCheatEvents = this.antiCheatEvents.slice(-500);
