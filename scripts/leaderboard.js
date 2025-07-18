@@ -356,27 +356,36 @@ Leaderboard.filterSuspiciousUsers = (leaderboard) => {
     if (!window.AntiCheatSystem) return leaderboard;
 
     return leaderboard.filter(entry => {
-        const userId = entry.id || entry.userId;
+        // Handle undefined or missing userId/id safely
+        const userId = entry.id || entry.userId || entry.playerId;
         const score = entry.score || 0;
 
+        // Skip entries without valid userIds
+        if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+            console.warn('Leaderboard entry without valid userId:', entry);
+            return false;
+        }
+
+        const cleanUserId = userId.trim();
+
         // Check if user is flagged by anti-cheat system
-        if (window.AntiCheatSystem.isFlagged(userId)) {
-            console.log(`Filtering flagged user from leaderboard: ${userId}`);
+        if (window.AntiCheatSystem.isFlagged(cleanUserId)) {
+            console.log(`Filtering flagged user from leaderboard: ${cleanUserId}`);
             return false;
         }
 
         // Check for impossible scores (more than total challenges available)
         const maxPossibleScore = Leaderboard.getMaxPossibleScore();
         if (score > maxPossibleScore) {
-            console.log(`Filtering user with impossible score: ${userId} (${score} > ${maxPossibleScore})`);
-            window.AntiCheatSystem.flagUser(userId, 'Impossible score detected');
+            console.log(`Filtering user with impossible score: ${cleanUserId} (${score} > ${maxPossibleScore})`);
+            window.AntiCheatSystem.flagUser(cleanUserId, 'Impossible score detected');
             return false;
         }
 
         // Check for suspicious rapid progression
         if (Leaderboard.hasSuspiciousProgression(entry)) {
-            console.log(`Filtering user with suspicious progression: ${userId}`);
-            window.AntiCheatSystem.flagUser(userId, 'Suspicious rapid progression');
+            console.log(`Filtering user with suspicious progression: ${cleanUserId}`);
+            window.AntiCheatSystem.flagUser(cleanUserId, 'Suspicious rapid progression');
             return false;
         }
 
@@ -416,10 +425,17 @@ Leaderboard.hasSuspiciousProgression = (entry) => {
 // NEW: Check if player is verified (has consistent, reasonable progression)
 Leaderboard.isVerifiedPlayer = (entry) => {
     const score = entry.score || 0;
-    const userId = entry.id || entry.userId;
+    const userId = entry.id || entry.userId || entry.playerId;
+
+    // Skip verification for entries without valid userIds
+    if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+        return false;
+    }
+
+    const cleanUserId = userId.trim();
 
     // Consider players verified if they have moderate scores and aren't flagged
-    if (score >= 5 && score <= 30 && !window.AntiCheatSystem?.isFlagged(userId)) {
+    if (score >= 5 && score <= 30 && !window.AntiCheatSystem?.isFlagged(cleanUserId)) {
         return true;
     }
 
@@ -429,9 +445,17 @@ Leaderboard.isVerifiedPlayer = (entry) => {
 // Enhanced saveScore with additional validation
 const originalSaveScore = Leaderboard.saveScore;
 Leaderboard.saveScore = async (userId, username, score) => {
+    // Validate userId before proceeding
+    if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+        console.warn('Invalid userId provided to saveScore:', userId);
+        return false;
+    }
+
+    const cleanUserId = userId.trim();
+
     // Pre-submission validation
-    if (window.AntiCheatSystem?.isFlagged(userId)) {
-        console.warn('Blocked score submission from flagged user:', userId);
+    if (window.AntiCheatSystem?.isFlagged(cleanUserId)) {
+        console.warn('Blocked score submission from flagged user:', cleanUserId);
         if (window.Utils?.showNotification) {
             Utils.showNotification('Score submission blocked due to suspicious activity.', 'error');
         }
@@ -441,8 +465,8 @@ Leaderboard.saveScore = async (userId, username, score) => {
     // Check for reasonable score progression
     const maxReasonableScore = Leaderboard.getMaxPossibleScore();
     if (score > maxReasonableScore) {
-        console.warn('Blocked impossible score submission:', { userId, score, max: maxReasonableScore });
-        window.AntiCheatSystem?.flagUser(userId, 'Attempted impossible score submission');
+        console.warn('Blocked impossible score submission:', { userId: cleanUserId, score, max: maxReasonableScore });
+        window.AntiCheatSystem?.flagUser(cleanUserId, 'Attempted impossible score submission');
         if (window.Utils?.showNotification) {
             Utils.showNotification('Invalid score detected. Please refresh and try again.', 'error');
         }
@@ -450,7 +474,7 @@ Leaderboard.saveScore = async (userId, username, score) => {
     }
 
     // Proceed with original save if validation passes
-    return originalSaveScore.call(Leaderboard, userId, username, score);
+    return originalSaveScore.call(Leaderboard, cleanUserId, username, score);
 };
 
 // NEW: Enhanced refresh with anti-cheat status indicator
