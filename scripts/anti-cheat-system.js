@@ -69,7 +69,7 @@ const AntiCheatSystem = {
             [5, 36],   // Thank 10 volunteers - 1.5 days
             [6, 24],   // 3+ service opportunities - 1 day
             [7, 48],   // All speaker autographs - 2 days
-            [8, 168],  // Every worship service - 7 days
+            [8, 168],  // Each mass event - 7 days
             [9, 12],   // Lead prayer circle - 12 hours
             [10, 72],  // 25+ new friends - 3 days
             [11, 168], // Daily acts of kindness - 7 days
