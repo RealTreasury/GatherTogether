@@ -34,7 +34,7 @@ const AntiCheatSystem = {
         this.minimumIntervals.set('regular', new Map([
             [0, 15],   // Selfie with Martin Luther figure - 15 min
             [1, 30],   // Learn someone's name - 30 min
-            [2, 5],    // Attend opening worship - 5 min
+            [2, 5],    // Attend the Saturday mass event - 5 min
             [3, 20],   // Visit 3 booths - 20 min
             [4, 45],   // Service project - 45 min
             [5, 10],   // Chicken dance - 10 min
@@ -91,6 +91,14 @@ const AntiCheatSystem = {
         if (dayOfEvent > 7) return true;
 
         if (mode === 'regular') {
+            // Saturday mass event only available after 8pm Saturday
+            if (index === 2) {
+                const massDate = new Date(this.eventConfig.startDate);
+                massDate.setDate(massDate.getDate() + 2); // Saturday of event
+                massDate.setHours(20, 0, 0, 0); // 8 PM
+                return new Date() >= massDate;
+            }
+
             // Communion challenge only on Wednesday during the event
             if (index === 7) {
                 const isWednesday = new Date().getDay() === 3; // 0=Sun,3=Wed

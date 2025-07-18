@@ -3,7 +3,7 @@
 const BINGO_CHALLENGES = [
     "Take a selfie with a Martin Luther figure or picture",
     "Learn someone's name from a different state",
-    "Attend the opening worship service",
+    "Attend the Saturday mass event",
     "Visit 3 different exhibitor booths",
     "Participate in a service project",
     "Do the chicken dance with someone from another group",
