@@ -91,6 +91,12 @@ const AntiCheatSystem = {
         if (dayOfEvent > 7) return true;
 
         if (mode === 'regular') {
+            // Special lock for Saturday mass event (tile index 2)
+            if (index === 2) {
+                const unlockTime = new Date(this.eventConfig.startDate.getTime() + (2 * 24 + 20) * 60 * 60 * 1000);
+                return new Date() >= unlockTime;
+            }
+
             // Regular challenges unlock progressively
             return dayOfEvent >= 1;
         } else if (mode === 'completionist') {

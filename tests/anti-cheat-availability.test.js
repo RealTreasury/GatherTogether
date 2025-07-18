@@ -5,6 +5,7 @@ describe('challenge availability schedule', () => {
 
   afterEach(() => {
     AntiCheat.eventConfig.getDayOfEvent = originalGetDay;
+    jest.useRealTimers();
   });
 
   test('convention center games unlock on day 3', () => {
@@ -26,5 +27,18 @@ describe('challenge availability schedule', () => {
   test('daily acts of kindness available from start', () => {
     AntiCheat.eventConfig.getDayOfEvent = () => 1;
     expect(AntiCheat.isChallengeAvailable('completionist', 11)).toBe(true);
+  });
+
+  test('Saturday mass event locked until 8pm', () => {
+    const originalStart = AntiCheat.eventConfig.startDate;
+    AntiCheat.eventConfig.startDate = new Date('2025-07-17T00:00:00');
+
+    jest.useFakeTimers().setSystemTime(new Date('2025-07-19T19:00:00'));
+    expect(AntiCheat.isChallengeAvailable('regular', 2)).toBe(false);
+
+    jest.setSystemTime(new Date('2025-07-19T20:00:00'));
+    expect(AntiCheat.isChallengeAvailable('regular', 2)).toBe(true);
+
+    AntiCheat.eventConfig.startDate = originalStart;
   });
 });
