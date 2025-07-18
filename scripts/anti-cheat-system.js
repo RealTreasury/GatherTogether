@@ -44,7 +44,7 @@ const AntiCheatSystem = {
             [9, 60],   // Exchange contact info - 60 min
             [10, 30],  // Attend breakout session - 30 min
             [11, 20],  // Pray with someone - 20 min
-            [12, 15],  // Try food trucks - 15 min
+            [12, 15],  // Sample New Orleans cuisine - 15 min
             [13, 10],  // Group photo - 10 min
             [14, 20],  // Visit prayer station - 20 min
             [15, 30],  // Share experience - 30 min

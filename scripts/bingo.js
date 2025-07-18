@@ -13,7 +13,7 @@ const BINGO_CHALLENGES = [
     "Exchange contact info with 5 new friends",
     "Attend a breakout session on missions",
     "Pray with someone you just met",
-    "Try food from the local food trucks",
+    "Sample some classic New Orleans cuisine",
     "Take a group photo with your youth group",
     "Visit the prayer station and set a reminder to pray daily at home",
     "Share your experience with someone new at home",
