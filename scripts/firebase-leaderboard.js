@@ -104,20 +104,22 @@ class FirebaseLeaderboard {
 
         try {
             const { collection, query, orderBy, limit: firestoreLimit, getDocs } = window.firestoreModules;
-            
+
             const leaderboardRef = collection(this.db, 'leaderboard');
             const q = query(
                 leaderboardRef, 
                 orderBy('score', 'desc'), 
                 firestoreLimit(limit)
             );
-            
+
             const snapshot = await getDocs(q);
             const scores = [];
-            
+
             snapshot.forEach((doc) => {
                 const data = doc.data();
                 scores.push({
+                    id: data.userId || doc.id, // Include userId or fallback to doc ID
+                    userId: data.userId || doc.id, // Explicit userId field
                     username: data.username,
                     score: data.score,
                     lastUpdated: data.lastUpdated
@@ -141,7 +143,7 @@ class FirebaseLeaderboard {
 
         try {
             const { collection, query, orderBy, limit: firestoreLimit, onSnapshot } = window.firestoreModules;
-            
+
             const leaderboardRef = collection(this.db, 'leaderboard');
             const q = query(
                 leaderboardRef, 
@@ -154,6 +156,8 @@ class FirebaseLeaderboard {
                 snapshot.forEach((doc) => {
                     const data = doc.data();
                     scores.push({
+                        id: data.userId || doc.id, // Include userId or fallback to doc ID
+                        userId: data.userId || doc.id, // Explicit userId field
                         username: data.username,
                         score: data.score,
                         lastUpdated: data.lastUpdated
@@ -205,14 +209,17 @@ class FirebaseLeaderboard {
 
         try {
             const { collection, query, where, getDocs } = window.firestoreModules;
-            
+
             const leaderboardRef = collection(this.db, 'leaderboard');
             const q = query(leaderboardRef, where('userId', '==', userId));
             const snapshot = await getDocs(q);
 
             if (!snapshot.empty) {
-                const data = snapshot.docs[0].data();
+                const doc = snapshot.docs[0];
+                const data = doc.data();
                 return {
+                    id: data.userId || doc.id,
+                    userId: data.userId || doc.id,
                     username: data.username,
                     score: data.score,
                     lastUpdated: data.lastUpdated
