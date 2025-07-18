@@ -49,7 +49,7 @@ const AntiCheatSystem = {
             [14, 20],  // Visit prayer station - 20 min
             [15, 30],  // Share experience - 30 min
             [16, 5],   // Attend Mass Event Plus - 5 min
-            [17, 15],  // Write encouragement note - 15 min
+            [17, 15],  // Give Rev. Doug Bender a high five or a hug - 15 min
             [18, 25],  // Learn worship song - 25 min
             [19, 10],  // Visit LCMS booth - 10 min
             [20, 20],  // Large group games - 20 min
