@@ -23,6 +23,30 @@ const Utils = {
         return Math.floor(diff / (1000 * 60 * 60 * 24));
     },
 
+    // Convert milliseconds to a readable duration
+    formatDuration: (ms) => {
+        const minutes = Math.ceil(ms / (1000 * 60));
+        if (minutes < 60) {
+            return `${minutes} minute${minutes === 1 ? '' : 's'}`;
+        }
+        const hours = Math.ceil(ms / (1000 * 60 * 60));
+        if (hours < 24) {
+            return `${hours} hour${hours === 1 ? '' : 's'}`;
+        }
+        const days = Math.ceil(ms / (1000 * 60 * 60 * 24));
+        return `${days} day${days === 1 ? '' : 's'}`;
+    },
+
+    // Short label for countdown timer
+    formatDurationShort: (ms) => {
+        const minutes = Math.ceil(ms / (1000 * 60));
+        if (minutes < 60) return `${minutes}m`;
+        const hours = Math.ceil(ms / (1000 * 60 * 60));
+        if (hours < 24) return `${hours}h`;
+        const days = Math.ceil(ms / (1000 * 60 * 60 * 24));
+        return `${days}d`;
+    },
+
     // Debounce function
     debounce: (func, wait) => {
         let timeout;
