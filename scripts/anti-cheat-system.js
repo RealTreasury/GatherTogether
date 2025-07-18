@@ -117,6 +117,10 @@ const AntiCheatSystem = {
                 // Sessions/workshops and exhibitor booths open Sunday (Day 4)
                 return dayOfEvent >= 4;
             }
+            if (index === 15) {
+                // Hair color challenge available from the start
+                return dayOfEvent >= 1;
+            }
             if (index === 7) {
                 // Daily acts of kindness available from the start
                 return dayOfEvent >= 1;

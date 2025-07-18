@@ -28,6 +28,11 @@ describe('challenge availability schedule', () => {
     expect(AntiCheat.isChallengeAvailable('completionist', 7)).toBe(true);
   });
 
+  test('hair color challenge available from day 1', () => {
+    AntiCheat.eventConfig.getDayOfEvent = () => 1;
+    expect(AntiCheat.isChallengeAvailable('completionist', 15)).toBe(true);
+  });
+
   test('communion challenge only available on Wednesday', () => {
     jest.useFakeTimers();
     // Monday of event
