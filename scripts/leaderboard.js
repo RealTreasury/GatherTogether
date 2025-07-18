@@ -4,6 +4,21 @@ const Leaderboard = {
     _resolveInitialization: null,
     initializationPromise: null,
     pendingScores: {},
+    getMaxPossibleScore: () => {
+        try {
+            const regular = typeof BINGO_CHALLENGES !== 'undefined' ? BINGO_CHALLENGES.length : 25;
+            const completionist = typeof COMPLETIONIST_CHALLENGES !== 'undefined'
+                ? COMPLETIONIST_CHALLENGES.reduce((sum, ch) => {
+                      const extras = ch.sublist ? ch.sublist.length : (ch.requiredCount || 0);
+                      return sum + extras + 1; // sub-items plus tile itself
+                  }, 0)
+                : 16;
+            return regular + completionist;
+        } catch (err) {
+            console.warn('Failed to calculate max possible score', err);
+            return 41; // fallback to previous value
+        }
+    },
 
     init: () => {
         if (Leaderboard.isInitialized) return;
@@ -351,7 +366,7 @@ Leaderboard.filterSuspiciousUsers = (leaderboard) => {
         }
 
         // Check for impossible scores (more than total challenges available)
-        const maxPossibleScore = 25 + 16; // 25 regular + 16 completionist challenges
+        const maxPossibleScore = Leaderboard.getMaxPossibleScore();
         if (score > maxPossibleScore) {
             console.log(`Filtering user with impossible score: ${userId} (${score} > ${maxPossibleScore})`);
             window.AntiCheatSystem.flagUser(userId, 'Impossible score detected');
@@ -424,7 +439,7 @@ Leaderboard.saveScore = async (userId, username, score) => {
     }
 
     // Check for reasonable score progression
-    const maxReasonableScore = 25 + 16; // Total possible challenges
+    const maxReasonableScore = Leaderboard.getMaxPossibleScore();
     if (score > maxReasonableScore) {
         console.warn('Blocked impossible score submission:', { userId, score, max: maxReasonableScore });
         window.AntiCheatSystem?.flagUser(userId, 'Attempted impossible score submission');
