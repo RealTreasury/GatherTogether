@@ -91,6 +91,12 @@ const AntiCheatSystem = {
         if (dayOfEvent > 7) return true;
 
         if (mode === 'regular') {
+            // Communion challenge only on Wednesday during the event
+            if (index === 7) {
+                const isWednesday = new Date().getDay() === 3; // 0=Sun,3=Wed
+                return isWednesday;
+            }
+
             // Regular challenges unlock progressively
             return dayOfEvent >= 1;
         } else if (mode === 'completionist') {
