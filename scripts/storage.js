@@ -8,8 +8,7 @@ const Storage = {
         BINGO_SUBITEMS_COMPLETIONIST: 'bingoSubItemsCompletionist',
         FAVORITE_VERSES: 'favoriteVerses',
         POLL_RESPONSES: 'pollResponses',
-        USER_PREFERENCES: 'userPreferences',
-        DAILY_CHALLENGES: 'dailyChallenges'
+        USER_PREFERENCES: 'userPreferences'
     },
 
     // Save data to localStorage

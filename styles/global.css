@@ -202,11 +202,6 @@ body {
     transform: scale(0.98);
 }
 
-.bingo-tile.daily-challenge {
-    border-color: var(--gold);
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
-    animation: pulse 2s infinite;
-}
 
 .bingo-tile.completionist {
     border-color: var(--completionist-color);
@@ -218,10 +213,6 @@ body {
 }
 
 
-@keyframes pulse {
-    0%, 100% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.3); }
-    50% { box-shadow: 0 0 30px rgba(251, 191, 36, 0.6); }
-}
 
 .bingo-tile-text {
     font-size: 0.75rem;

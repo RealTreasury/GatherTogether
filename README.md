@@ -10,8 +10,6 @@ sublist view that can be dismissed via the close button, clicking outside the
 list or pressing <kbd>Esc</kbd>. For sublists with numbered placeholders such as
 "Meet people from 5 different countries," tapping a placeholder lets you enter
 the actual item name so each country can be recorded individually.
-Daily challenges like "Complete random acts of kindness" provide text fields so
-you can jot down exactly what was done each day.
 An "Invite a Friend" button lets you quickly share the site link using your
 device's native share sheet or by copying the invite text to the clipboard.
 
