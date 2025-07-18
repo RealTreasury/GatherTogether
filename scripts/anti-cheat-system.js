@@ -239,6 +239,30 @@ const AntiCheatSystem = {
                 timestamp: Date.now()
             });
 
+            // Persist flag to Firestore if available
+            if (typeof window !== 'undefined' && window.FirebaseAntiCheat) {
+                if (!window._firebaseAntiCheatInstance) {
+                    window._firebaseAntiCheatInstance = new window.FirebaseAntiCheat();
+                    if (window.firebaseApp) {
+                        window._firebaseAntiCheatInstance.init(window.firebaseApp);
+                    } else {
+                        window.addEventListener('firebaseReady', () => {
+                            window._firebaseAntiCheatInstance.init(window.firebaseApp);
+                        }, { once: true });
+                    }
+                }
+                const inst = window._firebaseAntiCheatInstance;
+                if (inst.isAvailable()) {
+                    inst.markUserFlagged(userId, reason).catch(err => console.error('Failed to record flag in Firestore', err));
+                } else {
+                    window.addEventListener('firebaseReady', () => {
+                        inst.init(window.firebaseApp).then(() => {
+                            inst.markUserFlagged(userId, reason).catch(err => console.error('Failed to record flag in Firestore', err));
+                        });
+                    }, { once: true });
+                }
+            }
+
             // Notify and reset progress when a user is flagged
             this.handleCheater(userId);
         }
@@ -270,6 +294,14 @@ const AntiCheatSystem = {
     },
 
     isFlagged(userId) {
+        if (this.flaggedUsers.has(userId)) return true;
+
+        if (typeof window !== 'undefined' && window._firebaseAntiCheatInstance && window._firebaseAntiCheatInstance.isAvailable()) {
+            window._firebaseAntiCheatInstance.isUserFlagged(userId).then(isFlagged => {
+                if (isFlagged) this.flaggedUsers.add(userId);
+            }).catch(() => {});
+        }
+
         return this.flaggedUsers.has(userId);
     },
 
@@ -289,6 +321,30 @@ const AntiCheatSystem = {
             dayOfEvent: this.eventConfig.getDayOfEvent(),
             daysRemaining: Math.max(0, 8 - this.eventConfig.getDayOfEvent())
         };
+    },
+
+    async loadFlaggedUsersFromFirebase() {
+        if (typeof window === 'undefined') return;
+        if (!window.FirebaseAntiCheat) return;
+
+        if (!window._firebaseAntiCheatInstance) {
+            window._firebaseAntiCheatInstance = new window.FirebaseAntiCheat();
+        }
+
+        const inst = window._firebaseAntiCheatInstance;
+
+        try {
+            if (!inst.isAvailable()) {
+                await inst.init(window.firebaseApp);
+            }
+
+            if (inst.isAvailable()) {
+                const flagged = await inst.fetchFlaggedUsers();
+                flagged.forEach(f => this.flaggedUsers.add(f.userId));
+            }
+        } catch (err) {
+            console.error('Failed to load flagged users from Firestore:', err);
+        }
     }
 };
 
@@ -297,6 +353,14 @@ AntiCheatSystem.setupChallengeRules();
 
 if (typeof window !== 'undefined') {
     window.AntiCheatSystem = AntiCheatSystem;
+
+    window.addEventListener('firebaseReady', () => {
+        AntiCheatSystem.loadFlaggedUsersFromFirebase();
+    });
+
+    if (window.firebaseApp) {
+        AntiCheatSystem.loadFlaggedUsersFromFirebase();
+    }
 }
 
 if (typeof module !== 'undefined') {
