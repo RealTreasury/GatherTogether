@@ -121,12 +121,12 @@ const AntiCheatSystem = {
             this.lastActions[userId] = [];
         }
         
-        // Clean old actions (older than 5 minutes)
-        const fiveMinutesAgo = now - (5 * 60 * 1000);
-        this.lastActions[userId] = this.lastActions[userId].filter(t => t > fiveMinutesAgo);
-        
-        // Check for too many rapid completions
-        if (this.lastActions[userId].length >= 10) {
+        // Clean old actions (older than 10 minutes)
+        const tenMinutesAgo = now - (10 * 60 * 1000);
+        this.lastActions[userId] = this.lastActions[userId].filter(t => t > tenMinutesAgo);
+
+        // Check for too many rapid completions within the 10 minute window
+        if (this.lastActions[userId].length > 25) {
             this.flagUser(userId, 'Too many rapid completions');
             return {
                 allowed: false,
