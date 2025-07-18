@@ -109,15 +109,15 @@ const AntiCheatSystem = {
             return dayOfEvent >= 1;
         } else if (mode === 'completionist') {
             // Custom unlock schedule for certain challenges
-            if (index === 3) {
+            if (index === 12) {
                 // Convention center games start Saturday (Day 3)
                 return dayOfEvent >= 3;
             }
-            if (index === 4 || index === 14) {
+            if (index === 9 || index === 14) {
                 // Sessions/workshops and exhibitor booths open Sunday (Day 4)
                 return dayOfEvent >= 4;
             }
-            if (index === 11) {
+            if (index === 7) {
                 // Daily acts of kindness available from the start
                 return dayOfEvent >= 1;
             }
