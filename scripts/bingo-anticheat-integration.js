@@ -34,8 +34,11 @@
                         message = `This Hard Mode challenge unlocks later in the event. Keep checking back!`;
                     }
                 } else if (validation.type === 'cooldown') {
-                    const remainingMinutes = Math.ceil(validation.remainingTime / (1000 * 60));
-                    message = `Please wait ${remainingMinutes} more minutes before completing this challenge.`;
+                    let friendly = `${Math.ceil(validation.remainingTime / (1000 * 60))} minutes`;
+                    if (window.Utils && typeof Utils.formatDuration === 'function') {
+                        friendly = Utils.formatDuration(validation.remainingTime);
+                    }
+                    message = `Please wait ${friendly} before completing this challenge.`;
                 } else if (validation.type === 'rate_limit') {
                     message = `Slow down there, speed racer! 🏃‍♂️ Take time to truly experience each challenge.`;
                 }
@@ -102,8 +105,13 @@
         }
         
         const updateTimer = () => {
-            const minutes = Math.ceil(remainingTime / (1000 * 60));
-            timer.textContent = `${minutes}m`;
+            let label;
+            if (window.Utils && typeof Utils.formatDurationShort === 'function') {
+                label = Utils.formatDurationShort(remainingTime);
+            } else {
+                label = `${Math.ceil(remainingTime / (1000 * 60))}m`;
+            }
+            timer.textContent = label;
             timer.style.display = 'block';
             
             remainingTime -= 1000;

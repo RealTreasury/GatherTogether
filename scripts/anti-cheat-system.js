@@ -7,6 +7,7 @@ const AntiCheatSystem = {
     lastActions: {},
     minimumIntervals: new Map(),
     userCompletionTimes: new Map(),
+    cooldownScale: 0.5,
     
     // NEW: Event date configuration
     eventConfig: {
@@ -162,11 +163,14 @@ const AntiCheatSystem = {
             
             if (timeSinceLastCompletion < minInterval) {
                 const remainingTime = minInterval - timeSinceLastCompletion;
-                const remainingMinutes = Math.ceil(remainingTime / (1000 * 60));
-                
+                let readable = `${Math.ceil(remainingTime / (1000 * 60))} minutes`;
+                if (typeof window !== 'undefined' && window.Utils && typeof window.Utils.formatDuration === 'function') {
+                    readable = window.Utils.formatDuration(remainingTime);
+                }
+
                 return {
                     allowed: false,
-                    reason: `Please wait ${remainingMinutes} more minutes before completing this challenge again`,
+                    reason: `Please wait ${readable} before completing this challenge again`,
                     type: 'cooldown',
                     remainingTime: remainingTime
                 };
@@ -181,7 +185,9 @@ const AntiCheatSystem = {
         if (!m) return 0;
         const val = m.get(index);
         if (!val) return 0;
-        return mode === 'regular' ? val * 60 * 1000 : val * 60 * 60 * 1000;
+        const base = mode === 'regular' ? val * 60 * 1000 : val * 60 * 60 * 1000;
+        const scale = this.cooldownScale || 1;
+        return base * scale;
     },
 
     // UPDATED: Record completion with enhanced validation
