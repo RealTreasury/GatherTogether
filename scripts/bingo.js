@@ -23,7 +23,7 @@ const BINGO_CHALLENGES = [
     "Visit the LCMS booth",
     "Participate in the large group games",
     "Share a meal with another youth group",
-    "Take notes during a main session and review them when you get home",
+    "Take notes during a main session by singing them to a Disney tune",
     "Post about the gathering on social media",
     "Give a high-five to 10 different people"
 ];
