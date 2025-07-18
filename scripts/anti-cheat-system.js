@@ -83,24 +83,36 @@ const AntiCheatSystem = {
     // NEW: Check if challenge should be available based on event day
     isChallengeAvailable(mode, index) {
         const dayOfEvent = this.eventConfig.getDayOfEvent();
-        
+
         // Before event starts - no challenges available
         if (dayOfEvent < 1) return false;
-        
+
         // After event ends - all challenges available for completion
         if (dayOfEvent > 7) return true;
-        
+
         if (mode === 'regular') {
             // Regular challenges unlock progressively
-            // Days 1-2: All challenges available
-            // This is more permissive than strict day-by-day unlocking
             return dayOfEvent >= 1;
         } else if (mode === 'completionist') {
-            // Completionist challenges have stricter unlocking
-            const unlockDay = Math.floor(index / 3) + 1; // Every 3 challenges unlock per day
+            // Custom unlock schedule for certain challenges
+            if (index === 3) {
+                // Convention center games start Saturday (Day 3)
+                return dayOfEvent >= 3;
+            }
+            if (index === 4 || index === 14) {
+                // Sessions/workshops and exhibitor booths open Sunday (Day 4)
+                return dayOfEvent >= 4;
+            }
+            if (index === 11) {
+                // Daily acts of kindness available from the start
+                return dayOfEvent >= 1;
+            }
+
+            // Default: unlock groups of three each day
+            const unlockDay = Math.floor(index / 3) + 1;
             return dayOfEvent >= unlockDay;
         }
-        
+
         return true;
     },
 

@@ -271,14 +271,20 @@ const BingoTracker = {
 
         const overlay = document.createElement('div');
         overlay.className = 'sublist-overlay';
-        const listItems = challenge.sublist.map((item,i)=>{
+        const dayOfEvent = window.AntiCheatSystem ?
+            window.AntiCheatSystem.eventConfig.getDayOfEvent() : 8;
+
+        const listItems = challenge.sublist.map((item, i) => {
+            const unlocked = index !== 11 || dayOfEvent > i;
             if (challenge.freeText) {
                 const val = progress[i] || '';
                 const selected = val ? 'selected' : '';
-                return `<li><input class="sub-item-input ${selected}" data-sub="${i}" placeholder="${item}" value="${val}"></li>`;
+                const disabled = unlocked ? '' : 'disabled';
+                return `<li><input class="sub-item-input ${selected}" data-sub="${i}" placeholder="${item}" value="${val}" ${disabled}></li>`;
             }
             const selected = progress.has(i) ? 'selected' : '';
-            return `<li><button class="sub-item-btn ${selected}" data-sub="${i}">${item}</button></li>`;
+            const disabled = unlocked ? '' : 'disabled';
+            return `<li><button class="sub-item-btn ${selected}" data-sub="${i}" ${disabled}>${item}</button></li>`;
         }).join('');
         overlay.innerHTML = `
             <div class="sublist-content relative">
@@ -292,6 +298,12 @@ const BingoTracker = {
         const handleClick = (e) => {
             if (e.target.matches('.sub-item-btn')) {
                 const sub = parseInt(e.target.dataset.sub,10);
+                if (index === 11 && dayOfEvent <= sub) {
+                    if (window.Utils && Utils.showNotification) {
+                        Utils.showNotification(`Come back on Day ${sub+1} to complete this act!`, 'warning');
+                    }
+                    return;
+                }
                 if (progress.has(sub)) {
                     progress.delete(sub);
                     e.target.classList.remove('selected');
@@ -315,6 +327,13 @@ const BingoTracker = {
         const handleInput = (e) => {
             if (e.target.matches('.sub-item-input')) {
                 const sub = parseInt(e.target.dataset.sub,10);
+                if (index === 11 && dayOfEvent <= sub) {
+                    if (window.Utils && Utils.showNotification) {
+                        Utils.showNotification(`Come back on Day ${sub+1} to complete this act!`, 'warning');
+                    }
+                    e.target.value = progress[sub] || '';
+                    return;
+                }
                 const trimmed = e.target.value.trim();
                 if (trimmed === '') {
                     delete progress[sub];
