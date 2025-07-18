@@ -110,7 +110,9 @@ const COMPLETIONIST_CHALLENGES = [
         'SELC District'
     ] },
     { text: 'Visit every exhibitor booth', sublist: Array.from({length:50},(_,i)=>`Booth ${i+1}`) },
-    { text: 'Attend all main sessions', sublist: ['Opening', 'Session 1', 'Session 2', 'etc.'], freeText: true }
+    { text: 'Meet someone with different hair colors',
+      sublist: ['Brown', 'Blonde', 'Black', 'Red', 'Pink', 'Green', 'Bald'],
+      freeText: true }
 ];
 
 const BingoTracker = {
