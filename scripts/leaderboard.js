@@ -240,12 +240,10 @@ const Leaderboard = {
         
         if (window.BingoTracker && BingoTracker.completedTiles) {
             const completedCount = BingoTracker.completedTiles[BingoTracker.currentMode || 'regular'].size;
-            if (completedCount > 0) {
-                try {
-                    await Leaderboard.saveScore(userId, username, completedCount);
-                } catch (error) {
-                    console.error('Failed to save current progress:', error);
-                }
+            try {
+                await Leaderboard.saveScore(userId, username, completedCount);
+            } catch (error) {
+                console.error('Failed to save current progress:', error);
             }
         }
     },
@@ -522,6 +520,17 @@ Leaderboard.saveScore = async (userId, username, score) => {
             Utils.showNotification('Invalid score detected. Please refresh and try again.', 'error');
         }
         return false;
+    }
+
+    if (score <= 0 && Leaderboard.firebaseLeaderboard && Leaderboard.firebaseLeaderboard.isAvailable()) {
+        try {
+            await Leaderboard.firebaseLeaderboard.deleteUserScore(cleanUserId);
+            console.log('Removed user from leaderboard:', cleanUserId);
+            return true;
+        } catch (err) {
+            console.error('Failed to remove user score:', err);
+            return false;
+        }
     }
 
     // Proceed with original save if validation passes
