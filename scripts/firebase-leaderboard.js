@@ -32,6 +32,35 @@ class FirebaseLeaderboard {
         return this.initialized && this.db !== null;
     }
 
+    // Check if a username is available (not used by another user)
+    async isUsernameAvailable(username, currentUserId) {
+        if (!this.isAvailable()) {
+            throw new Error('Firebase not available');
+        }
+
+        try {
+            const { collection, query, where, getDocs } = window.firestoreModules;
+            const leaderboardRef = collection(this.db, 'leaderboard');
+            const q = query(leaderboardRef, where('username', '==', username));
+            const snapshot = await getDocs(q);
+
+            if (snapshot.empty) return true;
+
+            let available = true;
+            snapshot.forEach(docSnap => {
+                const data = docSnap.data();
+                if (!data) return;
+                if (!currentUserId || data.userId !== currentUserId) {
+                    available = false;
+                }
+            });
+            return available;
+        } catch (error) {
+            console.error('Failed to check username availability:', error);
+            throw error;
+        }
+    }
+
     // Basic username validation/sanitization
     validateUsername(username) {
         // Use advanced validator if available
@@ -67,6 +96,14 @@ class FirebaseLeaderboard {
 
             // Validate username before saving
             const cleanUsername = this.validateUsername(username);
+
+            // Check for duplicate username
+            const available = await this.isUsernameAvailable(cleanUsername, userId);
+            if (!available) {
+                const err = new Error('Username already taken');
+                err.code = 'USERNAME_TAKEN';
+                throw err;
+            }
 
             if (!snapshot.empty) {
                 // Update existing entry

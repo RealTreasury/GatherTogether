@@ -63,7 +63,7 @@ const Leaderboard = {
             });
         }
 
-        const submitUsername = () => {
+        const submitUsername = async () => {
             if (!usernameInput) return;
             let name = usernameInput.value.trim();
             if (window.UsernameValidator &&
@@ -80,6 +80,21 @@ const Leaderboard = {
                     Utils.showNotification('Please enter a username.', 'error');
                 }
                 return;
+            }
+
+            // Check for duplicate username if Firebase is ready
+            if (Leaderboard.firebaseLeaderboard && Leaderboard.firebaseLeaderboard.isAvailable()) {
+                try {
+                    const available = await Leaderboard.firebaseLeaderboard.isUsernameAvailable(name, Utils.getUserId());
+                    if (!available) {
+                        if (window.Utils?.showNotification) {
+                            Utils.showNotification('Username already taken. Choose another.', 'error');
+                        }
+                        return;
+                    }
+                } catch (err) {
+                    console.error('Username availability check failed:', err);
+                }
             }
 
             usernameInput.value = name;
@@ -202,7 +217,11 @@ const Leaderboard = {
                 return true;
             } catch (error) {
                 console.error('❌ Failed to save score to Firebase:', error);
-                if (window.Utils && Utils.showNotification) {
+                if (error.code === 'USERNAME_TAKEN') {
+                    if (window.Utils && Utils.showNotification) {
+                        Utils.showNotification('Username already taken. Choose another.', 'error');
+                    }
+                } else if (window.Utils && Utils.showNotification) {
                     Utils.showNotification('Failed to save score. Check console for details.', 'error');
                 }
                 throw error;
