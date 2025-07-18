@@ -1832,3 +1832,21 @@ body {
     100% { transform: scale(1) rotate(0deg); }
 }
 
+/* Current user highlighting in leaderboard */
+.leaderboard-current-user {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(162, 59, 176, 0.1) 100%) !important;
+    border-color: var(--primary-purple) !important;
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.2);
+}
+
+.leaderboard-current-user:hover {
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+    transform: translateY(-1px);
+}
+
+.user-indicator {
+    color: var(--primary-purple);
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
