@@ -71,7 +71,6 @@ const BingoTracker = {
         completionist: new Set()
     },
     subItemProgress: {},
-    dailyChallenge: 0,
     sublistKeyHandler: null,
     sessionsLoaded: false,
 
@@ -79,7 +78,6 @@ const BingoTracker = {
     init: async () => {
         await BingoTracker.loadSessions();
         BingoTracker.loadProgress();
-        BingoTracker.setDailyChallenge();
         BingoTracker.initCardSelector();
         const startBtn = document.getElementById('start-challenges-btn');
         if (startBtn) {
@@ -193,9 +191,6 @@ const BingoTracker = {
                 tile.classList.add('completed');
             }
 
-            if (index === BingoTracker.dailyChallenge && BingoTracker.currentMode === 'regular') {
-                tile.classList.add('daily-challenge');
-            }
 
             const label = typeof challenge === 'string' ? challenge : challenge.text;
             tile.innerHTML = `<div class="bingo-tile-text">${label}</div>`;
@@ -400,11 +395,6 @@ const BingoTracker = {
         });
     },
 
-    // Set daily challenge
-    setDailyChallenge: () => {
-        const dayOfYear = Utils.getDayOfYear();
-        BingoTracker.dailyChallenge = dayOfYear % BINGO_CHALLENGES.length;
-    },
 
     loadSessions: async () => {
         if (BingoTracker.sessionsLoaded) return;
