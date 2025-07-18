@@ -50,7 +50,7 @@ const AntiCheatSystem = {
             [15, 30],  // Share experience - 30 min
             [16, 5],   // Attend Mass Event Plus - 5 min
             [17, 15],  // Give Rev. Doug Bender a high five or a hug - 15 min
-            [18, 25],  // Take a picture of someone in a sombrero - 25 min
+            [18, 25],  // Take a picture of someone wearing a sombrero - 25 min
             [19, 10],  // Take a picture with a comfort dog - 10 min
             [20, 20],  // Large group games - 20 min
             [21, 45],  // Share meal with group - 45 min
