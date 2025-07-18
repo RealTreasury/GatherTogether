@@ -7,7 +7,6 @@ const AntiCheatSystem = {
     lastActions: {},
     minimumIntervals: new Map(),
     userCompletionTimes: new Map(),
-    cooldownScale: 0.5,
     
     // NEW: Event date configuration
     eventConfig: {
@@ -148,46 +147,13 @@ const AntiCheatSystem = {
             };
         }
 
-        // Check minimum time interval for this specific challenge
-        const minInterval = this.getMinimumInterval(mode, tileIndex);
-        if (minInterval > 0) {
-            let userMap = this.userCompletionTimes.get(userId);
-            if (!userMap) {
-                userMap = new Map();
-                this.userCompletionTimes.set(userId, userMap);
-            }
-            
-            const challengeKey = `${mode}:${tileIndex}`;
-            const lastCompletion = userMap.get(challengeKey) || 0;
-            const timeSinceLastCompletion = now - lastCompletion;
-            
-            if (timeSinceLastCompletion < minInterval) {
-                const remainingTime = minInterval - timeSinceLastCompletion;
-                let readable = `${Math.ceil(remainingTime / (1000 * 60))} minutes`;
-                if (typeof window !== 'undefined' && window.Utils && typeof window.Utils.formatDuration === 'function') {
-                    readable = window.Utils.formatDuration(remainingTime);
-                }
-
-                return {
-                    allowed: false,
-                    reason: `Please wait ${readable} before completing this challenge again`,
-                    type: 'cooldown',
-                    remainingTime: remainingTime
-                };
-            }
-        }
+        // Previously enforced per-challenge cooldowns are disabled
 
         return { allowed: true };
     },
 
     getMinimumInterval(mode, index) {
-        const m = this.minimumIntervals.get(mode);
-        if (!m) return 0;
-        const val = m.get(index);
-        if (!val) return 0;
-        const base = mode === 'regular' ? val * 60 * 1000 : val * 60 * 60 * 1000;
-        const scale = this.cooldownScale || 1;
-        return base * scale;
+        return 0;
     },
 
     // UPDATED: Record completion with enhanced validation
@@ -346,10 +312,6 @@ const AntiCheatSystem = {
 
     // NEW: Get remaining cooldown time for a challenge
     getRemainingCooldown(userId, tileIndex, mode = 'regular') {
-        const validation = this.canCompleteChallenge(userId, tileIndex, mode);
-        if (validation.type === 'cooldown') {
-            return validation.remainingTime;
-        }
         return 0;
     },
 
