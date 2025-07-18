@@ -495,3 +495,12 @@ const BingoTracker = {
         }
     }
 };
+
+// Export for use in other modules and make available globally
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = BingoTracker;
+}
+
+if (typeof window !== 'undefined') {
+    window.BingoTracker = BingoTracker;
+}
