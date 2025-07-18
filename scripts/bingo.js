@@ -1,7 +1,7 @@
 // Bingo tracker functionality
 
 const BINGO_CHALLENGES = [
-    "Take a selfie at the gathering entrance",
+    "Take a selfie with a Martin Luther figure or picture",
     "Learn someone's name from a different state",
     "Attend the opening worship service",
     "Visit 3 different exhibitor booths",

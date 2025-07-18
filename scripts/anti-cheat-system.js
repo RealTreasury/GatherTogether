@@ -32,7 +32,7 @@ const AntiCheatSystem = {
         
         // Regular challenges (in minutes) - conservative starting values
         this.minimumIntervals.set('regular', new Map([
-            [0, 15],   // Selfie at entrance - 15 min
+            [0, 15],   // Selfie with Martin Luther figure - 15 min
             [1, 30],   // Learn someone's name - 30 min
             [2, 5],    // Attend opening worship - 5 min
             [3, 20],   // Visit 3 booths - 20 min
