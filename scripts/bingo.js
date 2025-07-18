@@ -309,6 +309,23 @@ const BingoTracker = {
         return regular + completionist;
     },
 
+    // Calculate maximum possible points across both modes
+    getTotalPossiblePoints: () => {
+        let total = BINGO_CHALLENGES.length;
+        COMPLETIONIST_CHALLENGES.forEach(ch => {
+            const req = ch.requiredCount || (ch.sublist ? ch.sublist.length : 0);
+            total += req + 1;
+        });
+        return total;
+    },
+
+    // Overall completion percentage including sub items
+    getTotalProgressPercent: () => {
+        const achieved = BingoTracker.getTotalPoints();
+        const possible = BingoTracker.getTotalPossiblePoints();
+        return possible ? Math.round((achieved / possible) * 100) : 0;
+    },
+
     openSublist: (index) => {
         const challenge = COMPLETIONIST_CHALLENGES[index];
         const stored = BingoTracker.subItemProgress[index];
@@ -450,12 +467,14 @@ const BingoTracker = {
         const progressPercent = Math.round((completedCount / totalCount) * 100);
         const achievements = BingoTracker.countAchievements();
         const totalPoints = BingoTracker.getTotalPoints();
+        const totalProgress = BingoTracker.getTotalProgressPercent();
 
         const elements = {
             'completed-count': completedCount,
             'progress-percent': progressPercent + '%',
             'achievement-count': achievements,
-            'total-points': totalPoints
+            'total-points': totalPoints,
+            'total-progress': totalProgress + '%'
         };
         
         Object.entries(elements).forEach(([id, value]) => {
