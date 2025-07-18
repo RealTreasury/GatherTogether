@@ -83,7 +83,7 @@ const COMPLETIONIST_CHALLENGES = [
         'Wyoming District',
         'English District',
         'SELC District'
-    ], freeText: true },
+    ] },
     { text: 'Compete in every convention center game', sublist: Array.from({length:8},(_,i)=>`Game ${i+1}`), freeText: true },
     { text: 'Attend 15+ sessions/workshops', sublist: [], requiredCount: 15, enableSearch: true },
     { text: 'Write thank-you notes to 10 event volunteers',
