@@ -20,7 +20,7 @@ const BINGO_CHALLENGES = [
     "Attend Mass Event Plus",
     "Give Rev. Doug Bender a high five or a hug",
     "Take a picture of someone in a sombrero",
-    "Visit the LCMS booth",
+    "Take a picture with a comfort dog",
     "Participate in the large group games",
     "Share a meal with another youth group",
     "Have an entire conversation with someone in Disney lyrics",
