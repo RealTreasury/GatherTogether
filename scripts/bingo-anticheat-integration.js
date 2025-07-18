@@ -77,8 +77,7 @@
                 tile.classList.add('locked');
                 tracker.showLockIcon(tile);
             } else if (validation.type === 'cooldown') {
-                tile.classList.add('on-cooldown');
-                tracker.showCooldownTimer(tile, validation.remainingTime);
+                // Cooldown visuals have been removed
             }
         }
     };
@@ -95,45 +94,6 @@
         }
     };
 
-    // NEW: Show countdown timer for challenges on cooldown
-    tracker.showCooldownTimer = function(tile, remainingTime) {
-        let timer = tile.querySelector('.timer-indicator');
-        if (!timer) {
-            timer = document.createElement('div');
-            timer.className = 'timer-indicator';
-            tile.appendChild(timer);
-        }
-        
-        const updateTimer = () => {
-            let label;
-            if (window.Utils && typeof Utils.formatDurationShort === 'function') {
-                label = Utils.formatDurationShort(remainingTime);
-            } else {
-                label = `${Math.ceil(remainingTime / (1000 * 60))}m`;
-            }
-            timer.textContent = label;
-            timer.style.display = 'block';
-            
-            remainingTime -= 1000;
-            if (remainingTime <= 0) {
-                timer.style.display = 'none';
-                tile.classList.remove('on-cooldown');
-                // Show unlock notification
-                tracker.showUnlockNotification();
-            } else {
-                setTimeout(updateTimer, 1000);
-            }
-        };
-        
-        updateTimer();
-    };
-
-    // NEW: Show notification when challenge unlocks
-    tracker.showUnlockNotification = function() {
-        if (window.Utils && Utils.showNotification) {
-            Utils.showNotification('✨ Challenge unlocked! You can try again now.', 'success');
-        }
-    };
 
     // NEW: Enhanced render grid to apply anti-cheat state
     const originalRenderGrid = tracker.renderGrid;
