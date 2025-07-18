@@ -24,6 +24,7 @@ describe('Leaderboard pending score handling', () => {
     class FailFirebaseLeaderboard {
       async init() { return false; }
       isAvailable() { return false; }
+      async isUsernameAvailable() { return true; }
       subscribeToLeaderboard() {}
     }
     window.FirebaseLeaderboard = FailFirebaseLeaderboard;
@@ -42,6 +43,7 @@ describe('Leaderboard pending score handling', () => {
       constructor() { this.initialized = false; this.submitted = []; window._fbInstance = this; }
       async init() { this.initialized = true; return true; }
       isAvailable() { return this.initialized; }
+      async isUsernameAvailable() { return true; }
       async submitScore(userId, username, score) { this.submitted.push({ userId, username, score }); }
       subscribeToLeaderboard() {}
     }
