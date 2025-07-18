@@ -494,7 +494,7 @@ const BingoTracker = {
         const userId = Utils.getUserId();
         const usernameInput = document.getElementById('username');
         const username = usernameInput ? usernameInput.value || 'Anonymous' : 'Anonymous';
-        const score = BingoTracker.countAchievements();
+        const score = BingoTracker.getTotalPoints();
 
         // Always save score so a user can reset their leaderboard entry to zero
         if (window.Leaderboard && typeof Leaderboard.saveScore === 'function') {

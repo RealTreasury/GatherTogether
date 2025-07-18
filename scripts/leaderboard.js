@@ -274,6 +274,11 @@ const Leaderboard = {
             .sort((a, b) => b.score - a.score)
             .slice(0, 25);
 
+        // FIX: Get current user ID to identify their entry
+        const currentUserId = window.Utils && typeof Utils.getUserId === 'function'
+            ? Utils.getUserId()
+            : null;
+
         if (sortedLeaderboard.length === 0) {
             list.innerHTML = `
                 <li class="text-center py-4 text-gray-500">
@@ -287,7 +292,7 @@ const Leaderboard = {
 
         list.innerHTML = sortedLeaderboard.map((entry, index) => {
             const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
-            const bgClass = index === 0 ? 'bg-yellow-100 border-yellow-300' :
+            let bgClass = index === 0 ? 'bg-yellow-100 border-yellow-300' :
                            index === 1 ? 'bg-gray-100 border-gray-300' :
                            index === 2 ? 'bg-orange-100 border-orange-300' :
                            'bg-white border-gray-200';
@@ -295,16 +300,23 @@ const Leaderboard = {
             // Handle different property names
             const username = entry.playerName || entry.username || 'Anonymous';
             const score = entry.score || 0;
+            const entryUserId = entry.id || entry.userId || entry.playerId;
+            // Highlight current user's entry
+            const isCurrentUser = currentUserId && entryUserId === currentUserId;
+            if (isCurrentUser) {
+                bgClass = 'leaderboard-current-user';
+            }
 
             // Add verification badge for clean players
             const verificationBadge = Leaderboard.isVerifiedPlayer(entry) ?
                 '<span class="text-green-500 text-xs ml-1" title="Verified fair play">✓</span>' : '';
+            const userIndicator = isCurrentUser ? ' <span class="user-indicator">(You)</span>' : '';
 
             return `
                 <li class="flex justify-between items-center p-2 rounded-lg border ${bgClass} transition-all hover:shadow-md text-sm">
                     <div class="flex items-center">
                         <span class="w-6">${medal || `${index + 1}.`}</span>
-                        <span class="font-medium ml-1">${username}${verificationBadge}</span>
+                        <span class="font-medium ml-1">${username}${verificationBadge}${userIndicator}</span>
                     </div>
                     <div class="flex items-center">
                         <span class="font-bold">${score}</span>
