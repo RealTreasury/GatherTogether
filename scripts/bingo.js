@@ -21,7 +21,7 @@ const BINGO_CHALLENGES = [
     "Give Rev. Doug Bender a high five or a hug",
     "Take a picture of someone wearing a sombrero",
     "Take a picture with a comfort dog",
-    "Participate in the large group games",
+    "Participate in a team game",
     "Share a meal with another youth group",
     "Have an entire conversation with someone in Disney lyrics",
     "Post about the gathering on social media",
