@@ -11,7 +11,7 @@ const BINGO_CHALLENGES = [
     "Take communion at morning worship",
     "Ask a speaker a question during Q&A",
     "Exchange contact info with 5 new friends",
-    "Attend a breakout session on missions",
+    "Complete the Gathering poll",
     "Pray with someone you just met",
     "Sample some classic New Orleans cuisine",
     "Take a group photo with your youth group",
