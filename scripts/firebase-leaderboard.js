@@ -106,15 +106,26 @@ class FirebaseLeaderboard {
             }
 
             if (!snapshot.empty) {
-                // Update existing entry
                 const docRef = snapshot.docs[0];
-                await updateDoc(doc(this.db, 'leaderboard', docRef.id), {
-                    username: cleanUsername,
-                    score: score,
-                    lastUpdated: new Date().toISOString()
-                });
-                console.log('Score updated in Firebase for user:', userId);
+
+                if (score <= 0) {
+                    await deleteDoc(doc(this.db, 'leaderboard', docRef.id));
+                    console.log('Score removed from Firebase for user:', userId);
+                } else {
+                    // Update existing entry
+                    await updateDoc(doc(this.db, 'leaderboard', docRef.id), {
+                        username: cleanUsername,
+                        score: score,
+                        lastUpdated: new Date().toISOString()
+                    });
+                    console.log('Score updated in Firebase for user:', userId);
+                }
             } else {
+                if (score <= 0) {
+                    // Nothing to save when score is zero
+                    return true;
+                }
+
                 // Create new entry
                 await addDoc(leaderboardRef, {
                     userId: userId,

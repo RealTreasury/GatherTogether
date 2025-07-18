@@ -55,4 +55,27 @@ describe('Leaderboard pending score handling', () => {
     expect(fb.submitted).toEqual([{ userId: 'u1', username: 'Tester', score: 10 }]);
     expect(Leaderboard.pendingScores['u1']).toBeUndefined();
   });
+
+  test('score of zero removes user entry', async () => {
+    class MockFirebaseLeaderboard {
+      constructor() { this.initialized = false; this.deleted = []; window._fbZero = this; }
+      async init() { this.initialized = true; return true; }
+      isAvailable() { return this.initialized; }
+      async isUsernameAvailable() { return true; }
+      async submitScore() { }
+      async deleteUserScore(uid) { this.deleted.push(uid); }
+      subscribeToLeaderboard() {}
+    }
+    window.FirebaseLeaderboard = MockFirebaseLeaderboard;
+    window.firebaseApp = {};
+
+    require('../scripts/leaderboard.js');
+    Leaderboard = window.Leaderboard;
+    Leaderboard.init();
+    await Leaderboard.initializationPromise;
+
+    await Leaderboard.saveScore('u1', 'Tester', 0);
+    const fb = window._fbZero;
+    expect(fb.deleted).toEqual(['u1']);
+  });
 });
