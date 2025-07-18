@@ -1791,3 +1791,10 @@ body {
     font-size: 0.75rem;
 }
 
+/* Center the "Start Challenge" button */
+#submit-username-btn {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
