@@ -19,7 +19,7 @@ const BINGO_CHALLENGES = [
     "Share your experience with someone new at home",
     "Attend Mass Event Plus",
     "Give Rev. Doug Bender a high five or a hug",
-    "Learn a new worship song to teach your family back home",
+    "Take a picture of someone in a sombrero",
     "Visit the LCMS booth",
     "Participate in the large group games",
     "Share a meal with another youth group",
