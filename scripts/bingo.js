@@ -18,7 +18,7 @@ const BINGO_CHALLENGES = [
     "Visit the prayer station and set a reminder to pray daily at home",
     "Share your experience with someone new at home",
     "Attend Mass Event Plus",
-    "Write an encouragement note to a hotel worker",
+    "Give Rev. Doug Bender a high five or a hug",
     "Learn a new worship song to teach your family back home",
     "Visit the LCMS booth",
     "Participate in the large group games",
