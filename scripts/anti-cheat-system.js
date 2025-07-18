@@ -54,7 +54,7 @@ const AntiCheatSystem = {
             [19, 10],  // Visit LCMS booth - 10 min
             [20, 20],  // Large group games - 20 min
             [21, 45],  // Share meal with group - 45 min
-            [22, 30],  // Take notes during session - 30 min
+            [22, 30],  // Take notes by singing a Disney tune - 30 min
             [23, 5],   // Social media post - 5 min
             [24, 10]   // High-five 10 people - 10 min
         ]));
