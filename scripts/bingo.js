@@ -42,11 +42,36 @@ const KINDNESS_IDEAS = [
     'Write an encouraging note'
 ];
 
-const DAILY_KINDNESS_INDEX = 11; // index of daily acts challenge
+// Index of the "daily random acts" challenge within COMPLETIONIST_CHALLENGES
+// This is used to gate sub items until their release day
+let DAILY_KINDNESS_INDEX = 7;
 
 const COMPLETIONIST_CHALLENGES = [
     { text: 'Meet someone from all 50 states', sublist: US_STATES },
     { text: 'Meet people from 5 different countries', sublist: Array.from({length:5},(_,i)=>`Country ${i+1}`), freeText: true },
+    { text: 'Fast for a meal and donate savings' },
+    { text: 'Lead a prayer circle with strangers' },
+    { text: 'Write thank-you notes to 10 event volunteers',
+        sublist: [
+            'Hotel worker',
+            'Group Leader',
+            'Adult Volunteer',
+            'YAV',
+            'Police Officer',
+            'Restaurant worker',
+            'Stadium worker',
+            'Bus driver / Airline worker',
+            'Janitor',
+            'Pastor'
+        ] },
+    { text: 'Volunteer for 3+ service opportunities', sublist: Array.from({length:3},(_,i)=>`Service ${i+1}`) },
+    { text: 'Exchange contacts with 25+ new friends', sublist: Array.from({length:25},(_,i)=>`Friend ${i+1}`), freeText: true },
+    { text: 'Complete daily random acts of kindness', sublist: Array.from({length:7},(_,i)=>`Day ${i+1}`), freeText: true },
+    { text: 'Participate in every worship service', sublist: Array.from({length:5},(_,i)=>`Service ${i+1}`), freeText: true },
+    { text: 'Attend 15+ sessions/workshops', sublist: [], requiredCount: 15, enableSearch: true },
+    { text: 'Get autographs from all guest speakers', sublist: Array.from({length:5},(_,i)=>`Speaker ${i+1}`), freeText: true },
+    { text: 'Get photos with all main speakers', sublist: ['Shelly Schwalm', 'Tanner Olsen', 'Brady Finnern'] },
+    { text: 'Compete in every convention center game', sublist: Array.from({length:8},(_,i)=>`Game ${i+1}`), freeText: true },
     { text: 'Collect all district booth prizes', sublist: [
         'Atlantic District',
         'California–Nevada–Hawaii District',
@@ -84,29 +109,6 @@ const COMPLETIONIST_CHALLENGES = [
         'English District',
         'SELC District'
     ] },
-    { text: 'Compete in every convention center game', sublist: Array.from({length:8},(_,i)=>`Game ${i+1}`), freeText: true },
-    { text: 'Attend 15+ sessions/workshops', sublist: [], requiredCount: 15, enableSearch: true },
-    { text: 'Write thank-you notes to 10 event volunteers',
-        sublist: [
-            'Hotel worker',
-            'Group Leader',
-            'Adult Volunteer',
-            'YAV',
-            'Police Officer',
-            'Restaurant worker',
-            'Stadium worker',
-            'Bus driver / Airline worker',
-            'Janitor',
-            'Pastor'
-        ] },
-    { text: 'Volunteer for 3+ service opportunities', sublist: Array.from({length:3},(_,i)=>`Service ${i+1}`) },
-    { text: 'Get autographs from all guest speakers', sublist: Array.from({length:5},(_,i)=>`Speaker ${i+1}`), freeText: true },
-    { text: 'Participate in every worship service', sublist: Array.from({length:5},(_,i)=>`Service ${i+1}`), freeText: true },
-    { text: 'Lead a prayer circle with strangers' },
-    { text: 'Exchange contacts with 25+ new friends', sublist: Array.from({length:25},(_,i)=>`Friend ${i+1}`), freeText: true },
-    { text: 'Complete daily random acts of kindness', sublist: Array.from({length:7},(_,i)=>`Day ${i+1}`), freeText: true },
-    { text: 'Fast for a meal and donate savings' },
-    { text: 'Get photos with all main speakers', sublist: ['Shelly Schwalm', 'Tanner Olsen', 'Brady Finnern'] },
     { text: 'Visit every exhibitor booth', sublist: Array.from({length:50},(_,i)=>`Booth ${i+1}`) },
     { text: 'Attend all main sessions', sublist: ['Opening', 'Session 1', 'Session 2', 'etc.'], freeText: true }
 ];
