@@ -230,11 +230,19 @@ const AntiCheatSystem = {
     },
 
     flagUser(userId, reason) {
-        if (!this.flaggedUsers.has(userId)) {
-            this.flaggedUsers.add(userId);
+        // Validate userId
+        if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+            console.warn('Cannot flag invalid userId:', userId);
+            return;
+        }
+
+        const cleanUserId = userId.trim();
+
+        if (!this.flaggedUsers.has(cleanUserId)) {
+            this.flaggedUsers.add(cleanUserId);
             this.logEvent({
                 type: 'flag',
-                userId,
+                userId: cleanUserId,
                 reason,
                 timestamp: Date.now()
             });
@@ -253,18 +261,22 @@ const AntiCheatSystem = {
                 }
                 const inst = window._firebaseAntiCheatInstance;
                 if (inst.isAvailable()) {
-                    inst.markUserFlagged(userId, reason).catch(err => console.error('Failed to record flag in Firestore', err));
+                    inst.markUserFlagged(cleanUserId, reason).catch(err => {
+                        // Silently handle errors - don't spam console
+                    });
                 } else {
                     window.addEventListener('firebaseReady', () => {
                         inst.init(window.firebaseApp).then(() => {
-                            inst.markUserFlagged(userId, reason).catch(err => console.error('Failed to record flag in Firestore', err));
+                            inst.markUserFlagged(cleanUserId, reason).catch(err => {
+                                // Silently handle errors
+                            });
                         });
                     }, { once: true });
                 }
             }
 
             // Notify and reset progress when a user is flagged
-            this.handleCheater(userId);
+            this.handleCheater(cleanUserId);
         }
     },
 
@@ -294,15 +306,24 @@ const AntiCheatSystem = {
     },
 
     isFlagged(userId) {
-        if (this.flaggedUsers.has(userId)) return true;
-
-        if (typeof window !== 'undefined' && window._firebaseAntiCheatInstance && window._firebaseAntiCheatInstance.isAvailable()) {
-            window._firebaseAntiCheatInstance.isUserFlagged(userId).then(isFlagged => {
-                if (isFlagged) this.flaggedUsers.add(userId);
-            }).catch(() => {});
+        // Validate userId first
+        if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+            return false; // Don't warn for empty/invalid userIds, just return false
         }
 
-        return this.flaggedUsers.has(userId);
+        const cleanUserId = userId.trim();
+
+        if (this.flaggedUsers.has(cleanUserId)) return true;
+
+        if (typeof window !== 'undefined' && window._firebaseAntiCheatInstance && window._firebaseAntiCheatInstance.isAvailable()) {
+            window._firebaseAntiCheatInstance.isUserFlagged(cleanUserId).then(isFlagged => {
+                if (isFlagged) this.flaggedUsers.add(cleanUserId);
+            }).catch((err) => {
+                // Silently handle errors to prevent console spam
+            });
+        }
+
+        return this.flaggedUsers.has(cleanUserId);
     },
 
     // NEW: Get remaining cooldown time for a challenge
@@ -340,10 +361,15 @@ const AntiCheatSystem = {
 
             if (inst.isAvailable()) {
                 const flagged = await inst.fetchFlaggedUsers();
-                flagged.forEach(f => this.flaggedUsers.add(f.userId));
+                flagged.forEach(f => {
+                    if (f.userId && typeof f.userId === 'string') {
+                        this.flaggedUsers.add(f.userId.trim());
+                    }
+                });
             }
         } catch (err) {
-            console.error('Failed to load flagged users from Firestore:', err);
+            // Silently handle permission errors
+            console.log('Anti-cheat system running in local mode (Firestore unavailable)');
         }
     }
 };
