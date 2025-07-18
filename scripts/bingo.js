@@ -33,6 +33,17 @@ const US_STATES = [
     'Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'
 ];
 
+const KINDNESS_IDEAS = [
+    'Compliment a stranger',
+    'Hold the door for someone',
+    'Pick up litter',
+    'Donate to a food bank',
+    'Help carry someone\'s bags',
+    'Write an encouraging note'
+];
+
+const DAILY_KINDNESS_INDEX = 11; // index of daily acts challenge
+
 const COMPLETIONIST_CHALLENGES = [
     { text: 'Meet someone from all 50 states', sublist: US_STATES },
     { text: 'Meet people from 5 different countries', sublist: Array.from({length:5},(_,i)=>`Country ${i+1}`), freeText: true },
@@ -274,13 +285,15 @@ const BingoTracker = {
         const dayOfEvent = window.AntiCheatSystem ?
             window.AntiCheatSystem.eventConfig.getDayOfEvent() : 8;
 
+        const isKindness = index === DAILY_KINDNESS_INDEX;
         const listItems = challenge.sublist.map((item, i) => {
-            const unlocked = index !== 11 || dayOfEvent > i;
+            const unlocked = !isKindness || dayOfEvent > i;
             if (challenge.freeText) {
                 const val = progress[i] || '';
                 const selected = val ? 'selected' : '';
                 const disabled = unlocked ? '' : 'disabled';
-                return `<li><input class="sub-item-input ${selected}" data-sub="${i}" placeholder="${item}" value="${val}" ${disabled}></li>`;
+                const datalist = isKindness ? 'list="kindness-options"' : '';
+                return `<li><input ${datalist} class="sub-item-input ${selected}" data-sub="${i}" placeholder="${item}" value="${val}" ${disabled}></li>`;
             }
             const selected = progress.has(i) ? 'selected' : '';
             const disabled = unlocked ? '' : 'disabled';
@@ -292,13 +305,14 @@ const BingoTracker = {
                 <h3 class="text-xl font-bold mb-4">${challenge.text}</h3>
                 ${challenge.enableSearch ? '<input type="text" class="sublist-search" placeholder="Search..." />' : ''}
                 <ul class="sublist-items">${listItems}</ul>
+                ${isKindness ? `<datalist id="kindness-options">${KINDNESS_IDEAS.map(k => `<option value="${k}"></option>`).join('')}</datalist>` : ''}
             </div>
         `;
 
         const handleClick = (e) => {
             if (e.target.matches('.sub-item-btn')) {
                 const sub = parseInt(e.target.dataset.sub,10);
-                if (index === 11 && dayOfEvent <= sub) {
+                if (isKindness && dayOfEvent <= sub) {
                     if (window.Utils && Utils.showNotification) {
                         Utils.showNotification(`Come back on Day ${sub+1} to complete this act!`, 'warning');
                     }
@@ -327,7 +341,7 @@ const BingoTracker = {
         const handleInput = (e) => {
             if (e.target.matches('.sub-item-input')) {
                 const sub = parseInt(e.target.dataset.sub,10);
-                if (index === 11 && dayOfEvent <= sub) {
+                if (isKindness && dayOfEvent <= sub) {
                     if (window.Utils && Utils.showNotification) {
                         Utils.showNotification(`Come back on Day ${sub+1} to complete this act!`, 'warning');
                     }
