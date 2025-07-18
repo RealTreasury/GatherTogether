@@ -43,6 +43,7 @@ const Leaderboard = {
         const usernameDisplay = document.getElementById('username-display');
         const currentUsername = document.getElementById('current-username');
         const changeUsernameBtn = document.getElementById('change-username-btn');
+        const submitUsernameBtn = document.getElementById('submit-username-btn');
 
         const showDisplay = (name) => {
             if (currentUsername) currentUsername.textContent = name;
@@ -62,28 +63,47 @@ const Leaderboard = {
             });
         }
 
+        const submitUsername = () => {
+            if (!usernameInput) return;
+            let name = usernameInput.value.trim();
+            if (window.UsernameValidator &&
+                typeof window.UsernameValidator.getCleanUsername === 'function') {
+                const clean = window.UsernameValidator.getCleanUsername(name);
+                if (clean !== name && window.Utils?.showNotification) {
+                    Utils.showNotification(`Username changed to "${clean}" due to policy.`, 'warning');
+                }
+                name = clean;
+            }
+
+            if (!name) {
+                if (window.Utils?.showNotification) {
+                    Utils.showNotification('Please enter a username.', 'error');
+                }
+                return;
+            }
+
+            usernameInput.value = name;
+            localStorage.setItem('username', name);
+            showDisplay(name);
+            Leaderboard.saveCurrentProgress();
+        };
+
         if (usernameInput) {
             usernameInput.value = localStorage.getItem('username') || '';
             if (usernameInput.value) {
                 showDisplay(usernameInput.value);
             }
 
-            usernameInput.addEventListener('change', () => {
-                let name = usernameInput.value.trim();
-                if (window.UsernameValidator &&
-                    typeof window.UsernameValidator.getCleanUsername === 'function') {
-                    const clean = window.UsernameValidator.getCleanUsername(name);
-                    if (clean !== name && window.Utils?.showNotification) {
-                        Utils.showNotification(`Username changed to "${clean}" due to policy.`, 'warning');
-                    }
-                    name = clean;
+            usernameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    submitUsername();
                 }
-
-                usernameInput.value = name;
-                localStorage.setItem('username', name);
-                showDisplay(name);
-                Leaderboard.saveCurrentProgress();
             });
+        }
+
+        if (submitUsernameBtn) {
+            submitUsernameBtn.addEventListener('click', submitUsername);
         }
 
 
