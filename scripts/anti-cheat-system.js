@@ -42,7 +42,7 @@ const AntiCheatSystem = {
             [7, 5],    // Take communion - 5 min
             [8, 15],   // Ask speaker question - 15 min
             [9, 60],   // Exchange contact info - 60 min
-            [10, 30],  // Attend breakout session - 30 min
+            [10, 30],  // Complete the Gathering poll - 30 min
             [11, 20],  // Pray with someone - 20 min
             [12, 15],  // Sample New Orleans cuisine - 15 min
             [13, 10],  // Group photo - 10 min
