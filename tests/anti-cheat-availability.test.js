@@ -27,4 +27,19 @@ describe('challenge availability schedule', () => {
     AntiCheat.eventConfig.getDayOfEvent = () => 1;
     expect(AntiCheat.isChallengeAvailable('completionist', 11)).toBe(true);
   });
+
+  test('communion challenge only available on Wednesday', () => {
+    jest.useFakeTimers();
+    // Monday of event
+    jest.setSystemTime(new Date('2025-07-21T10:00:00Z'));
+    AntiCheat.eventConfig.getDayOfEvent = () => 5;
+    expect(AntiCheat.isChallengeAvailable('regular', 7)).toBe(false);
+
+    // Wednesday of event
+    jest.setSystemTime(new Date('2025-07-23T10:00:00Z'));
+    AntiCheat.eventConfig.getDayOfEvent = () => 7;
+    expect(AntiCheat.isChallengeAvailable('regular', 7)).toBe(true);
+
+    jest.useRealTimers();
+  });
 });
