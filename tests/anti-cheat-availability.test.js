@@ -7,9 +7,9 @@ describe('challenge availability schedule', () => {
     AntiCheat.eventConfig.getDayOfEvent = originalGetDay;
   });
 
-  test('convention center games unlock on day 3', () => {
-    AntiCheat.eventConfig.getDayOfEvent = () => 2;
-    expect(AntiCheat.isChallengeAvailable('completionist', 12)).toBe(false);
+  test('convention center games available from day 1', () => {
+    AntiCheat.eventConfig.getDayOfEvent = () => 1;
+    expect(AntiCheat.isChallengeAvailable('completionist', 12)).toBe(true);
     AntiCheat.eventConfig.getDayOfEvent = () => 3;
     expect(AntiCheat.isChallengeAvailable('completionist', 12)).toBe(true);
   });
