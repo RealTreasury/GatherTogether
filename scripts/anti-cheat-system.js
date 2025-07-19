@@ -123,6 +123,10 @@ const AntiCheatSystem = {
                 // Hair color challenge available from the start
                 return dayOfEvent >= 1;
             }
+            if (index === 6) {
+                // Social media friend challenge available from the start
+                return dayOfEvent >= 1;
+            }
             if (index === 7) {
                 // Daily acts of kindness available from the start
                 return dayOfEvent >= 1;
