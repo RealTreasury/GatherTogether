@@ -12,6 +12,8 @@ list or pressing <kbd>Esc</kbd>. For sublists with numbered placeholders such as
 the actual item name so each country can be recorded individually.
 An "Invite a Friend" button lets you quickly share the site link using your
 device's native share sheet or by copying the invite text to the clipboard.
+A "Suggest a Challenge" button in the footer opens your email client so you can
+send new challenge ideas to gathertogether2025@gmail.com.
 
 ## File Structure
 
