@@ -35,7 +35,7 @@ const AntiCheatSystem = {
             [0, 15],   // Selfie with Martin Luther figure - 15 min
             [1, 30],   // Learn someone's name - 30 min
             [2, 5],    // Attend the Saturday mass event - 5 min
-            [3, 20],   // Visit 3 booths - 20 min
+            [3, 20],   // Take a picture with a YAV - 20 min
             [4, 45],   // Service project - 45 min
             [5, 10],   // Chicken dance - 10 min
             [6, 30],   // Memorize verse - 30 min
