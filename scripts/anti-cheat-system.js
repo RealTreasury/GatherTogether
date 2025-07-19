@@ -112,8 +112,8 @@ const AntiCheatSystem = {
         } else if (mode === 'completionist') {
             // Custom unlock schedule for certain challenges
             if (index === 12) {
-                // Convention center games start Saturday (Day 3)
-                return dayOfEvent >= 3;
+                // Convention center game challenge available for the entire event
+                return dayOfEvent >= 1;
             }
             if (index === 9 || index === 14) {
                 // Sessions/workshops and exhibitor booths open Sunday (Day 4)
