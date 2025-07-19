@@ -73,7 +73,22 @@ const COMPLETIONIST_CHALLENGES = [
     { text: 'Attend 15+ sessions/workshops', sublist: [], requiredCount: 15, enableSearch: true },
     { text: 'Get autographs from all guest speakers', sublist: Array.from({length:5},(_,i)=>`Speaker ${i+1}`), freeText: true },
     { text: 'Get photos with all main speakers', sublist: ['Shelly Schwalm', 'Tanner Olsen', 'Brady Finnern'] },
-    { text: 'Compete in every convention center game', sublist: Array.from({length:8},(_,i)=>`Game ${i+1}`), freeText: true },
+    { text: 'Compete in every convention center game',
+      sublist: [
+        'Volleyball',
+        'Basketball',
+        '9-square',
+        'Ladder golf',
+        'Gaga all',
+        'Giant jenga',
+        'Pickleball',
+        'Ping pong',
+        'Ultimate frisbee',
+        'Hungry hungry hippos',
+        'Twister',
+        'Giant Uno'
+      ],
+      freeText: true },
     { text: 'Collect all district booth prizes', sublist: [
         'Atlantic District',
         'California–Nevada–Hawaii District',
