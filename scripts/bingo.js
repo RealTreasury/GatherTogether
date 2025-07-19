@@ -10,7 +10,7 @@ const BINGO_CHALLENGES = [
     "Memorize the gathering theme verse",
     "Take communion at morning worship",
     "Ask a speaker a question during Q&A",
-    "Exchange contact info with 5 new friends",
+    "Exchange contact info with 5 new friends (add them on social media)",
     "Complete the Gathering poll",
     "Pray with someone you just met",
     "Sample some classic New Orleans cuisine",
@@ -67,7 +67,7 @@ const COMPLETIONIST_CHALLENGES = [
             'Pastor'
         ] },
     { text: 'Volunteer for 3+ service opportunities', sublist: Array.from({length:3},(_,i)=>`Service ${i+1}`) },
-    { text: 'Exchange contacts with 25+ new friends', sublist: Array.from({length:25},(_,i)=>`Friend ${i+1}`), freeText: true },
+    { text: 'Exchange contact info with 25+ new friends (add them on social media)', sublist: Array.from({length:25},(_,i)=>`Friend ${i+1}`), freeText: true },
     { text: 'Complete daily random acts of kindness', sublist: Array.from({length:7},(_,i)=>`Day ${i+1}`), freeText: true },
     { text: 'Attend each mass event', sublist: Array.from({length:5},(_,i)=>`Event ${i+1}`), freeText: true },
     { text: 'Attend 15+ sessions/workshops', sublist: [], requiredCount: 15, enableSearch: true },
