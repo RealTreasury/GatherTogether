@@ -91,12 +91,14 @@ const AntiCheatSystem = {
         if (dayOfEvent > 7) return true;
 
         if (mode === 'regular') {
-            // Saturday mass event only available after 8pm Saturday
+            // Mass event challenge unlocks nightly at 7:30pm CT
             if (index === 2) {
-                const massDate = new Date(this.eventConfig.startDate);
-                massDate.setDate(massDate.getDate() + 2); // Saturday of event
-                massDate.setHours(20, 0, 0, 0); // 8 PM
-                return new Date() >= massDate;
+                const now = new Date();
+                if (now < this.eventConfig.startDate) return false;
+                const centralNow = new Date(now.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+                const unlock = new Date(centralNow);
+                unlock.setHours(19, 30, 0, 0); // 7:30 PM Central
+                return centralNow >= unlock;
             }
 
             // Communion challenge only on Wednesday during the event

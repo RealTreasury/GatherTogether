@@ -47,4 +47,14 @@ describe('challenge availability schedule', () => {
 
     jest.useRealTimers();
   });
+
+  test('mass event challenge unlocks at 7:30pm CT', () => {
+    jest.useFakeTimers();
+    AntiCheat.eventConfig.getDayOfEvent = () => 1;
+    jest.setSystemTime(new Date('2025-07-18T19:29:00-05:00'));
+    expect(AntiCheat.isChallengeAvailable('regular', 2)).toBe(false);
+    jest.setSystemTime(new Date('2025-07-18T19:31:00-05:00'));
+    expect(AntiCheat.isChallengeAvailable('regular', 2)).toBe(true);
+    jest.useRealTimers();
+  });
 });
