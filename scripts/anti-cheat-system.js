@@ -41,7 +41,7 @@ const AntiCheatSystem = {
             [6, 30],   // Memorize verse - 30 min
             [7, 5],    // Take communion - 5 min
             [8, 15],   // Ask speaker question - 15 min
-            [9, 60],   // Exchange contact info - 60 min
+            [9, 60],   // Exchange contact info (e.g., add on social media) - 60 min
             [10, 30],  // Complete the Gathering poll - 30 min
             [11, 20],  // Pray with someone - 20 min
             [12, 15],  // Sample New Orleans cuisine - 15 min
