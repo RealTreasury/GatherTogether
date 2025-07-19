@@ -45,6 +45,8 @@ const KINDNESS_IDEAS = [
 // Index of the "daily random acts" challenge within COMPLETIONIST_CHALLENGES
 // This is used to gate sub items until their release day
 let DAILY_KINDNESS_INDEX = 7;
+// Index of the "Attend each mass event" challenge for timed release
+let MASS_EVENT_INDEX = 8;
 
 const COMPLETIONIST_CHALLENGES = [
     { text: 'Meet someone from all 50 states', sublist: US_STATES },
@@ -343,8 +345,21 @@ const BingoTracker = {
             window.AntiCheatSystem.eventConfig.getDayOfEvent() : 8;
 
         const isKindness = index === DAILY_KINDNESS_INDEX;
+        const isMassEvent = index === MASS_EVENT_INDEX;
+        const getMassUnlockTime = (offset) => {
+            const base = window.AntiCheatSystem ? new Date(window.AntiCheatSystem.eventConfig.startDate) : new Date();
+            base.setDate(base.getDate() + offset);
+            const central = new Date(base.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+            central.setHours(19, 30, 0, 0); // 7:30 PM Central
+            return central;
+        };
         const listItems = challenge.sublist.map((item, i) => {
-            const unlocked = !isKindness || dayOfEvent > i;
+            let unlocked = true;
+            if (isKindness) {
+                unlocked = dayOfEvent > i;
+            } else if (isMassEvent) {
+                unlocked = new Date() >= getMassUnlockTime(i);
+            }
             if (challenge.freeText) {
                 const val = progress[i] || '';
                 const selected = val ? 'selected' : '';
@@ -375,6 +390,12 @@ const BingoTracker = {
                     }
                     return;
                 }
+                if (isMassEvent && new Date() < getMassUnlockTime(sub)) {
+                    if (window.Utils && Utils.showNotification) {
+                        Utils.showNotification('This mass event unlocks at 7:30 PM CT.', 'warning');
+                    }
+                    return;
+                }
                 if (progress.has(sub)) {
                     progress.delete(sub);
                     e.target.classList.remove('selected');
@@ -401,6 +422,13 @@ const BingoTracker = {
                 if (isKindness && dayOfEvent <= sub) {
                     if (window.Utils && Utils.showNotification) {
                         Utils.showNotification(`Come back on Day ${sub+1} to complete this act!`, 'warning');
+                    }
+                    e.target.value = progress[sub] || '';
+                    return;
+                }
+                if (isMassEvent && new Date() < getMassUnlockTime(sub)) {
+                    if (window.Utils && Utils.showNotification) {
+                        Utils.showNotification('This mass event unlocks at 7:30 PM CT.', 'warning');
                     }
                     e.target.value = progress[sub] || '';
                     return;
