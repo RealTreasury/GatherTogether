@@ -113,8 +113,7 @@ const COMPLETIONIST_CHALLENGES = [
     ] },
     { text: 'Visit every exhibitor booth', sublist: Array.from({length:50},(_,i)=>`Booth ${i+1}`) },
     { text: 'Meet someone with different hair colors',
-      sublist: ['Brown', 'Blonde', 'Black', 'Red', 'Pink', 'Green', 'Bald'],
-      freeText: true }
+      sublist: ['Brown', 'Blonde', 'Black', 'Red', 'Pink', 'Green', 'Bald'] }
 ];
 
 const BingoTracker = {
