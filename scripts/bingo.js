@@ -76,7 +76,8 @@ const COMPLETIONIST_CHALLENGES = [
         'Monday',
         'Tuesday',
         'Wednesday Worship'
-      ] },
+      ],
+      freeText: false },
     { text: 'Attend 15+ sessions/workshops', sublist: [], requiredCount: 15, enableSearch: true },
     { text: 'Complete the photo challenges for each day', sublist: Array.from({length:5},(_,i)=>`Day ${i+1}`), freeText: true },
     { text: 'Get photos with all main speakers', sublist: ['Shelly Schwalm', 'Tanner Olsen', 'Brady Finnern'] },
