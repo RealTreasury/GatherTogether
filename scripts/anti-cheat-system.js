@@ -122,6 +122,16 @@ const AntiCheatSystem = {
                 return isWednesday;
             }
 
+            // Mass Event Plus challenge unlocks nightly at 10:00pm CT
+            if (index === 16) {
+                const now = new Date();
+                if (now < this.eventConfig.startDate) return false;
+                const centralNow = new Date(now.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+                const unlock = new Date(centralNow);
+                unlock.setHours(22, 0, 0, 0); // 10:00 PM Central
+                return centralNow >= unlock;
+            }
+
             // Regular challenges unlock progressively
             return dayOfEvent >= 1;
         } else if (mode === 'completionist') {
