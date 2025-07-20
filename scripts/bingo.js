@@ -25,7 +25,8 @@ const BINGO_CHALLENGES = [
     "Share a meal with another youth group",
     "Have an entire conversation with someone in Disney lyrics",
     "Post about the gathering on social media",
-    "Give a high-five to 10 different people"
+    "Give a high-five to 10 different people",
+    "Ask someone where the bubbler is"
 ];
 
 const US_STATES = [
