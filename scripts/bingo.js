@@ -98,10 +98,10 @@ const COMPLETIONIST_CHALLENGES = [
       ] },
     { text: 'Collect all district booth prizes', sublist: [
         'Atlantic District',
-        'California–Nevada–Hawaii District',
+        'CaliforniaÃ¢ÂÂNevadaÃ¢ÂÂHawaii District',
         'Central Illinois District',
         'Eastern District',
-        'Florida–Georgia District',
+        'FloridaÃ¢ÂÂGeorgia District',
         'Indiana District',
         'Iowa District East',
         'Iowa District West',
@@ -133,7 +133,45 @@ const COMPLETIONIST_CHALLENGES = [
         'English District',
         'SELC District'
     ] },
-    { text: 'Visit every exhibitor booth', sublist: Array.from({length:50},(_,i)=>`Booth ${i+1}`) },
+    { text: 'Visit every exhibitor booth', sublist: [
+        'Saint Paul Lutheran High School',
+        'Shepherd\'s Heart Ministry',
+        'Three Trees Outdoor Ministry',
+        'Y4Life, Lutherans For Life',
+        'National Lutheran Outdoors Ministry Association',
+        'Ongoing Ambassadors For Christ',
+        'Orphan Grain Train',
+        'Our Place After School Care Inc.',
+        'Lutheran Hour Ministries',
+        'Lutheran Legal League',
+        'Lutheran Women in Mission',
+        'National Association of Directors of Christian Education',
+        'Lutheran Center for Religious Liberty',
+        'Lutheran Church Extension Fund (LCEF)',
+        'The Lutheran Church—Missouri Synod',
+        'Lutheran Counseling and Family Services of WI',
+        'Ysleta Lutheran Mission Human Care',
+        'KINDLE',
+        'LAMP Ministry Inc.',
+        'Lutheran Bible Translators',
+        'Lutheran Braille Workers',
+        'Forged by Fire Services',
+        'Higher Things',
+        'International Student Ministry, Inc.',
+        'KFUO Radio',
+        'Concordia University Nebraska',
+        'Concordia University System',
+        'Concordia University Wisconsin and Ann Arbor',
+        'Concordia University, St. Paul',
+        'A Place of Refuge Ministries of South WI Inc.',
+        'Camp Restore Detroit',
+        'Concordia Plans',
+        'Concordia Publishing House',
+        'Concordia Seminary',
+        'Concordia Theological Seminary',
+        'Concordia University Chicago',
+        'Concordia University Irvine'
+    ] },
     { text: 'Take a picture with someone with each hair color',
       sublist: ['Brown', 'Blonde', 'Black', 'Red', 'Pink', 'Green', 'Bald'] }
 ];
@@ -577,7 +615,7 @@ const BingoTracker = {
                 // Ensure Firebase is ready before attempting to save
                 await Leaderboard.initializationPromise;
                 await Leaderboard.saveScore(userId, username, score);
-                console.log('✅ Progress saved to leaderboard');
+                console.log('Ã¢ÂÂ Progress saved to leaderboard');
             } catch (error) {
                 console.warn('Failed to save to leaderboard:', error);
             }
