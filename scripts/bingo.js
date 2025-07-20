@@ -86,7 +86,7 @@ const COMPLETIONIST_CHALLENGES = [
         'Basketball',
         '9-square',
         'Ladder golf',
-        'Gaga all',
+        'Gagaball',
         'Giant jenga',
         'Pickleball',
         'Ping pong',
