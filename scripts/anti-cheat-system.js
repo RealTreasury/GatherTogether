@@ -8,10 +8,11 @@ const AntiCheatSystem = {
     minimumIntervals: new Map(),
     userCompletionTimes: new Map(),
     // Limit for bulk logging
-    actionWindowMs: 10 * 60 * 1000, // 10 minutes
-    maxActionsPerWindow: 50,
+    actionWindowMs: 10 * 60 * 1000, // 10 minute window
+    // Allow up to 7 tasks per minute
+    maxActionsPerWindow: 70,
     // Brief global cooldown between challenge completions
-    cooldownMs: 60 * 1000, // 1 minute
+    cooldownMs: 60 * 1000 / 7, // ~8.6 seconds
     
     // NEW: Event date configuration
     eventConfig: {
