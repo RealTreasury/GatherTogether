@@ -32,7 +32,7 @@ async function loadEventStatus() {
 }
 
 function getLocalEventData() {
-    const startDate = new Date('2025-07-18T00:00:00');
+    const startDate = new Date('2025-07-19T00:00:00');
     const endDate = new Date('2025-07-25T23:59:59');
 
     let dayOfEvent;
@@ -60,7 +60,7 @@ function getLocalEventData() {
         const now = new Date();
         const daysUntil = Math.ceil((startDate - now) / (1000 * 60 * 60 * 24));
         status = 'Upcoming';
-        message = `Challenges unlock in ${daysUntil} days (July 18th, 2025)`;
+        message = `Challenges unlock in ${daysUntil} days (July 19th, 2025)`;
     } else {
         status = 'Concluded';
         message = 'Youth Gathering 2025 has concluded';
