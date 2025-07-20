@@ -40,7 +40,8 @@ const Utils = {
     // Short label for countdown timer
     formatDurationShort: (ms) => {
         const minutes = Math.ceil(ms / (1000 * 60));
-        if (minutes < 60) return `${minutes}m`;
+        // Use hours once the countdown exceeds 90 minutes
+        if (minutes < 90) return `${minutes}m`;
         const hours = Math.ceil(ms / (1000 * 60 * 60));
         if (hours < 24) return `${hours}h`;
         const days = Math.ceil(ms / (1000 * 60 * 60 * 24));
