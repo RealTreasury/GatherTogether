@@ -154,6 +154,10 @@ const AntiCheatSystem = {
                 // Sessions/workshops and exhibitor booths open Sunday (Day 4)
                 return dayOfEvent >= 4;
             }
+            if (index === 13) {
+                // District booth prizes available from the start
+                return dayOfEvent >= 1;
+            }
             if (index === 15) {
                 // Hair color challenge available from the start
                 return dayOfEvent >= 1;
@@ -442,6 +446,9 @@ const AntiCheatSystem = {
                 unlock.setDate(unlock.getDate() + 3);
                 unlock.setHours(0, 0, 0, 0);
                 return dayOfEvent >= 4 ? null : unlock;
+            }
+            if (index === 13) { // District booth prizes available day 1
+                return dayOfEvent >= 1 ? null : start;
             }
             if ([6,7,10,11,12,15].includes(index)) {
                 return dayOfEvent >= 1 ? null : start;
