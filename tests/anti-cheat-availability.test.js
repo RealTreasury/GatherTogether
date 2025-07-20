@@ -33,6 +33,11 @@ describe('challenge availability schedule', () => {
     expect(AntiCheat.isChallengeAvailable('completionist', 15)).toBe(true);
   });
 
+  test('photos with main speakers available from day 1', () => {
+    AntiCheat.eventConfig.getDayOfEvent = () => 1;
+    expect(AntiCheat.isChallengeAvailable('completionist', 11)).toBe(true);
+  });
+
   test('mass event hard mode challenge available from day 1', () => {
     AntiCheat.eventConfig.getDayOfEvent = () => 1;
     expect(AntiCheat.isChallengeAvailable('completionist', 8)).toBe(true);
