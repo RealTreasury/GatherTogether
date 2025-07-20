@@ -7,6 +7,9 @@ const AntiCheatSystem = {
     lastActions: {},
     minimumIntervals: new Map(),
     userCompletionTimes: new Map(),
+    // Limit for bulk logging
+    actionWindowMs: 10 * 60 * 1000, // 10 minutes
+    maxActionsPerWindow: 50,
     
     // NEW: Event date configuration
     eventConfig: {
@@ -169,12 +172,12 @@ const AntiCheatSystem = {
             this.lastActions[userId] = [];
         }
         
-        // Clean old actions (older than 10 minutes)
-        const tenMinutesAgo = now - (10 * 60 * 1000);
-        this.lastActions[userId] = this.lastActions[userId].filter(t => t > tenMinutesAgo);
+        // Clean old actions based on configured window
+        const windowAgo = now - this.actionWindowMs;
+        this.lastActions[userId] = this.lastActions[userId].filter(t => t > windowAgo);
 
-        // Check for too many rapid completions within the 10 minute window
-        if (this.lastActions[userId].length > 25) {
+        // Check for too many rapid completions within the window
+        if (this.lastActions[userId].length >= this.maxActionsPerWindow) {
             this.flagUser(userId, 'Too many rapid completions');
             return {
                 allowed: false,
