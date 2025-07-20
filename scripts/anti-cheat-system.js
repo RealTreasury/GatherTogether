@@ -139,6 +139,10 @@ const AntiCheatSystem = {
                 // Daily photo challenge available from the start
                 return dayOfEvent >= 1;
             }
+            if (index === 11) {
+                // Photos with main speakers available from the start
+                return dayOfEvent >= 1;
+            }
 
             // Default: unlock groups of three each day
             const unlockDay = Math.floor(index / 3) + 1;
