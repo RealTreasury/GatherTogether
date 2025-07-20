@@ -18,14 +18,14 @@ router.get('/leaderboard', async (req, res) => {
       const leaderboard = rows
         .map(r => ({ id: r[0], playerName: r[1], score: parseInt(r[2], 10) || 0 }))
         .sort((a, b) => b.score - a.score)
-        .slice(0, 50);
+        .slice(0, 100);
       return res.json(leaderboard);
     }
 
     const leaderboardSnapshot = await db
       .collection('leaderboard') // <-- CHANGED
       .orderBy('score', 'desc')
-      .limit(50)
+      .limit(100)
       .get();
 
     const leaderboard = [];

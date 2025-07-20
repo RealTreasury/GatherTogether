@@ -204,7 +204,7 @@ function getLeaderboard() {
       updatedAt: p.updatedAt || new Date().toISOString()
     }))
     .sort((a, b) => b.score - a.score)
-    .slice(0, 50); // Top 50 players
+    .slice(0, 100); // Top 100 players
   
   console.log('Current leaderboard:', leaderboard);
   return leaderboard;
