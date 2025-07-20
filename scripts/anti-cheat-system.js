@@ -151,8 +151,8 @@ const AntiCheatSystem = {
                 return diffHours >= 19.5;
             }
             if (index === 9 || index === 14) {
-                // Sessions/workshops and exhibitor booths open Sunday (Day 4)
-                return dayOfEvent >= 4;
+                // Sessions/workshops and exhibitor booths now available from Day 1
+                return dayOfEvent >= 1;
             }
             if (index === 13) {
                 // District booth prizes available from the start
