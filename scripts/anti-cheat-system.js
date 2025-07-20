@@ -115,6 +115,10 @@ const AntiCheatSystem = {
                 // Convention center game challenge available for the entire event
                 return dayOfEvent >= 1;
             }
+            if (index === 8) {
+                // Mass event hard mode challenge should be available from the start
+                return dayOfEvent >= 1;
+            }
             if (index === 9 || index === 14) {
                 // Sessions/workshops and exhibitor booths open Sunday (Day 4)
                 return dayOfEvent >= 4;
