@@ -1092,9 +1092,9 @@ body {
 
 /* Anti-cheat status indicator */
 .anticheat-status {
-    position: fixed;
-    bottom: 1rem;
-    right: 1rem;
+    position: static;
+    display: inline-block;
+    margin-top: 0.5rem;
     background: var(--glass-bg);
     backdrop-filter: blur(10px);
     border: 1px solid var(--glass-border);
@@ -1215,8 +1215,7 @@ body {
     .anticheat-status {
         font-size: 0.75rem;
         padding: 0.25rem 0.5rem;
-        bottom: 0.5rem;
-        right: 0.5rem;
+        margin-top: 0.25rem;
     }
 
     .suspicious-warning-content {
@@ -1431,9 +1430,9 @@ body {
 
 /* Anti-Cheat Status Indicator */
 .anticheat-status {
-    position: fixed;
-    bottom: 1rem;
-    right: 1rem;
+    position: static;
+    display: inline-block;
+    margin-top: 0.5rem;
     background: var(--glass-bg);
     backdrop-filter: blur(10px);
     border: 1px solid var(--glass-border);
