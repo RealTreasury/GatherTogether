@@ -657,9 +657,7 @@ body {
 }
 
 #username-feedback.success::before {
-    content: "✓";
-    color: #10b981;
-    font-weight: bold;
+    content: "";
 }
 
 /* Error feedback */
@@ -777,11 +775,7 @@ body {
 }
 
 .leaderboard-username.validated::after {
-    content: "✓";
-    color: #10b981;
-    font-size: 0.75rem;
-    margin-left: 0.25rem;
-    opacity: 0.7;
+    content: "";
 }
 
 .leaderboard-username.cleaned::after {
