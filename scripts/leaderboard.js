@@ -324,9 +324,8 @@ const Leaderboard = {
                 bgClass = 'leaderboard-current-user';
             }
 
-            // Add verification badge for clean players
-            const verificationBadge = Leaderboard.isVerifiedPlayer(entry) ?
-                '<span class="text-green-500 text-xs ml-1" title="Verified fair play">✓</span>' : '';
+            // Remove visual verification badge
+            const verificationBadge = '';
             const userIndicator = isCurrentUser ? ' <span class="user-indicator">(You)</span>' : '';
 
             return `
