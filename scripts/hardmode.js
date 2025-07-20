@@ -26,13 +26,13 @@ const HardMode = {
         const day3 = new Date('2025-07-22T10:00:00-05:00');
 
         HardMode.schedule = [
-            { time: day1, action: 'start' },
-            { time: new Date('2025-07-20T18:00:00-05:00'), action: 'day1Evening' },
-            { time: day2, action: 'day2Morning' },
-            { time: new Date('2025-07-21T14:00:00-05:00'), action: 'day2Afternoon' },
-            { time: new Date('2025-07-21T18:00:00-05:00'), action: 'day2Evening' },
-            { time: day3, action: 'day3Morning' },
-            { time: new Date('2025-07-22T13:00:00-05:00'), action: 'day3Midday' }
+            { time: day1, action: 'start', points: 0 },
+            { time: new Date('2025-07-20T18:00:00-05:00'), action: 'day1Evening', points: 2 },
+            { time: day2, action: 'day2Morning', points: 2 },
+            { time: new Date('2025-07-21T14:00:00-05:00'), action: 'day2Afternoon', points: 2 },
+            { time: new Date('2025-07-21T18:00:00-05:00'), action: 'day2Evening', points: 3 },
+            { time: day3, action: 'day3Morning', points: 3 },
+            { time: new Date('2025-07-22T13:00:00-05:00'), action: 'day3Midday', points: 3 }
         ];
     },
 
@@ -58,12 +58,12 @@ const HardMode = {
             if (!HardMode.executedReleases.includes(idx) && now >= item.time) {
                 HardMode.executedReleases.push(idx);
                 HardMode.save();
-                HardMode.handleAction(item.action);
+                HardMode.handleAction(item.action, idx, item.points);
             }
         });
     },
 
-    handleAction(action) {
+    handleAction(action, idx, points = 0) {
         switch (action) {
             case 'start':
                 Utils.showNotification('Hard Mode Challenge unlocked!');
@@ -89,6 +89,10 @@ const HardMode = {
                 break;
             default:
                 break;
+        }
+
+        for (let i = 0; i < points; i++) {
+            HardMode.addSession(`auto-${idx}-${i}`);
         }
     },
 

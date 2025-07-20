@@ -31,11 +31,14 @@ describe('HardMode challenge basics', () => {
     expect(HardMode.sessions.length).toBe(1);
   });
 
-  test('checkSchedule triggers start action', () => {
+  test('checkSchedule releases session points', () => {
     HardMode.buildSchedule = () => {
-      HardMode.schedule = [{ time: new Date(Date.now() - 1000), action: 'start' }];
+      HardMode.schedule = [
+        { time: new Date(Date.now() - 1000), action: 'day2Morning', points: 2 }
+      ];
     };
     HardMode.init();
     expect(Utils.showNotification).toHaveBeenCalled();
+    expect(HardMode.sessions.length).toBe(2);
   });
 });
