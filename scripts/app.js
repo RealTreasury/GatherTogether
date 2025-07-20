@@ -32,6 +32,9 @@ const App = {
         // Initialize all modules
         App.setupEventListeners();
         BingoTracker.init();
+        if (window.HardMode) {
+            HardMode.init();
+        }
         VerseManager.init();
         Leaderboard.init();
 
