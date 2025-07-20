@@ -72,7 +72,8 @@ const AntiCheatSystem = {
             [21, 45],  // Share meal with group - 45 min
             [22, 30],  // Have a conversation entirely in Disney lyrics - 30 min
             [23, 5],   // Social media post - 5 min
-            [24, 10]   // High-five 10 people - 10 min
+            [24, 10],  // High-five 10 people - 10 min
+            [25, 5]    // Put a clothespin on someone's bag - 5 min
         ]));
 
         // Completionist challenges (in hours) - much longer intervals
