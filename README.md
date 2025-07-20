@@ -126,7 +126,9 @@ file URLs in `index.html`:
 ```
 
 Increase the version number whenever you deploy new assets so browsers do not
-use stale cached files.
+use stale cached files. Always remember to bump the version query parameter in
+`index.html` whenever you change any scripts or styles so visitors receive the
+latest files.
 
 ## Legal
 
