@@ -10,6 +10,8 @@ const AntiCheatSystem = {
     // Limit for bulk logging
     actionWindowMs: 10 * 60 * 1000, // 10 minutes
     maxActionsPerWindow: 50,
+    // Brief global cooldown between challenge completions
+    cooldownMs: 60 * 1000, // 1 minute
     
     // NEW: Event date configuration
     eventConfig: {
@@ -197,10 +199,21 @@ const AntiCheatSystem = {
         if (!this.lastActions[userId]) {
             this.lastActions[userId] = [];
         }
-        
+
         // Clean old actions based on configured window
         const windowAgo = now - this.actionWindowMs;
         this.lastActions[userId] = this.lastActions[userId].filter(t => t > windowAgo);
+
+        // Enforce brief cooldown between completions
+        const lastAction = this.lastActions[userId][this.lastActions[userId].length - 1];
+        if (lastAction && (now - lastAction < this.cooldownMs)) {
+            return {
+                allowed: false,
+                reason: 'Please slow down before completing another challenge',
+                type: 'cooldown',
+                remainingTime: this.cooldownMs - (now - lastAction)
+            };
+        }
 
         // Check for too many rapid completions within the window
         if (this.lastActions[userId].length >= this.maxActionsPerWindow) {
@@ -377,7 +390,11 @@ const AntiCheatSystem = {
 
     // NEW: Get remaining cooldown time for a challenge
     getRemainingCooldown(userId, tileIndex, mode = 'regular') {
-        return 0;
+        const actions = this.lastActions[userId];
+        if (!actions || !actions.length) return 0;
+        const last = actions[actions.length - 1];
+        const now = Date.now();
+        return Math.max(0, this.cooldownMs - (now - last));
     },
 
     // NEW: Get event status info
