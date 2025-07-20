@@ -126,7 +126,7 @@ const COMPLETIONIST_CHALLENGES = [
         'SELC District'
     ] },
     { text: 'Visit every exhibitor booth', sublist: Array.from({length:50},(_,i)=>`Booth ${i+1}`) },
-    { text: 'Meet someone with different hair colors',
+    { text: 'Take a picture with someone with each hair color',
       sublist: ['Brown', 'Blonde', 'Black', 'Red', 'Pink', 'Green', 'Bald'] }
 ];
 
