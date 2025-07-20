@@ -71,7 +71,7 @@ const COMPLETIONIST_CHALLENGES = [
     { text: 'Complete daily random acts of kindness', sublist: Array.from({length:7},(_,i)=>`Day ${i+1}`), freeText: true },
     { text: 'Attend each mass event', sublist: Array.from({length:5},(_,i)=>`Event ${i+1}`), freeText: true },
     { text: 'Attend 15+ sessions/workshops', sublist: [], requiredCount: 15, enableSearch: true },
-    { text: 'Get autographs from all guest speakers', sublist: Array.from({length:5},(_,i)=>`Speaker ${i+1}`), freeText: true },
+    { text: 'Complete the photo challenges for each day', sublist: Array.from({length:5},(_,i)=>`Day ${i+1}`), freeText: true },
     { text: 'Get photos with all main speakers', sublist: ['Shelly Schwalm', 'Tanner Olsen', 'Brady Finnern'] },
     { text: 'Compete in every convention center game',
       sublist: [
