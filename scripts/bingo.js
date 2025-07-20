@@ -174,7 +174,7 @@ const COMPLETIONIST_CHALLENGES = [
         'Concordia University Irvine'
     ] },
     { text: 'Take a picture with someone with each hair color',
-      sublist: ['Brown', 'Blonde', 'Black', 'Red', 'Pink', 'Green', 'Bald'] }
+      sublist: ['Brown', 'Blonde', 'Black', 'Red', 'Pink', 'Green', 'Orange', 'Bald'] }
 ];
 
 const BingoTracker = {
