@@ -367,6 +367,7 @@ const BingoTracker = {
 
         const isKindness = index === DAILY_KINDNESS_INDEX;
         const isMassEvent = index === MASS_EVENT_INDEX;
+        const centralNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
         const getMassUnlockTime = (offset) => {
             const base = window.AntiCheatSystem ? new Date(window.AntiCheatSystem.eventConfig.startDate) : new Date();
             base.setDate(base.getDate() + offset);
@@ -379,7 +380,7 @@ const BingoTracker = {
             if (isKindness) {
                 unlocked = dayOfEvent > i;
             } else if (isMassEvent) {
-                unlocked = new Date() >= getMassUnlockTime(i);
+                unlocked = centralNow >= getMassUnlockTime(i);
             }
             if (challenge.freeText) {
                 const val = progress[i] || '';
@@ -411,7 +412,8 @@ const BingoTracker = {
                     }
                     return;
                 }
-                if (isMassEvent && new Date() < getMassUnlockTime(sub)) {
+                const nowCentral = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+                if (isMassEvent && nowCentral < getMassUnlockTime(sub)) {
                     if (window.Utils && Utils.showNotification) {
                         Utils.showNotification('This mass event unlocks at 7:30 PM CT.', 'warning');
                     }
@@ -447,7 +449,8 @@ const BingoTracker = {
                     e.target.value = progress[sub] || '';
                     return;
                 }
-                if (isMassEvent && new Date() < getMassUnlockTime(sub)) {
+                const nowCentral = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+                if (isMassEvent && nowCentral < getMassUnlockTime(sub)) {
                     if (window.Utils && Utils.showNotification) {
                         Utils.showNotification('This mass event unlocks at 7:30 PM CT.', 'warning');
                     }

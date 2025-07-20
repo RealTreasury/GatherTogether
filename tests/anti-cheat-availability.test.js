@@ -38,9 +38,14 @@ describe('challenge availability schedule', () => {
     expect(AntiCheat.isChallengeAvailable('completionist', 11)).toBe(true);
   });
 
-  test('mass event hard mode challenge available from day 1', () => {
+  test('mass event hard mode challenge unlocks at 7:30pm CT', () => {
+    jest.useFakeTimers();
     AntiCheat.eventConfig.getDayOfEvent = () => 1;
+    jest.setSystemTime(new Date('2025-07-18T19:29:00-05:00'));
+    expect(AntiCheat.isChallengeAvailable('completionist', 8)).toBe(false);
+    jest.setSystemTime(new Date('2025-07-18T19:31:00-05:00'));
     expect(AntiCheat.isChallengeAvailable('completionist', 8)).toBe(true);
+    jest.useRealTimers();
   });
 
   test('communion challenge only available on Wednesday', () => {
