@@ -114,6 +114,20 @@ npm test
 Tests are automatically executed for every push and pull request through
 GitHub Actions.
 
+## Cache Busting
+
+When updating any scripts or styles hosted on GitHub Pages you can force
+visitors to download the new versions by appending a query parameter to the
+file URLs in `index.html`:
+
+```html
+<link href="styles/global.css?v=2" rel="stylesheet">
+<script src="scripts/app.js?v=2"></script>
+```
+
+Increase the version number whenever you deploy new assets so browsers do not
+use stale cached files.
+
 ## Legal
 
 Standalone pages [`terms.html`](terms.html) and [`privacy.html`](privacy.html) outline the demo
