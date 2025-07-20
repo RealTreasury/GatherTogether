@@ -87,8 +87,7 @@ const COMPLETIONIST_CHALLENGES = [
         'Hungry hungry hippos',
         'Twister',
         'Giant Uno'
-      ],
-      freeText: true },
+      ] },
     { text: 'Collect all district booth prizes', sublist: [
         'Atlantic District',
         'California–Nevada–Hawaii District',
