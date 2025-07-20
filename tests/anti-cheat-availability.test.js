@@ -14,11 +14,8 @@ describe('challenge availability schedule', () => {
     expect(AntiCheat.isChallengeAvailable('completionist', 12)).toBe(true);
   });
 
-  test('sessions and booths unlock on day 4', () => {
-    AntiCheat.eventConfig.getDayOfEvent = () => 3;
-    expect(AntiCheat.isChallengeAvailable('completionist', 9)).toBe(false);
-    expect(AntiCheat.isChallengeAvailable('completionist', 14)).toBe(false);
-    AntiCheat.eventConfig.getDayOfEvent = () => 4;
+  test('sessions and booths available from day 1', () => {
+    AntiCheat.eventConfig.getDayOfEvent = () => 1;
     expect(AntiCheat.isChallengeAvailable('completionist', 9)).toBe(true);
     expect(AntiCheat.isChallengeAvailable('completionist', 14)).toBe(true);
   });
