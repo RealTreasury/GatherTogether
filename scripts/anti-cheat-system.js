@@ -135,6 +135,10 @@ const AntiCheatSystem = {
                 // Daily acts of kindness available from the start
                 return dayOfEvent >= 1;
             }
+            if (index === 10) {
+                // Daily photo challenge available from the start
+                return dayOfEvent >= 1;
+            }
 
             // Default: unlock groups of three each day
             const unlockDay = Math.floor(index / 3) + 1;
