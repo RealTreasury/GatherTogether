@@ -38,9 +38,9 @@ describe('challenge availability schedule', () => {
   test('mass event hard mode challenge unlocks at 7:30pm CT', () => {
     jest.useFakeTimers();
     AntiCheat.eventConfig.getDayOfEvent = () => 1;
-    jest.setSystemTime(new Date('2025-07-18T19:29:00-05:00'));
+    jest.setSystemTime(new Date('2025-07-19T19:29:00-05:00'));
     expect(AntiCheat.isChallengeAvailable('completionist', 8)).toBe(false);
-    jest.setSystemTime(new Date('2025-07-18T19:31:00-05:00'));
+    jest.setSystemTime(new Date('2025-07-19T19:31:00-05:00'));
     expect(AntiCheat.isChallengeAvailable('completionist', 8)).toBe(true);
     jest.useRealTimers();
   });
@@ -63,9 +63,9 @@ describe('challenge availability schedule', () => {
   test('mass event challenge unlocks at 7:30pm CT', () => {
     jest.useFakeTimers();
     AntiCheat.eventConfig.getDayOfEvent = () => 1;
-    jest.setSystemTime(new Date('2025-07-18T19:29:00-05:00'));
+    jest.setSystemTime(new Date('2025-07-19T19:29:00-05:00'));
     expect(AntiCheat.isChallengeAvailable('regular', 2)).toBe(false);
-    jest.setSystemTime(new Date('2025-07-18T19:31:00-05:00'));
+    jest.setSystemTime(new Date('2025-07-19T19:31:00-05:00'));
     expect(AntiCheat.isChallengeAvailable('regular', 2)).toBe(true);
     jest.useRealTimers();
   });
@@ -73,9 +73,9 @@ describe('challenge availability schedule', () => {
   test('mass event plus challenge unlocks at 10pm CT', () => {
     jest.useFakeTimers();
     AntiCheat.eventConfig.getDayOfEvent = () => 1;
-    jest.setSystemTime(new Date('2025-07-18T21:59:00-05:00'));
+    jest.setSystemTime(new Date('2025-07-19T21:59:00-05:00'));
     expect(AntiCheat.isChallengeAvailable('regular', 16)).toBe(false);
-    jest.setSystemTime(new Date('2025-07-18T22:01:00-05:00'));
+    jest.setSystemTime(new Date('2025-07-19T22:01:00-05:00'));
     expect(AntiCheat.isChallengeAvailable('regular', 16)).toBe(true);
     jest.useRealTimers();
   });
