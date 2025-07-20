@@ -35,12 +35,6 @@
                     } else if (mode === 'completionist') {
                         message = `This Hard Mode challenge unlocks later in the event. Keep checking back!`;
                     }
-                } else if (validation.type === 'cooldown') {
-                    let friendly = `${Math.ceil(validation.remainingTime / (1000 * 60))} minutes`;
-                    if (window.Utils && typeof Utils.formatDuration === 'function') {
-                        friendly = Utils.formatDuration(validation.remainingTime);
-                    }
-                    message = `Please wait ${friendly} before completing this challenge.`;
                 } else if (validation.type === 'rate_limit') {
                     message = `Slow down there, speed racer! 🏃‍♂️ Take time to truly experience each challenge.`;
                 }
@@ -71,7 +65,7 @@
         if (!tile) return;
         
         // Remove existing state classes
-        tile.classList.remove('locked', 'on-cooldown', 'newly-unlocked');
+        tile.classList.remove('locked', 'newly-unlocked');
         
         // Add appropriate state class
         if (validation && !validation.allowed) {
@@ -80,8 +74,6 @@
                 tracker.showLockIcon(tile);
                 const unlock = ac.getChallengeUnlockTime(tracker.currentMode || 'regular', index);
                 tracker.updateCountdown(tile, unlock);
-            } else if (validation.type === 'cooldown') {
-                // Cooldown visuals have been removed
             }
         } else {
             tracker.updateCountdown(tile, null);

@@ -5,7 +5,6 @@ describe('rapid completion rate limiting', () => {
     // reset tracking
     AntiCheat.flaggedUsers.clear();
     AntiCheat.lastActions = {};
-    AntiCheat.cooldownMs = 0;
     // allow all challenges
     AntiCheat.isChallengeAvailable = () => true;
   });
@@ -27,13 +26,4 @@ describe('rapid completion rate limiting', () => {
     expect(AntiCheat.flaggedUsers.has(user)).toBe(true);
   });
 
-  test('brief cooldown prevents immediate repeat', () => {
-    const user = 'cooldownUser';
-    AntiCheat.cooldownMs = 1000; // 1 second
-    const first = AntiCheat.recordTileCompletion(user, 0);
-    expect(first.allowed).toBe(true);
-    const second = AntiCheat.recordTileCompletion(user, 1);
-    expect(second.allowed).toBe(false);
-    expect(second.type).toBe('cooldown');
-  });
 });
