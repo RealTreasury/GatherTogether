@@ -32,24 +32,32 @@ async function loadEventStatus() {
 }
 
 function getLocalEventData() {
-    // Use the same event configuration as anti-cheat system
-    const now = new Date();
     const startDate = new Date('2025-07-18T00:00:00');
     const endDate = new Date('2025-07-25T23:59:59');
-    
-    const isActive = now >= startDate && now <= endDate;
-    const isUpcoming = now < startDate;
-    const isPast = now > endDate;
-    
+
+    let dayOfEvent;
+    if (window.AntiCheatSystem && window.AntiCheatSystem.eventConfig) {
+        dayOfEvent = window.AntiCheatSystem.eventConfig.getDayOfEvent();
+    } else {
+        const now = new Date();
+        if (now < startDate) dayOfEvent = -1;
+        else if (now > endDate) dayOfEvent = 8;
+        else {
+            const diffDays = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
+            dayOfEvent = Math.min(7, diffDays + 1);
+        }
+    }
+
+    const isActive = dayOfEvent >= 1 && dayOfEvent <= 7;
+    const isUpcoming = dayOfEvent < 1;
+    const isPast = dayOfEvent > 7;
+
     let status, message;
-    
     if (isActive) {
-        const diffTime = now - startDate;
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        const dayOfEvent = Math.min(7, diffDays + 1);
         status = 'LIVE';
         message = `Youth Gathering Day ${dayOfEvent} is active!`;
     } else if (isUpcoming) {
+        const now = new Date();
         const daysUntil = Math.ceil((startDate - now) / (1000 * 60 * 60 * 24));
         status = 'Upcoming';
         message = `Challenges unlock in ${daysUntil} days (July 18th, 2025)`;
@@ -57,7 +65,7 @@ function getLocalEventData() {
         status = 'Concluded';
         message = 'Youth Gathering 2025 has concluded';
     }
-    
+
     return {
         status,
         message,

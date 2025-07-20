@@ -20,10 +20,22 @@ const AntiCheatSystem = {
             return now >= this.startDate && now <= this.endDate;
         },
         getDayOfEvent: function() {
+            if (typeof window !== 'undefined') {
+                const params = new URLSearchParams(window.location.search);
+                const override = parseInt(params.get('day'), 10);
+                if (!isNaN(override)) {
+                    return override;
+                }
+                if (typeof window.EVENT_DAY_OVERRIDE !== 'undefined') {
+                    const manual = parseInt(window.EVENT_DAY_OVERRIDE, 10);
+                    if (!isNaN(manual)) return manual;
+                }
+            }
+
             const now = new Date();
             if (now < this.startDate) return -1; // Before event
             if (now > this.endDate) return 8;    // After event
-            
+
             const diffTime = now - this.startDate;
             const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
             return Math.min(7, diffDays + 1); // Days 1-7
