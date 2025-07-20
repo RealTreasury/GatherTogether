@@ -397,6 +397,66 @@ const AntiCheatSystem = {
         return Math.max(0, this.cooldownMs - (now - last));
     },
 
+    // NEW: Determine when a challenge will unlock
+    getChallengeUnlockTime(mode, index) {
+        const start = new Date(this.eventConfig.startDate);
+        const dayOfEvent = this.eventConfig.getDayOfEvent();
+
+        if (dayOfEvent > 7) return null; // Event concluded
+
+        if (mode === 'regular') {
+            if (index === 2) { // Mass event nightly 7:30pm CT
+                const now = new Date();
+                const centralNow = new Date(now.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+                const unlock = new Date(centralNow);
+                unlock.setHours(19, 30, 0, 0);
+                return centralNow >= unlock ? null : unlock;
+            }
+            if (index === 16) { // Mass event plus 10pm CT
+                const now = new Date();
+                const centralNow = new Date(now.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+                const unlock = new Date(centralNow);
+                unlock.setHours(22, 0, 0, 0);
+                return centralNow >= unlock ? null : unlock;
+            }
+            if (index === 7) { // Communion on Wednesday
+                const now = new Date();
+                const dow = now.getDay();
+                const diff = (3 - dow + 7) % 7; // 3=Wed
+                if (diff === 0 && dayOfEvent >= 1) return null;
+                const next = new Date(now);
+                next.setDate(now.getDate() + diff);
+                next.setHours(0, 0, 0, 0);
+                return next;
+            }
+            if (dayOfEvent >= 1) return null;
+            return start;
+        } else if (mode === 'completionist') {
+            if (index === 8) { // Hard mode mass event day 1 7:30pm CT
+                const unlock = new Date(start);
+                unlock.setHours(19, 30, 0, 0);
+                return Date.now() >= unlock.getTime() ? null : unlock;
+            }
+            if (index === 9 || index === 14) { // Sessions/booths day 4
+                const unlock = new Date(start);
+                unlock.setDate(unlock.getDate() + 3);
+                unlock.setHours(0, 0, 0, 0);
+                return dayOfEvent >= 4 ? null : unlock;
+            }
+            if ([6,7,10,11,12,15].includes(index)) {
+                return dayOfEvent >= 1 ? null : start;
+            }
+            const unlockDay = Math.floor(index / 3) + 1;
+            if (dayOfEvent >= unlockDay) return null;
+            const unlock = new Date(start);
+            unlock.setDate(unlock.getDate() + unlockDay - 1);
+            unlock.setHours(0, 0, 0, 0);
+            return unlock;
+        }
+
+        return null;
+    },
+
     // NEW: Get event status info
     getEventStatus() {
         return {

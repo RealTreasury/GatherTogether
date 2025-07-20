@@ -5,6 +5,8 @@
     const ac = window.AntiCheatSystem;
     if (!tracker || !ac) return;
 
+    let countdownInterval;
+
     // Store original function
     const originalToggle = tracker.toggleTile;
     
@@ -76,9 +78,13 @@
             if (validation.type === 'temporal_lock') {
                 tile.classList.add('locked');
                 tracker.showLockIcon(tile);
+                const unlock = ac.getChallengeUnlockTime(tracker.currentMode || 'regular', index);
+                tracker.updateCountdown(tile, unlock);
             } else if (validation.type === 'cooldown') {
                 // Cooldown visuals have been removed
             }
+        } else {
+            tracker.updateCountdown(tile, null);
         }
     };
 
@@ -93,6 +99,46 @@
             tile.appendChild(lockIcon);
         }
     };
+
+    // NEW: Display or clear the unlock countdown
+    tracker.updateCountdown = function(tile, unlockTime) {
+        let el = tile.querySelector('.unlock-countdown');
+        if (!unlockTime) {
+            if (el) el.remove();
+            return;
+        }
+        const diff = unlockTime - Date.now();
+        if (diff <= 0) {
+            if (el) el.remove();
+            tile.classList.add('newly-unlocked');
+            return;
+        }
+        if (!el) {
+            el = document.createElement('div');
+            el.className = 'unlock-countdown';
+            tile.appendChild(el);
+        }
+        if (window.Utils && typeof Utils.formatDurationShort === 'function') {
+            el.textContent = Utils.formatDurationShort(diff);
+        } else {
+            el.textContent = Math.ceil(diff / (1000 * 60)) + 'm';
+        }
+    };
+
+    tracker.updateAllCountdowns = function() {
+        const mode = tracker.currentMode || 'regular';
+        tracker.getCurrentChallenges().forEach((_, idx) => {
+            const tile = document.querySelector(`[data-index="${idx}"]`);
+            if (!tile || !tile.classList.contains('locked')) return;
+            const unlock = ac.getChallengeUnlockTime(mode, idx);
+            tracker.updateCountdown(tile, unlock);
+        });
+    };
+
+    function startCountdownInterval() {
+        if (countdownInterval) return;
+        countdownInterval = setInterval(tracker.updateAllCountdowns, 60000);
+    }
 
 
     // NEW: Enhanced render grid to apply anti-cheat state
@@ -110,14 +156,17 @@
         const userId = window.Utils && typeof Utils.getUserId === 'function'
             ? Utils.getUserId()
             : 'anonymous';
-        
+
         const mode = tracker.currentMode || 'regular';
         const challenges = tracker.getCurrentChallenges();
-        
+
         challenges.forEach((challenge, index) => {
             const validation = ac.canCompleteChallenge(userId, index, mode);
             tracker.updateChallengeVisualState(index, validation);
         });
+
+        tracker.updateAllCountdowns();
+        startCountdownInterval();
     };
 
     // NEW: Add event status indicator
@@ -155,11 +204,13 @@
             setTimeout(() => {
                 tracker.applyAntiCheatStates();
                 tracker.showEventStatus();
+                startCountdownInterval();
             }, 100);
         });
     } else {
         tracker.applyAntiCheatStates();
         tracker.showEventStatus();
+        startCountdownInterval();
     }
 
     console.log('✅ Enhanced anti-cheat integration loaded');
