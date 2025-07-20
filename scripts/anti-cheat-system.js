@@ -116,8 +116,12 @@ const AntiCheatSystem = {
                 return dayOfEvent >= 1;
             }
             if (index === 8) {
-                // Mass event hard mode challenge should be available from the start
-                return dayOfEvent >= 1;
+                // Mass event hard mode unlocks at 7:30pm CT on day 1
+                const nowCentral = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+                if (nowCentral < this.eventConfig.startDate) return false;
+                if (dayOfEvent > 1) return true;
+                const diffHours = (nowCentral - this.eventConfig.startDate) / (1000 * 60 * 60);
+                return diffHours >= 19.5;
             }
             if (index === 9 || index === 14) {
                 // Sessions/workshops and exhibitor booths open Sunday (Day 4)
