@@ -185,7 +185,7 @@ const Leaderboard = {
         if (Leaderboard.firebaseLeaderboard && Leaderboard.firebaseLeaderboard.isAvailable()) {
             Leaderboard.showLoading();
             try {
-                const scores = await Leaderboard.firebaseLeaderboard.getTopScores(25);
+                const scores = await Leaderboard.firebaseLeaderboard.getTopScores(100);
                 Leaderboard.renderLeaderboard(scores);
                 return true;
             } catch (error) {
@@ -289,7 +289,7 @@ const Leaderboard = {
         // Sort by score descending (in case not sorted)
         const sortedLeaderboard = [...filteredLeaderboard]
             .sort((a, b) => b.score - a.score)
-            .slice(0, 25);
+            .slice(0, 100);
 
         // FIX: Get current user ID to identify their entry
         const currentUserId = window.Utils && typeof Utils.getUserId === 'function'
