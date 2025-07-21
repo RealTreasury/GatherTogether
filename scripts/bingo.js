@@ -101,10 +101,10 @@ const COMPLETIONIST_CHALLENGES = [
       ] },
     { text: 'Collect all district booth prizes', sublist: [
         'Atlantic District',
-        'CaliforniaÃ¢ÂÂNevadaÃ¢ÂÂHawaii District',
+        'California-Nevada-Hawaii District',
         'Central Illinois District',
         'Eastern District',
-        'FloridaÃ¢ÂÂGeorgia District',
+        'Florida-Georgia District',
         'Indiana District',
         'Iowa District East',
         'Iowa District West',
@@ -618,7 +618,8 @@ const BingoTracker = {
                 // Ensure Firebase is ready before attempting to save
                 await Leaderboard.initializationPromise;
                 await Leaderboard.saveScore(userId, username, score);
-                console.log('Ã¢ÂÂ Progress saved to leaderboard');
+                console.log('Progress saved to leaderboard');
+ Progress saved to leaderboard');
             } catch (error) {
                 console.warn('Failed to save to leaderboard:', error);
             }
