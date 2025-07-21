@@ -549,7 +549,7 @@ class ValidationAnalytics {
             report: report,
             rawEvents: this.events,
             antiCheatEvents: this.antiCheatEvents,
-            version: '1.0.0'
+            version: '1.0.1'
         };
 
         const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
