@@ -14,6 +14,11 @@ describe('HardMode challenge basics', () => {
     global.Utils = { showNotification: jest.fn() };
     require('../scripts/hardmode.js');
     HardMode = window.HardMode;
+    // Prevent automatic session additions from past-dated schedule
+    HardMode.buildSchedule = () => {
+      const future = new Date(Date.now() + 1000 * 60 * 60); // 1 hour ahead
+      HardMode.schedule = [{ time: future, action: 'start', points: 0 }];
+    };
   });
 
   afterEach(() => {
