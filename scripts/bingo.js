@@ -420,7 +420,7 @@ const BingoTracker = {
             if (isKindness) {
                 unlocked = dayOfEvent > i;
             } else if (isMassEvent) {
-                unlocked = centralNow >= getMassUnlockTime(i);
+                unlocked = i === 0 || centralNow >= getMassUnlockTime(i);
             }
             if (challenge.freeText) {
                 const val = progress[i] || '';
@@ -453,7 +453,7 @@ const BingoTracker = {
                     return;
                 }
                 const nowCentral = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-                if (isMassEvent && nowCentral < getMassUnlockTime(sub)) {
+                if (isMassEvent && sub > 0 && nowCentral < getMassUnlockTime(sub)) {
                     if (window.Utils && Utils.showNotification) {
                         Utils.showNotification('This mass event unlocks at 7:30 PM CT.', 'warning');
                     }
@@ -490,7 +490,7 @@ const BingoTracker = {
                     return;
                 }
                 const nowCentral = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-                if (isMassEvent && nowCentral < getMassUnlockTime(sub)) {
+                if (isMassEvent && sub > 0 && nowCentral < getMassUnlockTime(sub)) {
                     if (window.Utils && Utils.showNotification) {
                         Utils.showNotification('This mass event unlocks at 7:30 PM CT.', 'warning');
                     }

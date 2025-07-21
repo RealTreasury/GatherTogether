@@ -25,6 +25,7 @@ describe('HardMode challenge basics', () => {
   });
 
   test('addSession stores unique sessions', () => {
+    HardMode.buildSchedule = () => { HardMode.schedule = []; };
     HardMode.init();
     HardMode.addSession('S1');
     HardMode.addSession('S1');
