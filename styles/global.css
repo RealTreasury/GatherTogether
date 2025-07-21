@@ -453,6 +453,16 @@ body {
     margin-bottom: 1rem;
 }
 
+.challenge-suggest-input {
+    display: block;
+    width: 100%;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    margin-bottom: 1rem;
+}
+
 .sub-item-btn:hover {
     background: rgba(124,58,237,0.1);
     border-color: var(--primary-purple);
