@@ -78,4 +78,28 @@ describe('Leaderboard pending score handling', () => {
     const fb = window._fbZero;
     expect(fb.deleted).toEqual(['u1']);
   });
+
+  test('renderLeaderboard displays rank movement arrows', () => {
+    const dom = new JSDOM(`<!DOCTYPE html><ul id="leaderboard-list"></ul>`);
+    global.window = dom.window;
+    global.document = dom.window.document;
+    global.App = { currentTab: 'leaderboard' };
+    global.Utils = { getUserId: () => null };
+
+    require('../scripts/leaderboard.js');
+    Leaderboard = window.Leaderboard;
+
+    const data = [
+      { id: 'a', username: 'A', score: 2, rankChange: 1 },
+      { id: 'b', username: 'B', score: 1, rankChange: -1 }
+    ];
+
+    Leaderboard.renderLeaderboard(data);
+
+    const html = dom.window.document.querySelector('#leaderboard-list').innerHTML;
+    expect(html).toContain('▲');
+    expect(html).toContain('text-green-600');
+    expect(html).toContain('▼');
+    expect(html).toContain('text-red-600');
+  });
 });

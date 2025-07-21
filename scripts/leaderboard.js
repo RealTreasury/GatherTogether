@@ -328,6 +328,14 @@ const Leaderboard = {
             const verificationBadge = '';
             const userIndicator = isCurrentUser ? ' <span class="user-indicator">(You)</span>' : '';
 
+            const change = entry.rankChange || 0;
+            let arrow = '';
+            if (change > 0) {
+                arrow = '<span class="ml-1 text-green-600">&#9650;</span>';
+            } else if (change < 0) {
+                arrow = '<span class="ml-1 text-red-600">&#9660;</span>';
+            }
+
             return `
                 <li class="flex justify-between items-center p-2 rounded-lg border ${bgClass} transition-all hover:shadow-md text-sm">
                     <div class="flex items-center">
@@ -337,6 +345,7 @@ const Leaderboard = {
                     <div class="flex items-center">
                         <span class="font-bold">${score}</span>
                         <span class="text-xs text-gray-500 ml-1">pts</span>
+                        ${arrow}
                     </div>
                 </li>
             `;
