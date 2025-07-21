@@ -88,7 +88,7 @@ test('Leaderboard ranks users and updates existing entries', async () => {
   expect(user2.playerName.toLowerCase()).not.toContain('user');
 });
 
-test('Leaderboard includes rank change within 24 hours', async () => {
+test('Leaderboard includes rank change within 3 hours', async () => {
   await request(app)
     .post('/api/bingo/progress')
     .send({ userId: 'r1', username: 'One', completedTiles: [1] });
@@ -110,7 +110,7 @@ test('Leaderboard includes rank change within 24 hours', async () => {
   const historyPath = path.join(tempDir, 'rank_history.json');
   const history = JSON.parse(fs.readFileSync(historyPath, 'utf8'));
   Object.keys(history).forEach(k => {
-    history[k].timestamp = new Date(Date.now() - 23 * 60 * 60 * 1000).toISOString();
+    history[k].timestamp = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
   });
   fs.writeFileSync(historyPath, JSON.stringify(history, null, 2));
 
