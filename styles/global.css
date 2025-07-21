@@ -499,22 +499,6 @@ body {
     box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
 }
 
-.btn-instagram {
-    background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(150, 47, 191, 0.3);
-}
-
-.btn-instagram:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(150, 47, 191, 0.4);
-}
 
 .btn-compact {
     padding: 0.25rem 0.75rem;
