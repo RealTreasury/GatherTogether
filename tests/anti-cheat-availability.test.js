@@ -9,39 +9,39 @@ describe('challenge availability schedule', () => {
 
   test('convention center games available from day 1', () => {
     AntiCheat.eventConfig.getDayOfEvent = () => 1;
-    expect(AntiCheat.isChallengeAvailable('completionist', 12)).toBe(true);
+    expect(AntiCheat.isChallengeAvailable('completionist', 13)).toBe(true);
     AntiCheat.eventConfig.getDayOfEvent = () => 3;
-    expect(AntiCheat.isChallengeAvailable('completionist', 12)).toBe(true);
+    expect(AntiCheat.isChallengeAvailable('completionist', 13)).toBe(true);
   });
 
   test('sessions and booths available from day 1', () => {
     AntiCheat.eventConfig.getDayOfEvent = () => 1;
-    expect(AntiCheat.isChallengeAvailable('completionist', 9)).toBe(true);
-    expect(AntiCheat.isChallengeAvailable('completionist', 14)).toBe(true);
+    expect(AntiCheat.isChallengeAvailable('completionist', 10)).toBe(true);
+    expect(AntiCheat.isChallengeAvailable('completionist', 15)).toBe(true);
   });
 
   test('daily acts of kindness available from start', () => {
     AntiCheat.eventConfig.getDayOfEvent = () => 1;
-    expect(AntiCheat.isChallengeAvailable('completionist', 7)).toBe(true);
+    expect(AntiCheat.isChallengeAvailable('completionist', 8)).toBe(true);
   });
 
   test('hair color challenge available from day 1', () => {
     AntiCheat.eventConfig.getDayOfEvent = () => 1;
-    expect(AntiCheat.isChallengeAvailable('completionist', 15)).toBe(true);
+    expect(AntiCheat.isChallengeAvailable('completionist', 2)).toBe(true);
   });
 
   test('photos with main speakers available from day 1', () => {
     AntiCheat.eventConfig.getDayOfEvent = () => 1;
-    expect(AntiCheat.isChallengeAvailable('completionist', 11)).toBe(true);
+    expect(AntiCheat.isChallengeAvailable('completionist', 12)).toBe(true);
   });
 
   test('mass event hard mode challenge unlocks at 7:30pm CT', () => {
     jest.useFakeTimers();
     AntiCheat.eventConfig.getDayOfEvent = () => 1;
     jest.setSystemTime(new Date('2025-07-19T19:29:00-05:00'));
-    expect(AntiCheat.isChallengeAvailable('completionist', 8)).toBe(false);
+    expect(AntiCheat.isChallengeAvailable('completionist', 9)).toBe(false);
     jest.setSystemTime(new Date('2025-07-19T19:31:00-05:00'));
-    expect(AntiCheat.isChallengeAvailable('completionist', 8)).toBe(true);
+    expect(AntiCheat.isChallengeAvailable('completionist', 9)).toBe(true);
     jest.useRealTimers();
   });
 

@@ -47,13 +47,15 @@ const KINDNESS_IDEAS = [
 
 // Index of the "daily random acts" challenge within COMPLETIONIST_CHALLENGES
 // This is used to gate sub items until their release day
-let DAILY_KINDNESS_INDEX = 7;
+let DAILY_KINDNESS_INDEX = 8;
 // Index of the "Attend each mass event" challenge for timed release
-let MASS_EVENT_INDEX = 8;
+let MASS_EVENT_INDEX = 9;
 
 const COMPLETIONIST_CHALLENGES = [
     { text: 'Meet someone from all 50 states', sublist: US_STATES },
     { text: 'Meet people from 5 different countries', sublist: Array.from({length:5},(_,i)=>`Country ${i+1}`), freeText: true },
+    { text: 'Take a picture with someone with each hair color',
+      sublist: ['Brown', 'Blonde', 'Black', 'Red', 'Pink', 'Green', 'Orange', 'Bald'] },
     { text: 'Fast for a meal and donate savings' },
     { text: 'Lead a prayer circle with strangers' },
     { text: 'Write thank-you notes to 10 event volunteers',
@@ -175,8 +177,6 @@ const COMPLETIONIST_CHALLENGES = [
         'Concordia University Chicago',
         'Concordia University Irvine'
     ] },
-    { text: 'Take a picture with someone with each hair color',
-      sublist: ['Brown', 'Blonde', 'Black', 'Red', 'Pink', 'Green', 'Orange', 'Bald'] }
 ];
 
 const BingoTracker = {
