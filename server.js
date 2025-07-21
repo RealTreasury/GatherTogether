@@ -230,7 +230,7 @@ function getLeaderboard() {
   leaderboard.forEach((entry, index) => {
     const prev = rankHistory[entry.id];
     const currentRank = index + 1;
-    if (prev && now - new Date(prev.timestamp).getTime() <= 24 * 60 * 60 * 1000) {
+    if (prev && now - new Date(prev.timestamp).getTime() <= 3 * 60 * 60 * 1000) {
       entry.rankChange = prev.rank - currentRank;
     } else {
       entry.rankChange = 0;
