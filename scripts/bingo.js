@@ -27,7 +27,8 @@ const BINGO_CHALLENGES = [
     "Post about the gathering on social media",
     "Give a high-five to 10 different people",
     "Ask someone where the bubbler is",
-    "Put a clothespin on someone's bag without them noticing"
+    "Put a clothespin on someone's bag without them noticing",
+    "Get a picture with a Bears fan"
 ];
 
 const US_STATES = [
