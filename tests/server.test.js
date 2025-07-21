@@ -88,6 +88,43 @@ test('Leaderboard ranks users and updates existing entries', async () => {
   expect(user2.playerName.toLowerCase()).not.toContain('user');
 });
 
+test('Leaderboard includes rank change within 24 hours', async () => {
+  await request(app)
+    .post('/api/bingo/progress')
+    .send({ userId: 'r1', username: 'One', completedTiles: [1] });
+  await request(app)
+    .post('/api/bingo/progress')
+    .send({ userId: 'r2', username: 'Two', completedTiles: [1, 2] });
+
+  // initial leaderboard to populate history
+  await request(app).get('/api/bingo/leaderboard');
+
+  // Modify stored progress and rank history timestamps
+  const progressPath = path.join(tempDir, 'bingo_progress.json');
+  const progress = JSON.parse(fs.readFileSync(progressPath, 'utf8'));
+  const user = progress.find(p => p.userId === 'r1');
+  user.completedTiles = [1,2,3,4];
+  user.updatedAt = new Date().toISOString();
+  fs.writeFileSync(progressPath, JSON.stringify(progress, null, 2));
+
+  const historyPath = path.join(tempDir, 'rank_history.json');
+  const history = JSON.parse(fs.readFileSync(historyPath, 'utf8'));
+  Object.keys(history).forEach(k => {
+    history[k].timestamp = new Date(Date.now() - 23 * 60 * 60 * 1000).toISOString();
+  });
+  fs.writeFileSync(historyPath, JSON.stringify(history, null, 2));
+
+  jest.resetModules();
+  app = require('../server');
+
+  const res = await request(app).get('/api/bingo/leaderboard');
+  expect(res.status).toBe(200);
+  const e1 = res.body.find(e => e.id === 'r1');
+  const e2 = res.body.find(e => e.id === 'r2');
+  expect(e1.rankChange).toBeGreaterThan(0);
+  expect(e2.rankChange).toBeLessThan(0);
+});
+
 test('POST /api/users stores user info and can be retrieved', async () => {
   const user = { userId: 'user42', username: 'Tester', email: 't@example.com' };
   const res = await request(app)

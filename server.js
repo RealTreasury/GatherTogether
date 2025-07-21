@@ -12,6 +12,7 @@ const DATA_PATH = path.join(DATA_DIR, 'polls.json');
 const RESPONSES_DATA_PATH = path.join(DATA_DIR, 'poll_responses.json');
 const BINGO_PROGRESS_PATH = path.join(DATA_DIR, 'bingo_progress.json');
 const USERS_DATA_PATH = path.join(DATA_DIR, 'users.json');
+const RANK_HISTORY_PATH = path.join(DATA_DIR, 'rank_history.json');
 
 function countBingoLines(completedTiles, size = 5) {
   const completedSet = new Set(completedTiles || []);
@@ -141,6 +142,24 @@ function saveBingoProgress(progress) {
   fs.writeFileSync(BINGO_PROGRESS_PATH, JSON.stringify(progress, null, 2));
 }
 
+function loadRankHistory() {
+  ensureDataDir();
+  if (fs.existsSync(RANK_HISTORY_PATH)) {
+    try {
+      const data = fs.readFileSync(RANK_HISTORY_PATH, 'utf8');
+      return JSON.parse(data);
+    } catch (err) {
+      console.error('Error reading rank history file:', err);
+    }
+  }
+  return {};
+}
+
+function saveRankHistory(history) {
+  ensureDataDir();
+  fs.writeFileSync(RANK_HISTORY_PATH, JSON.stringify(history, null, 2));
+}
+
 function loadUsers() {
   ensureDataDir();
   if (fs.existsSync(USERS_DATA_PATH)) {
@@ -163,6 +182,7 @@ let polls = loadPolls();
 let pollResponses = loadPollResponses();
 let bingoProgress = loadBingoProgress();
 let users = loadUsers();
+let rankHistory = loadRankHistory();
 
 // Validate username to match client-side rules
 function validateUsername(username) {
@@ -196,16 +216,29 @@ function getPollsWithVotes() {
 }
 
 function getLeaderboard() {
+  const now = Date.now();
   const leaderboard = bingoProgress
-    .map(p => ({ 
+    .map(p => ({
       id: p.userId,
-      playerName: p.username, 
-      score: p.completedTiles ? p.completedTiles.length : 0,
+      playerName: p.username,
+      score: p.score !== undefined ? p.score : (p.completedTiles ? p.completedTiles.length : 0),
       updatedAt: p.updatedAt || new Date().toISOString()
     }))
     .sort((a, b) => b.score - a.score)
     .slice(0, 100); // Top 100 players
-  
+
+  leaderboard.forEach((entry, index) => {
+    const prev = rankHistory[entry.id];
+    const currentRank = index + 1;
+    if (prev && now - new Date(prev.timestamp).getTime() <= 24 * 60 * 60 * 1000) {
+      entry.rankChange = prev.rank - currentRank;
+    } else {
+      entry.rankChange = 0;
+    }
+    rankHistory[entry.id] = { rank: currentRank, timestamp: new Date().toISOString() };
+  });
+  saveRankHistory(rankHistory);
+
   console.log('Current leaderboard:', leaderboard);
   return leaderboard;
 }
