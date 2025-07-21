@@ -80,20 +80,20 @@ const AntiCheatSystem = {
         this.minimumIntervals.set('completionist', new Map([
             [0, 168],  // Meet all 50 states - 7 days (full event)
             [1, 48],   // Meet 5 countries - 2 days
-            [2, 72],   // Collect all prizes - 3 days
-            [3, 48],   // Every game - 2 days
-            [4, 24],   // 15+ sessions - 1 day
-            [5, 36],   // Thank 10 volunteers - 1.5 days
-            [6, 24],   // 3+ service opportunities - 1 day
-            [7, 48],   // Daily photo challenges - 2 days
-            [8, 168],  // Each mass event - 7 days
-            [9, 12],   // Lead prayer circle - 12 hours
-            [10, 72],  // 25+ new friends - 3 days
-            [11, 168], // Daily acts of kindness - 7 days
-            [12, 12],  // Fast for meal - 12 hours
-            [13, 48],  // Photos with speakers - 2 days
-            [14, 120], // Visit every booth - 5 days
-            [15, 168]  // All main sessions - 7 days
+            [2, 72],   // Hair color photo series - 3 days
+            [3, 72],   // Collect all district booth prizes - 3 days
+            [4, 120],  // Visit every exhibitor booth - 5 days
+            [5, 12],   // Fast for a meal - 12 hours
+            [6, 12],   // Lead prayer circle - 12 hours
+            [7, 36],   // Thank 10 volunteers - 1.5 days
+            [8, 24],   // 3+ service opportunities - 1 day
+            [9, 72],   // 25+ new friends - 3 days
+            [10, 168], // Daily acts of kindness - 7 days
+            [11, 168], // Each mass event - 7 days
+            [12, 24],  // 15+ sessions - 1 day
+            [13, 48],  // Daily photo challenges - 2 days
+            [14, 48],  // Photos with main speakers - 2 days
+            [15, 48]   // Convention center games - 2 days
         ]));
     },
 
@@ -133,11 +133,11 @@ const AntiCheatSystem = {
             return dayOfEvent >= 1;
         } else if (mode === 'completionist') {
             // Custom unlock schedule for certain challenges
-            if (index === 13) {
+            if (index === 15) {
                 // Convention center game challenge available for the entire event
                 return dayOfEvent >= 1;
             }
-            if (index === 9) {
+            if (index === 11) {
                 // Mass event hard mode unlocks at 7:30pm CT on day 1
                 const nowCentral = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
                 if (nowCentral < this.eventConfig.startDate) return false;
@@ -145,11 +145,11 @@ const AntiCheatSystem = {
                 const diffHours = (nowCentral - this.eventConfig.startDate) / (1000 * 60 * 60);
                 return diffHours >= 19.5;
             }
-            if (index === 10 || index === 15) {
+            if (index === 12 || index === 4) {
                 // Sessions/workshops and exhibitor booths now available from Day 1
                 return dayOfEvent >= 1;
             }
-            if (index === 14) {
+            if (index === 3) {
                 // District booth prizes available from the start
                 return dayOfEvent >= 1;
             }
@@ -157,19 +157,19 @@ const AntiCheatSystem = {
                 // Hair color challenge available from the start
                 return dayOfEvent >= 1;
             }
-            if (index === 7) {
+            if (index === 9) {
                 // Social media friend challenge available from the start
                 return dayOfEvent >= 1;
             }
-            if (index === 8) {
+            if (index === 10) {
                 // Daily acts of kindness available from the start
                 return dayOfEvent >= 1;
             }
-            if (index === 11) {
+            if (index === 13) {
                 // Daily photo challenge available from the start
                 return dayOfEvent >= 1;
             }
-            if (index === 12) {
+            if (index === 14) {
                 // Photos with main speakers available from the start
                 return dayOfEvent >= 1;
             }
@@ -407,21 +407,21 @@ const AntiCheatSystem = {
             if (dayOfEvent >= 1) return null;
             return start;
         } else if (mode === 'completionist') {
-            if (index === 9) { // Hard mode mass event day 1 7:30pm CT
+            if (index === 11) { // Hard mode mass event day 1 7:30pm CT
                 const unlock = new Date(start);
                 unlock.setHours(19, 30, 0, 0);
                 return Date.now() >= unlock.getTime() ? null : unlock;
             }
-            if (index === 10 || index === 15) { // Sessions/booths day 4
+            if (index === 12 || index === 4) { // Sessions/booths day 4
                 const unlock = new Date(start);
                 unlock.setDate(unlock.getDate() + 3);
                 unlock.setHours(0, 0, 0, 0);
                 return dayOfEvent >= 4 ? null : unlock;
             }
-            if (index === 14) { // District booth prizes available day 1
+            if (index === 3) { // District booth prizes available day 1
                 return dayOfEvent >= 1 ? null : start;
             }
-            if ([7,8,11,12,13,2].includes(index)) {
+            if ([9,10,13,14,3,2].includes(index)) {
                 return dayOfEvent >= 1 ? null : start;
             }
             const unlockDay = Math.floor(index / 3) + 1;
