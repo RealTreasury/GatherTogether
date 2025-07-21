@@ -91,4 +91,8 @@ const ChallengeSuggest = {
     }
 };
 
-document.addEventListener('DOMContentLoaded', () => ChallengeSuggest.init());
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => ChallengeSuggest.init());
+} else {
+    ChallengeSuggest.init();
+}
