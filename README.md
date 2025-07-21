@@ -4,8 +4,9 @@ This demo is publicly hosted through [GitHub Pages](https://realtreasury.github.
 It is **not** running on WordPress.com and the page is served directly rather than being embedded in an iframe. Simply visit the link above to use the
 app without any additional setup. The project is intentionally lightweight and uses
 vanilla JavaScript without external frameworks. The challenge tracker now supports
-both a regular list and a more difficult **completionist** mode that can be
-toggled in the interface. Completionist challenges with multiple tasks open in a
+both a regular list and a more difficult **completionist** mode. The page starts
+in this Hard Mode by default, but you can switch modes using the buttons at the
+top of the challenge area. Completionist challenges with multiple tasks open in a
 sublist view that can be dismissed via the close button, clicking outside the
 list or pressing <kbd>Esc</kbd>. For sublists with numbered placeholders such as
 "Meet people from 5 different countries," tapping a placeholder lets you enter
