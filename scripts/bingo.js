@@ -654,7 +654,7 @@ const BingoTracker = {
         const completedCount = BingoTracker.completedTiles[BingoTracker.currentMode].size;
         const totalCount = BingoTracker.getCurrentChallenges().length;
         const progressPercent = Math.round((completedCount / totalCount) * 100);
-        const mode = BingoTracker.currentMode === 'completionist' ? 'Hard Mode' : 'Regular';
+        const mode = BingoTracker.currentMode === 'completionist' ? 'Hard Mode' : 'Easy Mode';
 
         const shareText = `I'm ${progressPercent}% done with my ${mode} Faith Challenges at #LCMSGathering2025!`;
 
