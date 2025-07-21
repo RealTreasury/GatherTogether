@@ -122,8 +122,8 @@ visitors to download the new versions by appending a query parameter to the
 file URLs in `index.html`:
 
 ```html
-<link href="styles/global.css?v=10" rel="stylesheet">
-<script src="scripts/app.js?v=10"></script>
+<link href="styles/global.css?v=11" rel="stylesheet">
+<script src="scripts/app.js?v=11"></script>
 ```
 
 Increase the version number whenever you deploy new assets so browsers do not
