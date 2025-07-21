@@ -47,60 +47,15 @@ const KINDNESS_IDEAS = [
 
 // Index of the "daily random acts" challenge within COMPLETIONIST_CHALLENGES
 // This is used to gate sub items until their release day
-let DAILY_KINDNESS_INDEX = 8;
+let DAILY_KINDNESS_INDEX = 10;
 // Index of the "Attend each mass event" challenge for timed release
-let MASS_EVENT_INDEX = 9;
+let MASS_EVENT_INDEX = 11;
 
 const COMPLETIONIST_CHALLENGES = [
     { text: 'Meet someone from all 50 states', sublist: US_STATES },
     { text: 'Meet people from 5 different countries', sublist: Array.from({length:5},(_,i)=>`Country ${i+1}`), freeText: true },
     { text: 'Take a picture with someone with each hair color',
       sublist: ['Brown', 'Blonde', 'Black', 'Red', 'Pink', 'Green', 'Orange', 'Bald'] },
-    { text: 'Fast for a meal and donate savings' },
-    { text: 'Lead a prayer circle with strangers' },
-    { text: 'Write thank-you notes to 10 event volunteers',
-        sublist: [
-            'Hotel worker',
-            'Group Leader',
-            'Adult Volunteer',
-            'YAV',
-            'Police Officer',
-            'Restaurant worker',
-            'Stadium worker',
-            'Bus driver / Airline worker',
-            'Janitor',
-            'Pastor'
-        ] },
-    { text: 'Volunteer for 3+ service opportunities', sublist: Array.from({length:3},(_,i)=>`Service ${i+1}`) },
-    { text: 'Exchange contact info with 25+ new friends (add them on social media)', sublist: Array.from({length:25},(_,i)=>`Friend ${i+1}`), freeText: true },
-    { text: 'Complete daily random acts of kindness', sublist: Array.from({length:7},(_,i)=>`Day ${i+1}`), freeText: true },
-    { text: 'Attend each mass event',
-      sublist: [
-        'Saturday',
-        'Sunday',
-        'Monday',
-        'Tuesday',
-        'Wednesday Worship'
-      ],
-      freeText: false },
-    { text: 'Attend 15+ sessions/workshops', sublist: [], requiredCount: 15, enableSearch: true },
-    { text: 'Complete the photo challenges for each day', sublist: Array.from({length:5},(_,i)=>`Day ${i+1}`), freeText: true },
-    { text: 'Get photos with all main speakers', sublist: ['Shelly Schwalm', 'Tanner Olsen', 'Brady Finnern'] },
-    { text: 'Compete in every convention center game',
-      sublist: [
-        'Volleyball',
-        'Basketball',
-        '9-square',
-        'Ladder golf',
-        'Gagaball',
-        'Giant jenga',
-        'Pickleball',
-        'Ping pong',
-        'Ultimate frisbee',
-        'Hungry hungry hippos',
-        'Twister',
-        'Giant Uno'
-      ] },
     { text: 'Collect all district booth prizes', sublist: [
         'Atlantic District',
         'California-Nevada-Hawaii District',
@@ -177,6 +132,51 @@ const COMPLETIONIST_CHALLENGES = [
         'Concordia University Chicago',
         'Concordia University Irvine'
     ] },
+    { text: 'Fast for a meal and donate savings' },
+    { text: 'Lead a prayer circle with strangers' },
+    { text: 'Write thank-you notes to 10 event volunteers',
+        sublist: [
+            'Hotel worker',
+            'Group Leader',
+            'Adult Volunteer',
+            'YAV',
+            'Police Officer',
+            'Restaurant worker',
+            'Stadium worker',
+            'Bus driver / Airline worker',
+            'Janitor',
+            'Pastor'
+        ] },
+    { text: 'Volunteer for 3+ service opportunities', sublist: Array.from({length:3},(_,i)=>`Service ${i+1}`) },
+    { text: 'Exchange contact info with 25+ new friends (add them on social media)', sublist: Array.from({length:25},(_,i)=>`Friend ${i+1}`), freeText: true },
+    { text: 'Complete daily random acts of kindness', sublist: Array.from({length:7},(_,i)=>`Day ${i+1}`), freeText: true },
+    { text: 'Attend each mass event',
+      sublist: [
+        'Saturday',
+        'Sunday',
+        'Monday',
+        'Tuesday',
+        'Wednesday Worship'
+      ],
+      freeText: false },
+    { text: 'Attend 15+ sessions/workshops', sublist: [], requiredCount: 15, enableSearch: true },
+    { text: 'Complete the photo challenges for each day', sublist: Array.from({length:5},(_,i)=>`Day ${i+1}`), freeText: true },
+    { text: 'Get photos with all main speakers', sublist: ['Shelly Schwalm', 'Tanner Olsen', 'Brady Finnern'] },
+    { text: 'Compete in every convention center game',
+      sublist: [
+        'Volleyball',
+        'Basketball',
+        '9-square',
+        'Ladder golf',
+        'Gagaball',
+        'Giant jenga',
+        'Pickleball',
+        'Ping pong',
+        'Ultimate frisbee',
+        'Hungry hungry hippos',
+        'Twister',
+        'Giant Uno'
+      ] },
 ];
 
 const BingoTracker = {
