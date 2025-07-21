@@ -619,7 +619,6 @@ const BingoTracker = {
                 await Leaderboard.initializationPromise;
                 await Leaderboard.saveScore(userId, username, score);
                 console.log('Progress saved to leaderboard');
- Progress saved to leaderboard');
             } catch (error) {
                 console.warn('Failed to save to leaderboard:', error);
             }
