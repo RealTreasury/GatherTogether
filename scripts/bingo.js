@@ -668,6 +668,40 @@ const BingoTracker = {
             navigator.clipboard.writeText(shareText);
             Utils.showNotification('Progress copied to clipboard!');
         }
+    },
+
+    // Share progress using the native share sheet with Instagram as a target
+    shareOnInstagram: async () => {
+        const completedCount = BingoTracker.completedTiles[BingoTracker.currentMode].size;
+        const totalCount = BingoTracker.getCurrentChallenges().length;
+        const progressPercent = Math.round((completedCount / totalCount) * 100);
+        const mode = BingoTracker.currentMode === 'completionist' ? 'Hard Mode' : 'Easy Mode';
+
+        const shareText = `I'm ${progressPercent}% done with my ${mode} Faith Challenges at #LCMSGathering2025!`;
+
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: 'GatherTogether - Faith Challenge Progress',
+                    text: shareText,
+                    url: window.location.href
+                });
+                return;
+            } catch (err) {
+                console.error('Share failed', err);
+            }
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            try {
+                await navigator.clipboard.writeText(shareText);
+                Utils.showNotification('Progress text copied. Paste into Instagram!');
+            } catch (err) {
+                console.error('Clipboard failed', err);
+            }
+        }
+
+        window.open('https://www.instagram.com/', '_blank');
     }
 };
 
