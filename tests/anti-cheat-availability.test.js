@@ -60,11 +60,11 @@ describe('challenge availability schedule', () => {
     jest.useRealTimers();
   });
 
-  test('mass event challenge unlocks at 7:30pm CT', () => {
+  test('mass event challenge available from day 1 regardless of time', () => {
     jest.useFakeTimers();
     AntiCheat.eventConfig.getDayOfEvent = () => 1;
-    jest.setSystemTime(new Date('2025-07-19T19:29:00-05:00'));
-    expect(AntiCheat.isChallengeAvailable('regular', 2)).toBe(false);
+    jest.setSystemTime(new Date('2025-07-19T19:00:00-05:00'));
+    expect(AntiCheat.isChallengeAvailable('regular', 2)).toBe(true);
     jest.setSystemTime(new Date('2025-07-19T19:31:00-05:00'));
     expect(AntiCheat.isChallengeAvailable('regular', 2)).toBe(true);
     jest.useRealTimers();
