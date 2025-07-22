@@ -1,4 +1,4 @@
-// Hard Mode 15 Session Challenge with time-based unlocks
+// Hard Mode 15 Session Challenge
 
 const HardMode = {
     sessions: [],
@@ -14,26 +14,15 @@ const HardMode = {
 
         HardMode.buildSchedule();
         HardMode.updateProgress();
+        HardMode.showProgress(true);
         HardMode.checkSchedule();
-        // Check every minute
+        // Check every minute (harmless if schedule empty)
         setInterval(HardMode.checkSchedule, 60 * 1000);
     },
 
     buildSchedule() {
-        // Base dates for 3 day challenge (Central Time)
-        const day1 = new Date('2025-07-20T10:00:00-05:00'); // Sunday
-        const day2 = new Date('2025-07-21T10:00:00-05:00');
-        const day3 = new Date('2025-07-22T10:00:00-05:00');
-
-        HardMode.schedule = [
-            { time: day1, action: 'start', points: 0 },
-            { time: new Date('2025-07-20T18:00:00-05:00'), action: 'day1Evening', points: 2 },
-            { time: day2, action: 'day2Morning', points: 2 },
-            { time: new Date('2025-07-21T14:00:00-05:00'), action: 'day2Afternoon', points: 2 },
-            { time: new Date('2025-07-21T18:00:00-05:00'), action: 'day2Evening', points: 3 },
-            { time: day3, action: 'day3Morning', points: 3 },
-            { time: new Date('2025-07-22T13:00:00-05:00'), action: 'day3Midday', points: 3 }
-        ];
+        // Time locks removed - no scheduled releases
+        HardMode.schedule = [];
     },
 
     addSession(session) {

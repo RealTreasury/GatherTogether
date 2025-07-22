@@ -99,86 +99,7 @@ const AntiCheatSystem = {
 
     // NEW: Check if challenge should be available based on event day
     isChallengeAvailable(mode, index) {
-        const dayOfEvent = this.eventConfig.getDayOfEvent();
-
-        // Before event starts - no challenges available
-        if (dayOfEvent < 1) return false;
-
-        // After event ends - all challenges available for completion
-        if (dayOfEvent > 7) return true;
-
-        if (mode === 'regular') {
-            // Mass event challenge is available from the start of the event
-            if (index === 2) {
-                return dayOfEvent >= 1;
-            }
-
-            // Communion challenge only on Wednesday during the event
-            if (index === 7) {
-                const isWednesday = new Date().getDay() === 3; // 0=Sun,3=Wed
-                return isWednesday;
-            }
-
-            // Mass Event Plus challenge unlocks nightly at 10:00pm CT
-            if (index === 16) {
-                const now = new Date();
-                if (now < this.eventConfig.startDate) return false;
-                const centralNow = new Date(now.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-                const unlock = new Date(centralNow);
-                unlock.setHours(22, 0, 0, 0); // 10:00 PM Central
-                return centralNow >= unlock;
-            }
-
-            // Regular challenges unlock progressively
-            return dayOfEvent >= 1;
-        } else if (mode === 'completionist') {
-            // Custom unlock schedule for certain challenges
-            if (index === 15) {
-                // Convention center game challenge available for the entire event
-                return dayOfEvent >= 1;
-            }
-            if (index === 11) {
-                // Mass event hard mode unlocks at 7:30pm CT on day 1
-                const nowCentral = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-                if (nowCentral < this.eventConfig.startDate) return false;
-                if (dayOfEvent > 1) return true;
-                const diffHours = (nowCentral - this.eventConfig.startDate) / (1000 * 60 * 60);
-                return diffHours >= 19.5;
-            }
-            if (index === 12 || index === 4) {
-                // Sessions/workshops and exhibitor booths now available from Day 1
-                return dayOfEvent >= 1;
-            }
-            if (index === 3) {
-                // District booth prizes available from the start
-                return dayOfEvent >= 1;
-            }
-            if (index === 2) {
-                // Hair color challenge available from the start
-                return dayOfEvent >= 1;
-            }
-            if (index === 9) {
-                // Social media friend challenge available from the start
-                return dayOfEvent >= 1;
-            }
-            if (index === 10) {
-                // Daily acts of kindness available from the start
-                return dayOfEvent >= 1;
-            }
-            if (index === 13) {
-                // Daily photo challenge available from the start
-                return dayOfEvent >= 1;
-            }
-            if (index === 14) {
-                // Photos with main speakers available from the start
-                return dayOfEvent >= 1;
-            }
-
-            // Default: unlock groups of three each day
-            const unlockDay = Math.floor(index / 3) + 1;
-            return dayOfEvent >= unlockDay;
-        }
-
+        // Time locks disabled - all challenges available
         return true;
     },
 
@@ -378,60 +299,7 @@ const AntiCheatSystem = {
 
     // NEW: Determine when a challenge will unlock
     getChallengeUnlockTime(mode, index) {
-        const start = new Date(this.eventConfig.startDate);
-        const dayOfEvent = this.eventConfig.getDayOfEvent();
-
-        if (dayOfEvent > 7) return null; // Event concluded
-
-        if (mode === 'regular') {
-            if (index === 2) { // Mass event available from day 1
-                return dayOfEvent >= 1 ? null : start;
-            }
-            if (index === 16) { // Mass event plus 10pm CT
-                const now = new Date();
-                const centralNow = new Date(now.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-                const unlock = new Date(centralNow);
-                unlock.setHours(22, 0, 0, 0);
-                return centralNow >= unlock ? null : unlock;
-            }
-            if (index === 7) { // Communion on Wednesday
-                const now = new Date();
-                const dow = now.getDay();
-                const diff = (3 - dow + 7) % 7; // 3=Wed
-                if (diff === 0 && dayOfEvent >= 1) return null;
-                const next = new Date(now);
-                next.setDate(now.getDate() + diff);
-                next.setHours(0, 0, 0, 0);
-                return next;
-            }
-            if (dayOfEvent >= 1) return null;
-            return start;
-        } else if (mode === 'completionist') {
-            if (index === 11) { // Hard mode mass event day 1 7:30pm CT
-                const unlock = new Date(start);
-                unlock.setHours(19, 30, 0, 0);
-                return Date.now() >= unlock.getTime() ? null : unlock;
-            }
-            if (index === 12 || index === 4) { // Sessions/booths day 4
-                const unlock = new Date(start);
-                unlock.setDate(unlock.getDate() + 3);
-                unlock.setHours(0, 0, 0, 0);
-                return dayOfEvent >= 4 ? null : unlock;
-            }
-            if (index === 3) { // District booth prizes available day 1
-                return dayOfEvent >= 1 ? null : start;
-            }
-            if ([9,10,13,14,3,2].includes(index)) {
-                return dayOfEvent >= 1 ? null : start;
-            }
-            const unlockDay = Math.floor(index / 3) + 1;
-            if (dayOfEvent >= unlockDay) return null;
-            const unlock = new Date(start);
-            unlock.setDate(unlock.getDate() + unlockDay - 1);
-            unlock.setHours(0, 0, 0, 0);
-            return unlock;
-        }
-
+        // Time locks disabled
         return null;
     },
 
