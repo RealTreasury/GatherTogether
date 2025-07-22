@@ -403,26 +403,11 @@ const BingoTracker = {
 
         const overlay = document.createElement('div');
         overlay.className = 'sublist-overlay';
-        const dayOfEvent = window.AntiCheatSystem ?
-            window.AntiCheatSystem.eventConfig.getDayOfEvent() : 8;
 
         const isKindness = index === DAILY_KINDNESS_INDEX;
         const isMassEvent = index === MASS_EVENT_INDEX;
-        const centralNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-        const getMassUnlockTime = (offset) => {
-            const base = window.AntiCheatSystem ? new Date(window.AntiCheatSystem.eventConfig.startDate) : new Date();
-            base.setDate(base.getDate() + offset);
-            const central = new Date(base.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-            central.setHours(19, 30, 0, 0); // 7:30 PM Central
-            return central;
-        };
         const listItems = challenge.sublist.map((item, i) => {
-            let unlocked = true;
-            if (isKindness) {
-                unlocked = dayOfEvent > i;
-            } else if (isMassEvent) {
-                unlocked = i === 0 || centralNow >= getMassUnlockTime(i);
-            }
+            const unlocked = true;
             if (challenge.freeText) {
                 const val = progress[i] || '';
                 const selected = val ? 'selected' : '';
@@ -447,19 +432,6 @@ const BingoTracker = {
         const handleClick = (e) => {
             if (e.target.matches('.sub-item-btn')) {
                 const sub = parseInt(e.target.dataset.sub,10);
-                if (isKindness && dayOfEvent <= sub) {
-                    if (window.Utils && Utils.showNotification) {
-                        Utils.showNotification(`Come back on Day ${sub+1} to complete this act!`, 'warning');
-                    }
-                    return;
-                }
-                const nowCentral = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-                if (isMassEvent && sub > 0 && nowCentral < getMassUnlockTime(sub)) {
-                    if (window.Utils && Utils.showNotification) {
-                        Utils.showNotification('This mass event unlocks at 7:30 PM CT.', 'warning');
-                    }
-                    return;
-                }
                 if (progress.has(sub)) {
                     progress.delete(sub);
                     e.target.classList.remove('selected');
@@ -483,21 +455,6 @@ const BingoTracker = {
         const handleInput = (e) => {
             if (e.target.matches('.sub-item-input')) {
                 const sub = parseInt(e.target.dataset.sub,10);
-                if (isKindness && dayOfEvent <= sub) {
-                    if (window.Utils && Utils.showNotification) {
-                        Utils.showNotification(`Come back on Day ${sub+1} to complete this act!`, 'warning');
-                    }
-                    e.target.value = progress[sub] || '';
-                    return;
-                }
-                const nowCentral = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-                if (isMassEvent && sub > 0 && nowCentral < getMassUnlockTime(sub)) {
-                    if (window.Utils && Utils.showNotification) {
-                        Utils.showNotification('This mass event unlocks at 7:30 PM CT.', 'warning');
-                    }
-                    e.target.value = progress[sub] || '';
-                    return;
-                }
                 const trimmed = e.target.value.trim();
                 if (trimmed === '') {
                     delete progress[sub];
